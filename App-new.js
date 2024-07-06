@@ -1,23 +1,22 @@
 import { useEffect, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
-import firebase from './src/firebaseConfig';
+import { database } from './src/firebaseConfig';
+import { ref, onValue } from 'firebase/database';
 
 export default function App() {
   const [listUsers, setListUsers] = useState([]);
   useEffect(() => {
-    async function dados() {
-      await firebase
-        .database()
-        .ref('usuarios') //'usuarios/1'
-        .once('value', (snapshot) => {
-          setListUsers(snapshot.val());
-          //snapshot.val().nome
-          //snapshot.val().idade
-        });
-    }
-
-    dados();
+    const users = ref(database, 'usuarios');
+    onValue(users, (snapshot) => {
+      const data = snapshot.val();
+      const userList = Object.keys(data).map((key) => ({
+        id: key,
+        ...data[key]
+      }));
+      setListUsers(userList);
+      console.log(userList);
+    });
   }, []);
 
   return (
