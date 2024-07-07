@@ -1,52 +1,26 @@
-import { useEffect, useState } from 'react';
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
-import firebase from './src/firebaseConfig';
+import { useState } from 'react';
+import { View, Text, StyleSheet, SafeAreaView } from 'react-native';
+import Login from './src/components/Login';
 
-export default function App() {
-  const [listUsers, setListUsers] = useState([]);
-  useEffect(() => {
-    async function dados() {
-      await firebase
-        .database()
-        .ref('usuarios') //'usuarios/1'
-        .once('value', (snapshot) => {
-          setListUsers(snapshot.val());
-          //snapshot.val().nome
-          //snapshot.val().idade
-        });
-    }
+export default function escalaapp() {
+  const [user, setUuser] = useState(null);
 
-    dados();
-  }, []);
+  if (!user) {
+    return <Login />;
+  }
 
   return (
-    <View style={styles.container}>
-      <Text style={{ fontSize: 20, paddingBottom: 20 }}>Meus usuários</Text>
-      {listUsers.map((item, index) => {
-        return (
-          <View key={index} style={styles.boxuser}>
-            <Text style={styles.useritem}>{item.nome}</Text>
-            <Text style={styles.useritem}>{item.idade}</Text>
-          </View>
-        );
-      })}
-      <StatusBar style='auto' />
-    </View>
+    <SafeAreaView style={styles.container}>
+      <Text>HOME</Text>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  boxuser: {
-    flexDirection: 'row'
-  },
-  useritem: {
-    padding: 4
+    paddingTop: 35,
+    paddingHorizontal: 10,
+    backgroundColor: '#F2f6fc'
   }
 });
