@@ -11,7 +11,7 @@ export default function Home() {
         <Text>HOME</Text>
       </View>
       <View style={styles.boxButtons}>
-        <TouchableOpacity style={styles.button} onPress={() => { }}>
+        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Cadastro')}>
           <Text style={styles.textButtom}>Cadastro de Coroinha</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('GeradorEscalas')}>
