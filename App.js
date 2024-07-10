@@ -4,6 +4,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import Routes from './src/routes';
 
 import Login from './src/pages/Login';
+import EscalaProvider from './src/contexts/escalaContext';
 
 export default function escalaapp() {
   const [user, setUser] = useState(null);
@@ -14,7 +15,9 @@ export default function escalaapp() {
 
   return (
     <NavigationContainer>
-      <Routes />
+      <EscalaProvider>
+        <Routes />
+      </EscalaProvider>
     </NavigationContainer >
   );
 }

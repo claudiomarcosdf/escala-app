@@ -2,6 +2,23 @@ import { useEffect, useState, useMemo } from 'react';
 import { View, Text, StyleSheet, SafeAreaView, Button } from 'react-native';
 import Login from './src/components/Login';
 
+// Função para randomizar array
+// function shuffleArray(arr) {
+//   // Loop em todos os elementos
+// for (let i = arr.length - 1; i > 0; i--) {
+//       // Escolhendo elemento aleatório
+//   const j = Math.floor(Math.random() * (i + 1));
+//   // Reposicionando elemento
+//   [arr[i], arr[j]] = [arr[j], arr[i]];
+// }
+// // Retornando array com aleatoriedade
+// return arr;
+// }
+// var arrA = [1, 2, 3, 4, 5];
+// console.log(shuffleArray(arrA)); // [4, 2, 1, 5, 3]
+// console.log(shuffleArray(arrA)); // [5, 3, 4, 2, 1]
+// console.log(shuffleArray(arrA)); // [5, 1, 3, 4, 2]
+
 const pessoas = [
   { nome: 'CLAUDIO', celular: '99976-3771' },
   { nome: 'ALESSANDRA', celular: '99935-9980' },

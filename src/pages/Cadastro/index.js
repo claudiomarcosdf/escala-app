@@ -12,18 +12,7 @@ import {
 
 import firebase from '../../firebaseConfig';
 import ItemListaCoroinha from '../../components/ItemListaCoroinha';
-
-// const coroinhas = [
-//   { key: 1, nome: 'Therezinha', celular: '99236-4764' },
-//   { key: 2, nome: 'João Pedro', celular: '99236-4764' },
-//   { key: 3, nome: 'Othor', celular: '99236-4764' },
-//   { key: 4, nome: 'Salete', celular: '99236-4764' },
-//   { key: 5, nome: 'Mão Diná', celular: '99236-4764' },
-//   { key: 6, nome: 'Mão Diná', celular: '99236-4764' },
-//   { key: 7, nome: 'Mão Diná', celular: '99236-4764' },
-//   { key: 8, nome: 'Mão Diná', celular: '99236-4764' },
-//   { key: 9, nome: 'Mão Diná', celular: '99236-4764' }
-// ];
+import { Feather } from '@expo/vector-icons';
 
 export default function Cadastro() {
   const inputRef = useRef(null);
@@ -31,6 +20,7 @@ export default function Cadastro() {
   const [celular, setCelular] = useState(null);
   const [coroinhas, setCoroinhas] = useState([]);
   const [key, setKey] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function getDados() {
@@ -47,11 +37,15 @@ export default function Cadastro() {
               celular: childItem.val().celular
             };
 
-            setCoroinhas((oldCoroinhas) => [...oldCoroinhas, data]);
-          });
+            setCoroinhas((oldCoroinhas) => [...oldCoroinhas, data].reverse());
+          })
+          setLoading(false);
           //snapshot.val().nome
           //snapshot.val().idade
-        });
+        })
+        .catch((err) => {
+          setLoading(false);
+        })
     }
 
     getDados();
@@ -103,7 +97,7 @@ export default function Cadastro() {
           celular
         };
 
-        setCoroinhas((oldCoroinhas) => [...oldCoroinhas, data]);
+        setCoroinhas((oldCoroinhas) => [...oldCoroinhas, data].reverse());
       });
 
     setNome(null);
@@ -132,11 +126,31 @@ export default function Cadastro() {
     inputRef.current.focus();
   }
 
+  function handleCancelEdit() {
+    setKey(null);
+    setNome(null);
+    setCelular(null);
+    Keyboard.dismiss();
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.boxAreaCadastro}>
         <Text style={styles.titleText}>Cadastro de Coroinha</Text>
 
+        {key && (
+          <View style={styles.boxMessageEdit}>
+            <Feather name="alert-triangle" size={20} color="#e74c3c" />
+            <Text style={{ fontSize: 13, marginLeft: 5, color: '#e74c3c' }}>
+              Você está editando este registro
+            </Text>
+            <TouchableOpacity style={styles.btnCancelEdit} onPress={handleCancelEdit}>
+              <Text style={{ color: '#e74c3c', fontSize: 13 }}>
+                Cancelar
+              </Text>
+            </TouchableOpacity>
+          </View>
+        )}
         <TextInput
           placeholder='Nome'
           style={styles.input}
@@ -152,7 +166,7 @@ export default function Cadastro() {
         />
 
         <TouchableOpacity style={styles.btnCadastrar} onPress={handleAdd}>
-          <Text style={styles.btnText}>Cadastrar</Text>
+          <Text style={styles.btnText}>{key ? 'Editar' : 'Cadastrar'}</Text>
         </TouchableOpacity>
 
         <FlatList
@@ -167,11 +181,17 @@ export default function Cadastro() {
             />
           )}
           ListEmptyComponent={
-            <View style={{ alignItems: 'center', marginTop: 20 }}>
-              <Text style={{ fontSize: 14, color: '#ff6348' }}>
-                Nenhum coroinha cadastrado!
-              </Text>
-            </View>
+            loading ? (
+              <View style={styles.textMessage}>
+                <Text style={styles.textMessage}>Carregando...</Text>
+              </View>
+            ) : (
+              <View style={styles.textMessage}>
+                <Text style={{ fontSize: 14, color: '#ea8685' }}>
+                  Nenhum coroinha cadastrado!
+                </Text>
+              </View>
+            )
           }
         />
       </View>
@@ -226,5 +246,30 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 8,
     backgroundColor: '#dfe4ea'
+  },
+  textMessage: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 20
+  },
+  boxMessageEdit: {
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    padding: 5,
+    borderRadius: 5,
+    marginBottom: 5,
+    height: 30,
+    width: '100%',
+    backgroundColor: '#fab1a0'
+  },
+  btnCancelEdit: {
+    height: 20,
+    borderWidth: 1,
+    borderColor: '#e74c3c',
+    borderRadius: 5,
+    paddingRight: 5,
+    paddingLeft: 5,
+    marginLeft: 10
   }
 });

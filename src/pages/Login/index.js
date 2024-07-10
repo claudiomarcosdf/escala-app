@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import {
-  View,
   Text,
   StyleSheet,
   SafeAreaView,
   TextInput,
   TouchableOpacity,
+  TouchableWithoutFeedback,
+  ActivityIndicator,
   Keyboard
 } from 'react-native';
 
@@ -15,56 +16,70 @@ export default function Login({ changeStatus }) {
   const [type, setType] = useState('login');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
 
   function handleLogin() {
+    setLoading(true);
     Keyboard.dismiss();
     if (type === 'login') {
       const user = firebase.auth().signInWithEmailAndPassword(email, password)
         .then((user) => {
           changeStatus(user.user.uid);
+          setLoading(false);
         })
         .catch((err) => {
-          alert('Erro ao logar. \n' + err)
-          return
+          setLoading(false);
+          alert('Erro ao logar. \n' + err);
+          return;
         })
     } else {
       const user = firebase.auth().createUserWithEmailAndPassword(email, password)
         .then((user) => {
           changeStatus(user.user.uid);
+          setLoading(false);
         })
         .catch((err) => {
-          alert('Erro ao cadastrar usuário. \n' + err)
-          return
+          setLoading(false);
+          alert('Erro ao cadastrar usuário. \n' + err);
+          return;
         })
     }
   }
   return (
-    <SafeAreaView style={styles.container}>
-      <TextInput
-        placeholder='Seu email'
-        style={styles.input}
-        value={email}
-        onChangeText={(text) => setEmail(text)}
-      />
-      <TextInput
-        placeholder='***********'
-        style={styles.input}
-        value={password}
-        onChangeText={(text) => setPassword(text)}
-      />
+    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+      <SafeAreaView style={styles.container}>
+        <TextInput
+          placeholder='Seu email'
+          style={styles.input}
+          value={email}
+          onChangeText={(text) => setEmail(text)}
+        />
+        <TextInput
+          placeholder='***********'
+          style={styles.input}
+          value={password}
+          onChangeText={(text) => setPassword(text)}
+        />
 
-      <TouchableOpacity style={[styles.btnLogin, { backgroundColor: type === 'login' ? '#0984e3' : '#141414' }]} onPress={handleLogin}>
-        <Text style={styles.loginText}>
-          {type === 'login' ? 'Acessar' : 'Cadastrar'}
-        </Text>
-      </TouchableOpacity>
+        <TouchableOpacity style={[styles.btnLogin, { backgroundColor: type === 'login' ? '#0984e3' : '#141414' }]} onPress={handleLogin}>
+          <Text style={styles.loginText}>
+            {type === 'login' ? 'Acessar' : 'Cadastrar'}
+          </Text>
+        </TouchableOpacity>
 
-      <TouchableOpacity style={styles.btnCriarConta} onPress={() => setType(type => type === 'login' ? 'cadastrar' : 'login')}>
-        <Text style={{ textAlign: 'center' }}>
-          {type === 'login' ? 'Criar uma conta' : 'Já possuo uma conta'}
-        </Text>
-      </TouchableOpacity>
-    </SafeAreaView>
+        <TouchableOpacity style={styles.btnCriarConta} onPress={() => setType(type => type === 'login' ? 'cadastrar' : 'login')}>
+          {
+            loading ? (
+              <ActivityIndicator size={20} color='#0984e3' />
+            ) : (
+              <Text style={{ textAlign: 'center' }}>
+                {type === 'login' ? 'Criar uma conta' : 'Já possuo uma conta'}
+              </Text>
+            )
+          }
+        </TouchableOpacity>
+      </SafeAreaView>
+    </TouchableWithoutFeedback>
   );
 }
 
