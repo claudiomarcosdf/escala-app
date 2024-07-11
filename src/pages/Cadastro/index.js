@@ -38,14 +38,14 @@ export default function Cadastro() {
             };
 
             setCoroinhas((oldCoroinhas) => [...oldCoroinhas, data].reverse());
-          })
+          });
           setLoading(false);
           //snapshot.val().nome
           //snapshot.val().idade
         })
         .catch((err) => {
           setLoading(false);
-        })
+        });
     }
 
     getDados();
@@ -140,14 +140,15 @@ export default function Cadastro() {
 
         {key && (
           <View style={styles.boxMessageEdit}>
-            <Feather name="alert-triangle" size={20} color="#e74c3c" />
+            <Feather name='alert-triangle' size={20} color='#e74c3c' />
             <Text style={{ fontSize: 13, marginLeft: 5, color: '#e74c3c' }}>
               Você está editando este registro
             </Text>
-            <TouchableOpacity style={styles.btnCancelEdit} onPress={handleCancelEdit}>
-              <Text style={{ color: '#e74c3c', fontSize: 13 }}>
-                Cancelar
-              </Text>
+            <TouchableOpacity
+              style={styles.btnCancelEdit}
+              onPress={handleCancelEdit}
+            >
+              <Text style={{ color: '#e74c3c', fontSize: 13 }}>Cancelar</Text>
             </TouchableOpacity>
           </View>
         )}

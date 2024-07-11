@@ -14,16 +14,15 @@ import { Feather } from '@expo/vector-icons';
 import { format } from 'date-fns';
 import { Calendar, LocaleConfig } from 'react-native-calendars';
 import { ptBR } from '../../localeCalendar';
-import moment from 'moment-timezone';
 
 LocaleConfig.locales['pt-br'] = ptBR;
 LocaleConfig.defaultLocale = 'pt-br';
 
 import { EscalaContext } from '../../contexts/escalaContext';
+import { getOnlyDateBr } from '../../utils/helpers';
 
 export default function GeradorEscalas() {
-  let dataBr = moment.tz('America/Sao_Paulo');
-  let dataAtual = dataBr.format().substring(0, 10);
+  let dataAtual = getOnlyDateBr();
 
   const inputRef = useRef(null);
   const [dateNow, setDateNow] = useState(new Date(dataAtual));

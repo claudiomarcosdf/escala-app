@@ -6,6 +6,8 @@ export const EscalaContext = createContext({});
 function EscalaProvider({ children }) {
   const [coroinhas, setCoroinhas] = useState([]);
   const [escalaEncontrada, setEscalaEncontrada] = useState(false);
+  const [escalas, setEscalas] = useState([]);
+  const [loadingEscalas, setLoadingEscalas] = useState(false);
   const [building, setBuilding] = useState(false);
   const [finish, setFinish] = useState(false);
 
@@ -34,6 +36,35 @@ function EscalaProvider({ children }) {
 
     getDados();
   }, []);
+
+  async function getEscalas(data) {
+    setLoadingEscalas(true);
+    setEscalas([]);
+
+    await firebase
+      .database()
+      .ref('escalas')
+      .orderByChild('data')
+      .equalTo(data)
+      .once('value', (snapshot) => {
+        snapshot?.forEach((childItem) => {
+          let data = {
+            key: childItem.key,
+            data: childItem.val().data,
+            hora: childItem.val().hora,
+            nome: childItem.val().coroinha,
+            celular: childItem.val().celular
+          };
+
+          setEscalas((oldEscalas) => [...oldEscalas, data]);
+        });
+        setLoadingEscalas(false);
+      })
+      .catch((err) => {
+        setLoadingEscalas(false);
+        console.log(err);
+      });
+  }
 
   function montarArrayComVagasEHorarios(horariosDisponiveis) {
     const totalCoroinhas = coroinhas.length;
@@ -164,7 +195,15 @@ function EscalaProvider({ children }) {
 
   return (
     <EscalaContext.Provider
-      value={{ gerarEscala, building, finish, setFinish }}
+      value={{
+        gerarEscala,
+        building,
+        finish,
+        setFinish,
+        getEscalas,
+        escalas,
+        loadingEscalas
+      }}
     >
       {children}
     </EscalaContext.Provider>
