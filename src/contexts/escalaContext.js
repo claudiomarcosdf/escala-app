@@ -5,6 +5,9 @@ export const EscalaContext = createContext({});
 
 function EscalaProvider({ children }) {
   const [coroinhas, setCoroinhas] = useState([]);
+  const [escalaEncontrada, setEscalaEncontrada] = useState(false);
+  const [building, setBuilding] = useState(false);
+  const [finish, setFinish] = useState(false);
 
   useEffect(() => {
     async function getDados() {
@@ -22,11 +25,11 @@ function EscalaProvider({ children }) {
             };
 
             setCoroinhas((oldCoroinhas) => [...oldCoroinhas, data].reverse());
-          })
+          });
         })
         .catch((err) => {
           console.log(err);
-        })
+        });
     }
 
     getDados();
@@ -35,7 +38,9 @@ function EscalaProvider({ children }) {
   function montarArrayComVagasEHorarios(horariosDisponiveis) {
     const totalCoroinhas = coroinhas.length;
     const qtdHorariosDisponiveis = horariosDisponiveis.length;
-    const coroinhasPorHorario = Math.floor(totalCoroinhas / qtdHorariosDisponiveis); //parte inteira
+    const coroinhasPorHorario = Math.floor(
+      totalCoroinhas / qtdHorariosDisponiveis
+    ); //parte inteira
     const sobraCoroinhas = totalCoroinhas % qtdHorariosDisponiveis;
 
     //montar o array vagasHorarios
@@ -78,11 +83,18 @@ function EscalaProvider({ children }) {
   }
 
   async function escalaExiste(data) {
-    return await firebase.database().ref('escalas').orderByChild('data').equalTo(data).once('value', (snapshot) => {
-      console.log('snapshot origiem ')
-      if (snapshot?.val() != null) return true
-      else return false;
-    });
+    let retorno = false;
+    await firebase
+      .database()
+      .ref('escalas')
+      .orderByChild('data')
+      .equalTo(data)
+      .once('value')
+      .then(function (snapshot) {
+        if (snapshot.val() != null) retorno = true;
+      });
+
+    return retorno;
   }
 
   async function salvarEscala(dadosNovaEscala) {
@@ -99,11 +111,15 @@ function EscalaProvider({ children }) {
 
   async function gerarEscala(data, horarios) {
     //Verificar se a escala do dia já foi gerada
-    console.log('result ', await escalaExiste(data));
-    // if (escalaExiste(data)) {
-    //   alert('A escala para a data informada já foi gerada!');
-    //   return;
-    // }
+    setFinish(false);
+    setBuilding(true);
+    let existe = await Promise.all([escalaExiste(data)]);
+
+    if (existe[0] == true) {
+      alert('A escala para a data informada já foi gerada!');
+      setBuilding(false);
+      return;
+    }
 
     const vagasHorarios = montarArrayComVagasEHorarios(horarios);
     const escalas = [];
@@ -113,7 +129,6 @@ function EscalaProvider({ children }) {
       let coroinhaJaEscalado = false;
 
       horarios.forEach((horario) => {
-
         const vagaHorarioFinded = vagasHorariosTemp.find(
           (vagaHorario) => vagaHorario.horario == horario
         );
@@ -139,15 +154,21 @@ function EscalaProvider({ children }) {
     }); //end forEach
 
     for (var i = 0; i < escalas.length; i++) {
-      await salvarEscala(escalas[i]);
+      await Promise.all([salvarEscala(escalas[i])]);
+      //await salvarEscala(escalas[i]);
     }
+
+    setBuilding(false);
+    setFinish(true);
   }
 
   return (
-    <EscalaContext.Provider value={{ gerarEscala }}>
+    <EscalaContext.Provider
+      value={{ gerarEscala, building, finish, setFinish }}
+    >
       {children}
     </EscalaContext.Provider>
-  )
+  );
 }
 
 export default EscalaProvider;

@@ -1,9 +1,20 @@
 import { useState, useContext, useRef } from 'react';
-import { View, Text, TextInput, StyleSheet, SafeAreaView, TouchableOpacity, ActivityIndicator, Alert, Keyboard } from 'react-native';
+import {
+  View,
+  Text,
+  TextInput,
+  StyleSheet,
+  SafeAreaView,
+  TouchableOpacity,
+  ActivityIndicator,
+  Alert,
+  Keyboard
+} from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { format } from 'date-fns';
 import { Calendar, LocaleConfig } from 'react-native-calendars';
 import { ptBR } from '../../localeCalendar';
+import moment from 'moment-timezone';
 
 LocaleConfig.locales['pt-br'] = ptBR;
 LocaleConfig.defaultLocale = 'pt-br';
@@ -11,14 +22,19 @@ LocaleConfig.defaultLocale = 'pt-br';
 import { EscalaContext } from '../../contexts/escalaContext';
 
 export default function GeradorEscalas() {
+  let dataBr = moment.tz('America/Sao_Paulo');
+  let dataAtual = dataBr.format().substring(0, 10);
+
   const inputRef = useRef(null);
-  const [dateNow, setDateNow] = useState(new Date());
-  const [markedDates, setMarkedDates] = useState({});
+  const [dateNow, setDateNow] = useState(new Date(dataAtual));
+  const [markedDates, setMarkedDates] = useState({
+    [dataAtual]: { selected: true, marked: true }
+  });
   const [horaMarcada, setHoraMarcada] = useState({ horas: '', minutos: '' });
   const [horariosDisponiveis, setHorariosDisponiveis] = useState([]);
-  const [building, setBuilding] = useState(false);
 
-  const { gerarEscala } = useContext(EscalaContext);
+  const { gerarEscala, building, finish, setFinish } =
+    useContext(EscalaContext);
 
   function handleDayPress(date) {
     setDateNow(new Date(date.dateString));
@@ -28,14 +44,14 @@ export default function GeradorEscalas() {
       selected: true,
       selectedColor: '#3b3dbf',
       textColor: '#fff'
-    }
+    };
 
     setMarkedDates(markedDay);
   }
 
   function checkLimit(value, limit) {
     if (value == '') return true;
-    const parsedQty = Number.parseInt(value)
+    const parsedQty = Number.parseInt(value);
     if (Number.isNaN(parsedQty)) {
       alert('Horário inválido!');
     } else if (parsedQty > limit) {
@@ -46,43 +62,52 @@ export default function GeradorEscalas() {
   }
 
   function onCheckLimitHours(value) {
-    if (checkLimit(value, 23)) setHoraMarcada({ ...horaMarcada, horas: value })
+    if (checkLimit(value, 23)) setHoraMarcada({ ...horaMarcada, horas: value });
   }
 
   function onCheckLimitMinuts(value) {
-    if (checkLimit(value, 59)) setHoraMarcada({ ...horaMarcada, minutos: value })
+    if (checkLimit(value, 59))
+      setHoraMarcada({ ...horaMarcada, minutos: value });
   }
 
   function handleAdicionarHorario() {
-    if (horaMarcada.horas == '' || horaMarcada.minutos == '') alert('Favor informar horas e minutos!');
+    if (horaMarcada.horas == '' || horaMarcada.minutos == '')
+      alert('Favor informar horas e minutos!');
 
     const novoHorario = horaMarcada.horas + ':' + horaMarcada.minutos;
-    const horarioJaExisteIndex = horariosDisponiveis.findIndex((horario) => horario === novoHorario);
+    const horarioJaExisteIndex = horariosDisponiveis.findIndex(
+      (horario) => horario === novoHorario
+    );
     if (horarioJaExisteIndex != -1) {
       alert('O horário já existe!');
       return;
     }
 
-    setHorariosDisponiveis(oldHorarios => [...oldHorarios, novoHorario]);
+    setHorariosDisponiveis((oldHorarios) => [...oldHorarios, novoHorario]);
     setHoraMarcada({ horas: '', minutos: '' });
     inputRef.current.focus();
   }
 
   function handleDeleteHorario(horarioSelecionado) {
-    Alert.alert('Atenção', `Confirma exclusão do horário "${horarioSelecionado}"`, [
-      {
-        text: 'Cancelar',
-        style: 'cancel'
-      },
-      {
-        text: 'Continuar',
-        onPress: () => {
-          const newListHoariosDisponiveis = horariosDisponiveis.filter((horario) => horario !== horarioSelecionado);
-          setHorariosDisponiveis([...newListHoariosDisponiveis]);
-
+    Alert.alert(
+      'Atenção',
+      `Confirma exclusão do horário "${horarioSelecionado}"`,
+      [
+        {
+          text: 'Cancelar',
+          style: 'cancel'
+        },
+        {
+          text: 'Continuar',
+          onPress: () => {
+            const newListHoariosDisponiveis = horariosDisponiveis.filter(
+              (horario) => horario !== horarioSelecionado
+            );
+            setHorariosDisponiveis([...newListHoariosDisponiveis]);
+          }
         }
-      }
-    ])
+      ]
+    );
   }
 
   async function handleGerar() {
@@ -92,12 +117,11 @@ export default function GeradorEscalas() {
       alert('Os horários das missas devem ser informados!');
       return;
     }
-    setBuilding(true);
+
     const date = new Date(dateNow);
     const onlyDate = date.valueOf() + date.getTimezoneOffset() * 60 * 1000;
     const dataFormatada = format(onlyDate, 'dd/MM/yyy');
     await gerarEscala(dataFormatada, horariosDisponiveis);
-    setBuilding(false);
   }
 
   return (
@@ -109,12 +133,14 @@ export default function GeradorEscalas() {
 
         <View style={styles.boxCalendar}>
           <Calendar
+            current={dataAtual}
             onDayPress={handleDayPress}
             markedDates={markedDates}
             enableSwipeMonths={true}
             style={{ borderRadius: 5 }}
             theme={{
-              todayTextColor: '#ff0000',
+              //todayTextColor: '#ff0000',
+              todayTextColor: '#000',
               selectedDayBackgroundColor: '#00adf5',
               selectedDayTextColor: '#fff'
             }}
@@ -122,44 +148,75 @@ export default function GeradorEscalas() {
         </View>
 
         <View style={styles.boxHorario}>
-          <Text style={{ padding: 3 }}>{"Informe o horário: "}</Text>
+          <Text style={{ padding: 3 }}>{'Informe o horário: '}</Text>
           <TextInput
             ref={inputRef}
             style={styles.inputHoras}
-            keyboardType={"numeric"}
+            keyboardType={'numeric'}
             maxLength={2}
             value={horaMarcada.horas}
             onChangeText={onCheckLimitHours}
           />
-          <Text style={{ padding: 3 }}>{":"}</Text>
+          <Text style={{ padding: 3 }}>{':'}</Text>
           <TextInput
             style={styles.inputMinutos}
-            keyboardType={"numeric"}
+            keyboardType={'numeric'}
             maxLength={2}
             value={horaMarcada.minutos}
             onChangeText={onCheckLimitMinuts}
           />
-          <TouchableOpacity style={styles.plusButton} onPress={handleAdicionarHorario}>
-            <Feather name="plus" size={17} color="#fff" />
+          <TouchableOpacity
+            style={styles.plusButton}
+            onPress={handleAdicionarHorario}
+          >
+            <Feather name='plus' size={17} color='#fff' />
           </TouchableOpacity>
         </View>
 
-        <Text style={{ color: "#0652DD", fontWeight: '700' }}>Horários das missas</Text>
-        {horariosDisponiveis.length === 0 && <Text style={{ fontSize: 12 }}>Não informado</Text>}
-        <View style={{ flexDirection: "row", marginBottom: 25 }}>
-          {horariosDisponiveis.map((horario) =>
-            <Text key={horario} style={styles.boxHorarioDisponivel} onPress={() => handleDeleteHorario(horario)}>{horario}</Text>
-          )}
+        <Text style={{ color: '#0652DD', fontWeight: '700' }}>
+          Horários das missas
+        </Text>
+        {horariosDisponiveis.length === 0 && (
+          <Text style={{ fontSize: 12 }}>Não informado</Text>
+        )}
+        <View style={{ flexDirection: 'row', marginBottom: 25 }}>
+          {horariosDisponiveis.map((horario) => (
+            <Text
+              key={horario}
+              style={styles.boxHorarioDisponivel}
+              onPress={() => handleDeleteHorario(horario)}
+            >
+              {horario}
+            </Text>
+          ))}
         </View>
 
-        <TouchableOpacity style={styles.btnCadastrar} onPress={handleGerar} disabled={building ? true : false}>
-          <Text style={styles.btnText}>{building ? 'Gerando Escalas...' : 'Gerar Escalas'}</Text>
+        <TouchableOpacity
+          style={styles.btnCadastrar}
+          onPress={handleGerar}
+          disabled={building ? true : false}
+        >
+          <Text style={styles.btnText}>
+            {building ? 'Gerando Escalas...' : 'Gerar Escalas'}
+          </Text>
         </TouchableOpacity>
         {building && (
           <View style={{ marginTop: 20 }}>
             <ActivityIndicator size={20} color='#0984e3' />
           </View>
-
+        )}
+        {finish && (
+          <View style={{ marginTop: 20, alignItems: 'center' }}>
+            <Text style={{ color: '#27ae60', fontWeight: '700' }}>
+              Escala gerada com sucesso!
+            </Text>
+            <TouchableOpacity
+              onPress={() => setFinish(false)}
+              style={styles.btnFinish}
+            >
+              <Text style={styles.textBtnFinish}>Fechar</Text>
+            </TouchableOpacity>
+          </View>
         )}
       </View>
     </SafeAreaView>
@@ -202,7 +259,7 @@ const styles = StyleSheet.create({
     fontSize: 14
   },
   boxHorario: {
-    flexDirection: "row",
+    flexDirection: 'row',
     marginBottom: 20
   },
   inputHoras: {
@@ -211,7 +268,7 @@ const styles = StyleSheet.create({
     height: 30,
     padding: 8,
     borderWidth: 1,
-    borderColor: '#747d8c',
+    borderColor: '#747d8c'
   },
   inputMinutos: {
     backgroundColor: '#FFF',
@@ -219,7 +276,7 @@ const styles = StyleSheet.create({
     height: 30,
     padding: 8,
     borderWidth: 1,
-    borderColor: '#747d8c',
+    borderColor: '#747d8c'
   },
   plusButton: {
     alignItems: 'center',
@@ -237,5 +294,22 @@ const styles = StyleSheet.create({
     marginRight: 6,
     fontWeight: '500',
     backgroundColor: '#ffeaa7'
+  },
+  btnFinish: {
+    // width: 70,
+    // height: 20,
+    paddingHorizontal: 10,
+    paddingtop: 2,
+    paddingBottom: 2,
+    borderRadius: 5,
+    marginTop: 2,
+    backgroundColor: '#27ae60',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  textBtnFinish: {
+    color: '#fff',
+    fontWeight: '400',
+    fontSize: 13
   }
 });
