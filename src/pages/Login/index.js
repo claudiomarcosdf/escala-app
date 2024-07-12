@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import {
   Text,
+  View,
+  Image,
   StyleSheet,
   SafeAreaView,
   TextInput,
@@ -48,6 +50,12 @@ export default function Login({ changeStatus }) {
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <SafeAreaView style={styles.container}>
+        <View style={{ width: '100%', alignItems: 'center', marginBottom: 30 }}>
+          <Image
+            style={{ width: 100, height: 100, borderRadius: 50 }}
+            source={require('../../../assets/amem.png')}
+          />
+        </View>
         <TextInput
           placeholder='Seu email'
           style={styles.input}
@@ -56,6 +64,7 @@ export default function Login({ changeStatus }) {
         />
         <TextInput
           placeholder='***********'
+          secureTextEntry={true}
           style={styles.input}
           value={password}
           onChangeText={(text) => setPassword(text)}

@@ -52,7 +52,7 @@ function EscalaProvider({ children }) {
             key: childItem.key,
             data: childItem.val().data,
             hora: childItem.val().hora,
-            nome: childItem.val().coroinha,
+            coroinha: childItem.val().coroinha,
             celular: childItem.val().celular
           };
 
@@ -202,6 +202,7 @@ function EscalaProvider({ children }) {
         setFinish,
         getEscalas,
         escalas,
+        setEscalas,
         loadingEscalas
       }}
     >

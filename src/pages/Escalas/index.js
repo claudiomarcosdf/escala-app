@@ -1,4 +1,4 @@
-import { useState, useContext } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import {
   View,
   Text,
@@ -15,52 +15,59 @@ import { ptBR } from '../../localeCalendar';
 
 import ItemListaEscala from '../../components/ItemListaEscala';
 import { EscalaContext } from '../../contexts/escalaContext';
-import { getOnlyDateBr } from '../../utils/helpers';
+import { getOnlyDateBr, getDataToFilterFirebase } from '../../utils/helpers';
 
-const escalas = [
-  {
-    data: '11/07/2024',
-    hora: '09:00',
-    coroinha: 'Fulano de Tal',
-    celular: '61 98745-3589'
-  },
-  {
-    data: '11/07/2024',
-    hora: '11:00',
-    coroinha: 'Fulano de Tal',
-    celular: '61 98745-3589'
-  },
-  {
-    data: '11/07/2024',
-    hora: '17:00',
-    coroinha: 'Fulano de Tal',
-    celular: '61 98745-3589'
-  },
-  {
-    data: '11/07/2024',
-    hora: '18:00',
-    coroinha: 'Fulano de Tal',
-    celular: '61 98745-3589'
-  },
-  {
-    data: '11/07/2024',
-    hora: '19:00',
-    coroinha: 'Fulano de Tal',
-    celular: '61 98745-3589'
-  },
-  {
-    data: '11/07/2024',
-    hora: '21:00',
-    coroinha: 'Fulano de Tal',
-    celular: '61 98745-3589'
-  },
-  {
-    data: '11/07/2024',
-    hora: '23:00',
-    coroinha: 'Fulano de Tal',
-    celular: '61 98745-3589'
-  }
-];
+// const escalas = [
+//   {
+//     key: 1,
+//     data: '11/07/2024',
+//     hora: '09:00',
+//     coroinha: 'Fulano de Tal',
+//     celular: '61 98745-3589'
+//   },
+//   {
+//     key: 2,
+//     data: '11/07/2024',
+//     hora: '11:00',
+//     coroinha: 'Fulano de Tal',
+//     celular: '61 98745-3589'
+//   },
+//   {
+//     key: 3,
+//     data: '11/07/2024',
+//     hora: '17:00',
+//     coroinha: 'Fulano de Tal',
+//     celular: '61 98745-3589'
+//   },
+//   {
+//     key: 4,
+//     data: '11/07/2024',
+//     hora: '18:00',
+//     coroinha: 'Fulano de Tal',
+//     celular: '61 98745-3589'
+//   },
+//   {
+//     key: 5,
+//     data: '11/07/2024',
+//     hora: '19:00',
+//     coroinha: 'Fulano de Tal',
+//     celular: '61 98745-3589'
+//   },
+//   {
+//     key: 6,
+//     data: '11/07/2024',
+//     hora: '21:00',
+//     coroinha: 'Fulano de Tal',
+//     celular: '61 98745-3589'
+//   },
+//   {
+//     key: 7,
+//     data: '11/07/2024',
+//     hora: '23:00',
+//     coroinha: 'Fulano de Tal',
+//     celular: '61 98745-3589'
+//   }
+// ];
 
 export default function Escalas() {
   let dataAtual = getOnlyDateBr();
@@ -70,7 +77,18 @@ export default function Escalas() {
   });
   const [horaMarcada, setHoraMarcada] = useState({ horas: '', minutos: '' });
 
-  const { getEscalas, loadingEscalas } = useContext(EscalaContext);
+  const { escalas, setEscalas, getEscalas, loadingEscalas } = useContext(EscalaContext);
+
+  async function exibirEscalas(dataSelecionada) {
+    const dataDeHoje = getDataToFilterFirebase();
+    const dataParaBusca = dataSelecionada ? getDataToFilterFirebase(dataSelecionada) : dataDeHoje;
+    await getEscalas(dataParaBusca);
+  }
+
+  useEffect(() => {
+    exibirEscalas(dateNow ? dateNow.toISOString() : null);
+  }, []);
+
 
   function handleDayPress(date) {
     setDateNow(new Date(date.dateString));
@@ -83,27 +101,42 @@ export default function Escalas() {
     };
 
     setMarkedDates(markedDay);
+    exibirEscalas(date.dateString);
   }
 
-  function handleDelete(key) {
+  function handleDelete(key, coroinha) {
     if (!key) return;
-
-    // firebase
-    //   .database()
-    //   .ref('coroinhas')
-    //   .child(key)
-    //   .remove()
-    //   .then(() => {
-    //     const newCoroinhasList = coroinhas.filter((item) => item.key !== key);
-    //     setCoroinhas(newCoroinhasList);
-    //   });
+    Alert.alert(
+      'Atenção',
+      `Confirma exclusão do(a) ${coroinha} da escala?`,
+      [
+        {
+          text: 'Cancelar',
+          style: 'cancel'
+        },
+        {
+          text: 'Continuar',
+          onPress: () => {
+            // firebase
+            //   .database()
+            //   .ref('escalas')
+            //   .child(key)
+            //   .remove()
+            //   .then(() => {
+            //     const newEscalaList = escalas.filter((item) => item.key !== key);
+            //     setEscalas(newEscalaList);
+            //   });
+          }
+        }
+      ]
+    );
   }
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.boxArea}>
-        <View style={styles.titleText}>
-          <Text>Escalas</Text>
+        <View >
+          <Text style={styles.titleText}>Escalas</Text>
         </View>
 
         <View style={styles.boxCalendar}>
@@ -123,13 +156,13 @@ export default function Escalas() {
 
         <View style={styles.boxComands}>
           <Text style={{ fontSize: 13, fontWeight: '600' }}>
-            Escalas do dia
+            Escala do dia
           </Text>
           <View style={{ flexDirection: 'row' }}>
-            <TouchableOpacity style={styles.btnEscalar} onPress={() => {}}>
-              <Text style={styles.textBtnEscalar}>Escalar</Text>
+            <TouchableOpacity style={styles.btnEscalar} onPress={() => { }}>
+              <Text style={styles.textBtnEscalar}>Escalar coroinha</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.btnCompartilhar} onPress={() => {}}>
+            <TouchableOpacity style={styles.btnCompartilhar} onPress={() => { }}>
               <AntDesign name='sharealt' size={18} color='#fff' />
             </TouchableOpacity>
           </View>
@@ -149,8 +182,8 @@ export default function Escalas() {
               </View>
             ) : (
               <View style={styles.textMessage}>
-                <Text style={{ fontSize: 14, color: '#ea8685' }}>
-                  Nenhuma escala encontrada!
+                <Text style={{ fontSize: 14, color: '#ee5253' }}>
+                  Nenhuma escala para o dia selecionado!
                 </Text>
               </View>
             )
@@ -165,18 +198,19 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingTop: 35,
-    paddingHorizontal: 10,
+    paddingHorizontal: 2,
     backgroundColor: '#F2f6fc'
   },
   boxArea: {
     flex: 1,
     alignItems: 'center',
-    padding: 15
+    padding: 5
   },
   titleText: {
-    fontSize: 16,
+    fontSize: 18,
+    fontWeight: '700',
     color: '#2f3640',
-    marginBottom: 20
+    marginBottom: 8
   },
   boxCalendar: {
     width: '100%',
@@ -212,8 +246,8 @@ const styles = StyleSheet.create({
   },
   list: {
     width: '100%',
-    marginTop: 5,
-    padding: 10,
+    marginTop: 10,
+    padding: 5,
     borderRadius: 8,
     backgroundColor: '#dfe4ea'
   },

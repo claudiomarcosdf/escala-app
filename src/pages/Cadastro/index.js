@@ -7,7 +7,8 @@ import {
   SafeAreaView,
   TouchableOpacity,
   FlatList,
-  Keyboard
+  Keyboard,
+  Alert
 } from 'react-native';
 
 import firebase from '../../firebaseConfig';
@@ -105,18 +106,33 @@ export default function Cadastro() {
     Keyboard.dismiss();
   }
 
-  function handleDelete(key) {
+  function handleDelete(key, nome) {
     if (!key) return;
 
-    firebase
-      .database()
-      .ref('coroinhas')
-      .child(key)
-      .remove()
-      .then(() => {
-        const newCoroinhasList = coroinhas.filter((item) => item.key !== key);
-        setCoroinhas(newCoroinhasList);
-      });
+    Alert.alert(
+      'Atenção',
+      `Confirma exclusão do coroinha "${nome}"?`,
+      [
+        {
+          text: 'Cancelar',
+          style: 'cancel'
+        },
+        {
+          text: 'Continuar',
+          onPress: () => {
+            firebase
+              .database()
+              .ref('coroinhas')
+              .child(key)
+              .remove()
+              .then(() => {
+                const newCoroinhasList = coroinhas.filter((item) => item.key !== key);
+                setCoroinhas(newCoroinhasList);
+              });
+          }
+        }
+      ]
+    );
   }
 
   function handleEdit(data) {
@@ -170,6 +186,11 @@ export default function Cadastro() {
           <Text style={styles.btnText}>{key ? 'Editar' : 'Cadastrar'}</Text>
         </TouchableOpacity>
 
+        <View style={styles.boxTotalCoroinhas}>
+          <Text style={styles.textTotal}>Coroinhas cadastrados: </Text>
+          <Text style={[styles.textTotal, { fontWeight: '700' }]}>{coroinhas.length != 0 ? coroinhas.length : 0}</Text>
+        </View>
+
         <FlatList
           style={styles.list}
           keyExtractor={(item) => item.key}
@@ -188,7 +209,7 @@ export default function Cadastro() {
               </View>
             ) : (
               <View style={styles.textMessage}>
-                <Text style={{ fontSize: 14, color: '#ea8685' }}>
+                <Text style={{ fontSize: 14, color: '#ee5253' }}>
                   Nenhum coroinha cadastrado!
                 </Text>
               </View>
@@ -204,18 +225,19 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingTop: 35,
-    paddingHorizontal: 10,
+    paddingHorizontal: 2,
     backgroundColor: '#F2f6fc'
   },
   boxAreaCadastro: {
     flex: 1,
     alignItems: 'center',
-    padding: 15
+    padding: 5
   },
   titleText: {
-    fontSize: 16,
+    fontSize: 18,
+    fontWeight: '700',
     color: '#2f3640',
-    marginBottom: 20
+    marginBottom: 15
   },
   input: {
     marginBottom: 10,
@@ -241,10 +263,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#0984e3',
     width: '100%'
   },
+  boxTotalCoroinhas: { flexDirection: 'row', width: '100%', marginTop: 10, paddingHorizontal: 5 },
+  textTotal: { fontSize: 12, color: '#0652DD' },
   list: {
     width: '100%',
-    marginTop: 10,
-    padding: 10,
+    marginTop: 2,
+    padding: 5,
     borderRadius: 8,
     backgroundColor: '#dfe4ea'
   },

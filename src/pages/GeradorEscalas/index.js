@@ -126,8 +126,8 @@ export default function GeradorEscalas() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.boxArea}>
-        <View style={styles.titleText}>
-          <Text>Gerador de Escalas</Text>
+        <View>
+          <Text style={styles.titleText}>Gerador de Escalas</Text>
         </View>
 
         <View style={styles.boxCalendar}>
@@ -226,18 +226,19 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingTop: 35,
-    paddingHorizontal: 10,
+    paddingHorizontal: 5,
     backgroundColor: '#F2f6fc'
   },
   boxArea: {
     flex: 1,
     alignItems: 'center',
-    padding: 15
+    padding: 5
   },
   titleText: {
-    fontSize: 16,
+    fontSize: 18,
+    fontWeight: '700',
     color: '#2f3640',
-    marginBottom: 20
+    marginBottom: 8
   },
   boxCalendar: {
     width: '100%',

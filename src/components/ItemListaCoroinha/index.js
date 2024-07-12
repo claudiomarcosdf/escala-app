@@ -7,6 +7,7 @@ import {
 } from 'react-native';
 
 import { FontAwesome6 } from '@expo/vector-icons';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
 
 export default function ItemListaCoroinha({ data, deleteItem, editItem }) {
@@ -26,8 +27,8 @@ export default function ItemListaCoroinha({ data, deleteItem, editItem }) {
         </View>
       </View>
       <View style={styles.deleteBox}>
-        <TouchableOpacity onPress={() => deleteItem(data.key)}>
-          <Ionicons name='trash-bin' size={20} color='#ff6b81' />
+        <TouchableOpacity onPress={() => deleteItem(data.key, data.nome)}>
+          <MaterialCommunityIcons name="trash-can-outline" size={20} color='#ee5253' />
         </TouchableOpacity>
       </View>
     </View>
@@ -41,7 +42,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     padding: 10,
     marginTop: 0,
-    marginBottom: 10,
+    marginBottom: 3,
     borderRadius: 5,
     backgroundColor: '#fff'
   },
@@ -58,9 +59,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row'
   },
   iconPersonBox: {
-    padding: 2,
+    display: 'flex',
     marginRight: 15,
-    borderRadius: 2,
+    width: 40,
+    height: 40,
+    borderRadius: 50,
     backgroundColor: '#dfe4ea',
     alignItems: 'center',
     justifyContent: 'center'
