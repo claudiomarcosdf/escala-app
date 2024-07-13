@@ -9,11 +9,13 @@ import {
   Alert,
   Keybord
 } from 'react-native';
+import { Feather } from '@expo/vector-icons';
 import { AntDesign } from '@expo/vector-icons';
 import { Calendar, LocaleConfig } from 'react-native-calendars';
 import { ptBR } from '../../localeCalendar';
 
 import ItemListaEscala from '../../components/ItemListaEscala';
+import PrintEscala from '../../components/PrintEscala';
 import { EscalaContext } from '../../contexts/escalaContext';
 import { getOnlyDateBr, getDataToFilterFirebase } from '../../utils/helpers';
 
@@ -77,18 +79,20 @@ export default function Escalas() {
   });
   const [horaMarcada, setHoraMarcada] = useState({ horas: '', minutos: '' });
 
-  const { escalas, setEscalas, getEscalas, loadingEscalas } = useContext(EscalaContext);
+  const { escalas, setEscalas, getEscalas, loadingEscalas } =
+    useContext(EscalaContext);
 
   async function exibirEscalas(dataSelecionada) {
     const dataDeHoje = getDataToFilterFirebase();
-    const dataParaBusca = dataSelecionada ? getDataToFilterFirebase(dataSelecionada) : dataDeHoje;
+    const dataParaBusca = dataSelecionada
+      ? getDataToFilterFirebase(dataSelecionada)
+      : dataDeHoje;
     await getEscalas(dataParaBusca);
   }
 
   useEffect(() => {
     exibirEscalas(dateNow ? dateNow.toISOString() : null);
   }, []);
-
 
   function handleDayPress(date) {
     setDateNow(new Date(date.dateString));
@@ -106,36 +110,32 @@ export default function Escalas() {
 
   function handleDelete(key, coroinha) {
     if (!key) return;
-    Alert.alert(
-      'Atenção',
-      `Confirma exclusão do(a) ${coroinha} da escala?`,
-      [
-        {
-          text: 'Cancelar',
-          style: 'cancel'
-        },
-        {
-          text: 'Continuar',
-          onPress: () => {
-            // firebase
-            //   .database()
-            //   .ref('escalas')
-            //   .child(key)
-            //   .remove()
-            //   .then(() => {
-            //     const newEscalaList = escalas.filter((item) => item.key !== key);
-            //     setEscalas(newEscalaList);
-            //   });
-          }
+    Alert.alert('Atenção', `Confirma exclusão do(a) ${coroinha} da escala?`, [
+      {
+        text: 'Cancelar',
+        style: 'cancel'
+      },
+      {
+        text: 'Continuar',
+        onPress: () => {
+          // firebase
+          //   .database()
+          //   .ref('escalas')
+          //   .child(key)
+          //   .remove()
+          //   .then(() => {
+          //     const newEscalaList = escalas.filter((item) => item.key !== key);
+          //     setEscalas(newEscalaList);
+          //   });
         }
-      ]
-    );
+      }
+    ]);
   }
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.boxArea}>
-        <View >
+        <View>
           <Text style={styles.titleText}>Escalas</Text>
         </View>
 
@@ -155,16 +155,12 @@ export default function Escalas() {
         </View>
 
         <View style={styles.boxComands}>
-          <Text style={{ fontSize: 13, fontWeight: '600' }}>
-            Escala do dia
-          </Text>
+          <Text style={{ fontSize: 13, fontWeight: '600' }}>Escala do dia</Text>
           <View style={{ flexDirection: 'row' }}>
-            <TouchableOpacity style={styles.btnEscalar} onPress={() => { }}>
+            <TouchableOpacity style={styles.btnEscalar} onPress={() => {}}>
               <Text style={styles.textBtnEscalar}>Escalar coroinha</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.btnCompartilhar} onPress={() => { }}>
-              <AntDesign name='sharealt' size={18} color='#fff' />
-            </TouchableOpacity>
+            <PrintEscala data={escalas ? escalas : []} />
           </View>
         </View>
 
@@ -228,22 +224,24 @@ const styles = StyleSheet.create({
   },
   textBtnEscalar: { color: '#fff', fontSize: 12, fontWeight: '700' },
   btnEscalar: {
+    marginRight: 10,
     alignItems: 'center',
     justifyContent: 'center',
-    height: 25,
+    height: 26,
     paddingHorizontal: 10,
-    borderRadius: 5,
+    borderRadius: 50,
     backgroundColor: '#0984e3'
   },
-  btnCompartilhar: {
-    marginLeft: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
-    height: 25,
-    paddingHorizontal: 10,
-    borderRadius: 5,
-    backgroundColor: '#0984e3'
-  },
+  // btnCompartilhar: {
+  //   marginLeft: 0,
+  //   alignItems: 'center',
+  //   justifyContent: 'center',
+  //   height: 25,
+  //   width: 25,
+  //   paddingHorizontal: 0,
+  //   borderRadius: 50
+  //    backgroundColor: '#0984e3'
+  // },
   list: {
     width: '100%',
     marginTop: 10,

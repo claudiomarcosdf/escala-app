@@ -24,7 +24,9 @@ export default function Login({ changeStatus }) {
     setLoading(true);
     Keyboard.dismiss();
     if (type === 'login') {
-      const user = firebase.auth().signInWithEmailAndPassword(email, password)
+      const user = firebase
+        .auth()
+        .signInWithEmailAndPassword(email, password)
         .then((user) => {
           changeStatus(user.user.uid);
           setLoading(false);
@@ -33,9 +35,11 @@ export default function Login({ changeStatus }) {
           setLoading(false);
           alert('Erro ao logar. \n' + err);
           return;
-        })
+        });
     } else {
-      const user = firebase.auth().createUserWithEmailAndPassword(email, password)
+      const user = firebase
+        .auth()
+        .createUserWithEmailAndPassword(email, password)
         .then((user) => {
           changeStatus(user.user.uid);
           setLoading(false);
@@ -44,7 +48,7 @@ export default function Login({ changeStatus }) {
           setLoading(false);
           alert('Erro ao cadastrar usuário. \n' + err);
           return;
-        })
+        });
     }
   }
   return (
@@ -52,7 +56,7 @@ export default function Login({ changeStatus }) {
       <SafeAreaView style={styles.container}>
         <View style={{ width: '100%', alignItems: 'center', marginBottom: 30 }}>
           <Image
-            style={{ width: 100, height: 100, borderRadius: 50 }}
+            style={styles.image}
             source={require('../../../assets/amem.png')}
           />
         </View>
@@ -70,22 +74,31 @@ export default function Login({ changeStatus }) {
           onChangeText={(text) => setPassword(text)}
         />
 
-        <TouchableOpacity style={[styles.btnLogin, { backgroundColor: type === 'login' ? '#0984e3' : '#141414' }]} onPress={handleLogin}>
+        <TouchableOpacity
+          style={[
+            styles.btnLogin,
+            { backgroundColor: type === 'login' ? '#0984e3' : '#141414' }
+          ]}
+          onPress={handleLogin}
+        >
           <Text style={styles.loginText}>
             {type === 'login' ? 'Acessar' : 'Cadastrar'}
           </Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.btnCriarConta} onPress={() => setType(type => type === 'login' ? 'cadastrar' : 'login')}>
-          {
-            loading ? (
-              <ActivityIndicator size={20} color='#0984e3' />
-            ) : (
-              <Text style={{ textAlign: 'center' }}>
-                {type === 'login' ? 'Criar uma conta' : 'Já possuo uma conta'}
-              </Text>
-            )
+        <TouchableOpacity
+          style={styles.btnCriarConta}
+          onPress={() =>
+            setType((type) => (type === 'login' ? 'cadastrar' : 'login'))
           }
+        >
+          {loading ? (
+            <ActivityIndicator size={20} color='#0984e3' />
+          ) : (
+            <Text style={{ textAlign: 'center' }}>
+              {type === 'login' ? 'Criar uma conta' : 'Já possuo uma conta'}
+            </Text>
+          )}
         </TouchableOpacity>
       </SafeAreaView>
     </TouchableWithoutFeedback>
@@ -120,5 +133,12 @@ const styles = StyleSheet.create({
   },
   btnCriarConta: {
     marginTop: 10
+  },
+  image: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    borderColor: '#74b9ff',
+    borderWidth: 0.5
   }
 });
