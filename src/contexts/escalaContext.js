@@ -40,6 +40,7 @@ function EscalaProvider({ children }) {
   async function getEscalas(data) {
     setLoadingEscalas(true);
     setEscalas([]);
+    let escalasTemp = [];
 
     await firebase
       .database()
@@ -56,13 +57,31 @@ function EscalaProvider({ children }) {
             celular: childItem.val().celular
           };
 
-          setEscalas((oldEscalas) => [...oldEscalas, data]);
+          escalasTemp.push(data);
+          //setEscalas((oldEscalas) => [...oldEscalas, data]);
         });
+        setEscalas(
+          escalasTemp.sort((a, b) =>
+            a.hora > b.hora ? 1 : b.hora > a.hora ? -1 : 0
+          )
+        );
         setLoadingEscalas(false);
       })
       .catch((err) => {
         setLoadingEscalas(false);
         console.log(err);
+      });
+  }
+
+  async function excluirEscala(key) {
+    await firebase
+      .database()
+      .ref('escalas')
+      .child(key)
+      .remove()
+      .then(() => {
+        const newEscalaList = escalas.filter((item) => item.key !== key);
+        setEscalas(newEscalaList);
       });
   }
 
@@ -203,7 +222,8 @@ function EscalaProvider({ children }) {
         getEscalas,
         escalas,
         setEscalas,
-        loadingEscalas
+        loadingEscalas,
+        excluirEscala
       }}
     >
       {children}

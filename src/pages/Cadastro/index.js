@@ -10,6 +10,7 @@ import {
   Keyboard,
   Alert
 } from 'react-native';
+import filter from 'lodash.filter';
 
 import firebase from '../../firebaseConfig';
 import ItemListaCoroinha from '../../components/ItemListaCoroinha';
@@ -22,6 +23,8 @@ export default function Cadastro() {
   const [coroinhas, setCoroinhas] = useState([]);
   const [key, setKey] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [coroinhasFiltered, setCoroinhasFiltered] = useState([]);
 
   useEffect(() => {
     async function getDados() {
@@ -39,6 +42,9 @@ export default function Cadastro() {
             };
 
             setCoroinhas((oldCoroinhas) => [...oldCoroinhas, data].reverse());
+            setCoroinhasFiltered((oldCoroinhas) =>
+              [...oldCoroinhas, data].reverse()
+            );
           });
           setLoading(false);
           //snapshot.val().nome
@@ -73,6 +79,7 @@ export default function Cadastro() {
           coroinhasClone[coroinhaIndex].celular = celular;
 
           setCoroinhas([...coroinhasClone]);
+          setCoroinhasFiltered([...coroinhasClone]);
         });
 
       Keyboard.dismiss();
@@ -99,6 +106,9 @@ export default function Cadastro() {
         };
 
         setCoroinhas((oldCoroinhas) => [...oldCoroinhas, data].reverse());
+        setCoroinhasFiltered((oldCoroinhas) =>
+          [...oldCoroinhas, data].reverse()
+        );
       });
 
     setNome(null);
@@ -109,30 +119,29 @@ export default function Cadastro() {
   function handleDelete(key, nome) {
     if (!key) return;
 
-    Alert.alert(
-      'Atenção',
-      `Confirma exclusão do coroinha "${nome}"?`,
-      [
-        {
-          text: 'Cancelar',
-          style: 'cancel'
-        },
-        {
-          text: 'Continuar',
-          onPress: () => {
-            firebase
-              .database()
-              .ref('coroinhas')
-              .child(key)
-              .remove()
-              .then(() => {
-                const newCoroinhasList = coroinhas.filter((item) => item.key !== key);
-                setCoroinhas(newCoroinhasList);
-              });
-          }
+    Alert.alert('Atenção', `Confirma exclusão do coroinha "${nome}"?`, [
+      {
+        text: 'Cancelar',
+        style: 'cancel'
+      },
+      {
+        text: 'Continuar',
+        onPress: () => {
+          firebase
+            .database()
+            .ref('coroinhas')
+            .child(key)
+            .remove()
+            .then(() => {
+              const newCoroinhasList = coroinhas.filter(
+                (item) => item.key !== key
+              );
+              setCoroinhas(newCoroinhasList);
+              setCoroinhasFiltered(newCoroinhasList);
+            });
         }
-      ]
-    );
+      }
+    ]);
   }
 
   function handleEdit(data) {
@@ -147,6 +156,17 @@ export default function Cadastro() {
     setNome(null);
     setCelular(null);
     Keyboard.dismiss();
+  }
+
+  function handleSearch(query) {
+    setSearchQuery(query);
+    const formattedQuery = query.toLowerCase();
+    const filteredData = filter(coroinhasFiltered, (coroinha) => {
+      if (coroinha.nome.toLowerCase().includes(formattedQuery)) return true;
+      return false;
+    });
+
+    setCoroinhas(filteredData);
   }
 
   return (
@@ -186,9 +206,24 @@ export default function Cadastro() {
           <Text style={styles.btnText}>{key ? 'Editar' : 'Cadastrar'}</Text>
         </TouchableOpacity>
 
+        <View style={{ width: '100%', marginTop: 15 }}>
+          <TextInput
+            placeholder='Pesquisar'
+            clearButtonMode='always'
+            style={styles.textPesquisar}
+            autoCapitalize='none'
+            autoCorrect={false}
+            underlineColorAndroid='transparent'
+            value={searchQuery}
+            onChangeText={(query) => handleSearch(query)}
+          />
+        </View>
+
         <View style={styles.boxTotalCoroinhas}>
           <Text style={styles.textTotal}>Coroinhas cadastrados: </Text>
-          <Text style={[styles.textTotal, { fontWeight: '700' }]}>{coroinhas.length != 0 ? coroinhas.length : 0}</Text>
+          <Text style={[styles.textTotal, { fontWeight: '700' }]}>
+            {coroinhas.length != 0 ? coroinhas.length : 0}
+          </Text>
         </View>
 
         <FlatList
@@ -251,7 +286,8 @@ const styles = StyleSheet.create({
   },
   btnText: {
     color: '#FFF',
-    fontSize: 14
+    fontSize: 14,
+    fontWeight: '600'
   },
   btnCadastrar: {
     alignItems: 'center',
@@ -263,7 +299,19 @@ const styles = StyleSheet.create({
     backgroundColor: '#0984e3',
     width: '100%'
   },
-  boxTotalCoroinhas: { flexDirection: 'row', width: '100%', marginTop: 10, paddingHorizontal: 5 },
+  boxTotalCoroinhas: {
+    flexDirection: 'row',
+    width: '100%',
+    marginTop: 10,
+    paddingHorizontal: 5
+  },
+  textPesquisar: {
+    paddingHorizontal: 10,
+    paddingVertical: 1,
+    borderColor: '#ccc',
+    borderWidth: 1,
+    borderRadius: 10
+  },
   textTotal: { fontSize: 12, color: '#0652DD' },
   list: {
     width: '100%',

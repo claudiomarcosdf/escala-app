@@ -19,7 +19,9 @@ export default function ItemListaCoroinha({ data, deleteItem, editItem }) {
         </View>
         <View>
           <TouchableWithoutFeedback onPress={() => editItem(data)}>
-            <Text style={styles.textNome}>{data.nome}</Text>
+            <Text numberOfLines={1} style={styles.textNome}>
+              {data.nome}
+            </Text>
           </TouchableWithoutFeedback>
           <TouchableWithoutFeedback onPress={() => editItem(data)}>
             <Text style={styles.textCelular}>{data.celular}</Text>
@@ -28,7 +30,11 @@ export default function ItemListaCoroinha({ data, deleteItem, editItem }) {
       </View>
       <View style={styles.deleteBox}>
         <TouchableOpacity onPress={() => deleteItem(data.key, data.nome)}>
-          <MaterialCommunityIcons name="trash-can-outline" size={20} color='#ee5253' />
+          <MaterialCommunityIcons
+            name='trash-can-outline'
+            size={20}
+            color='#ee5253'
+          />
         </TouchableOpacity>
       </View>
     </View>
@@ -47,9 +53,13 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff'
   },
   textNome: {
+    width: 230,
     color: '#2f3640',
     fontSize: 14,
-    fontWeight: '700'
+    fontWeight: '700',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap'
   },
   textCelular: {
     color: '#2f3640',

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import { View, StyleSheet, TouchableOpacity, Platform } from 'react-native';
 import * as Print from 'expo-print';
 import { shareAsync } from 'expo-sharing';
@@ -6,9 +6,16 @@ import { shareAsync } from 'expo-sharing';
 import { Feather } from '@expo/vector-icons';
 import { AntDesign } from '@expo/vector-icons';
 
+import { AuthContext } from '../../contexts/authContext';
+
 export default function PrintEscala({ data }) {
   const [selectedPrinter, setSelectedPrinter] = useState();
   const [html, setHtml] = useState();
+  const [paroquiaDefault, setParoquiaDefault] = useState({
+    nome: 'NOME DA PARÓQUIA',
+    endereco: 'Endereço da Paróquia'
+  });
+  const { paroquia } = useContext(AuthContext);
 
   useEffect(() => {
     if (data.length != 0) {
@@ -38,8 +45,15 @@ export default function PrintEscala({ data }) {
                   border: 1px solid rgb(160 160 160);
               }
               .title{
-                font-size: 20px;
+                font-size: 30px;
+                font-weight: 700;
+                margin-bottom: 0px;
               }
+              .subtitle{
+                margin-top: 0px;
+                font-size: 18px;
+                font-style: italic;
+              },
               .name{
                 width: 300px;
               }
@@ -49,7 +63,14 @@ export default function PrintEscala({ data }) {
             </style>
           </head>
           <body style="text-align: center;">
-              <h1 class="title">Escala do dia ${data && data[0].data}</h1>
+              <span class="title">${
+                paroquia ? paroquia.nome : paroquiaDefault.nome
+              }</span><br />
+              <span class="subtitle">${
+                paroquia ? paroquia.endereco : paroquiaDefault.endereco
+              }</span>
+              <h3>Escala de coroinhas do dia ${data && data[0].data}</h3>
+              <br />
               <table style="margin: auto;" class="table">
                 <thead>
                   <tr>
@@ -59,14 +80,16 @@ export default function PrintEscala({ data }) {
                   </tr>
                 </thead>
                 <tbody>
-                  ${data.map(
-                    (escala) =>
-                      `<tr class="list" key=${escala.key}>
+                  ${data
+                    .map(
+                      (escala) =>
+                        `<tr class="list" key=${escala.key}>
                   <td class="hora">${escala.hora}</td>
                   <td style="text-align: left;" class="name">${escala.coroinha}</td>
                   <td style="text-align: left;">${escala.celular}</td>
                   </tr>`
-                  )}
+                    )
+                    .join('')}
                 </tbody>
               </table>
           </body>

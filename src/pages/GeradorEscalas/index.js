@@ -256,7 +256,8 @@ const styles = StyleSheet.create({
   },
   btnText: {
     color: '#FFF',
-    fontSize: 14
+    fontSize: 14,
+    fontWeight: '600'
   },
   boxHorario: {
     flexDirection: 'row',

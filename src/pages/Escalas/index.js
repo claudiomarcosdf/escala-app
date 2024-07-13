@@ -79,7 +79,7 @@ export default function Escalas() {
   });
   const [horaMarcada, setHoraMarcada] = useState({ horas: '', minutos: '' });
 
-  const { escalas, setEscalas, getEscalas, loadingEscalas } =
+  const { escalas, setEscalas, getEscalas, loadingEscalas, excluirEscala } =
     useContext(EscalaContext);
 
   async function exibirEscalas(dataSelecionada) {
@@ -117,17 +117,7 @@ export default function Escalas() {
       },
       {
         text: 'Continuar',
-        onPress: () => {
-          // firebase
-          //   .database()
-          //   .ref('escalas')
-          //   .child(key)
-          //   .remove()
-          //   .then(() => {
-          //     const newEscalaList = escalas.filter((item) => item.key !== key);
-          //     setEscalas(newEscalaList);
-          //   });
-        }
+        onPress: () => excluirEscala(key)
       }
     ]);
   }

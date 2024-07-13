@@ -25,14 +25,20 @@ export default function ItemListaEscala({ data, deleteItem }) {
             <Text style={styles.textHora}>{data.hora}</Text>
           </View>
           <View>
-            <Text style={styles.textNome}>{data.coroinha}</Text>
+            <Text numberOfLines={1} style={styles.textNome}>
+              {data.coroinha}
+            </Text>
             <Text style={styles.textCelular}>{data.celular}</Text>
           </View>
         </View>
       </View>
       <View style={styles.deleteBox}>
         <TouchableOpacity onPress={() => deleteItem(data.key, data.coroinha)}>
-          <MaterialCommunityIcons name="trash-can-outline" size={20} color='#ee5253' />
+          <MaterialCommunityIcons
+            name='trash-can-outline'
+            size={20}
+            color='#ee5253'
+          />
         </TouchableOpacity>
       </View>
     </View>
@@ -66,9 +72,13 @@ const styles = StyleSheet.create({
     fontWeight: '700'
   },
   textNome: {
+    width: 155,
     color: '#2f3640',
     fontSize: 13,
-    fontWeight: '700'
+    fontWeight: '700',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap'
   },
   textCelular: {
     color: '#2f3640',

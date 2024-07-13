@@ -1,9 +1,18 @@
-import { useState } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity } from 'react-native';
+import { useState, useContext } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  SafeAreaView,
+  TouchableOpacity
+} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+
+import { AuthContext } from '../../contexts/authContext';
 
 export default function Home() {
   const navigation = useNavigation();
+  const { logout } = useContext(AuthContext);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -11,20 +20,32 @@ export default function Home() {
         <Text>HOME</Text>
       </View>
       <View style={styles.boxButtons}>
-        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Cadastro')}>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => navigation.navigate('Cadastro')}
+        >
           <Text style={styles.textButtom}>Cadastro de Coroinha</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('GeradorEscalas')}>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => navigation.navigate('GeradorEscalas')}
+        >
           <Text style={styles.textButtom}>Gerador de Escalas</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('EscalaIndividual')}>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => navigation.navigate('EscalaIndividual')}
+        >
           <Text style={styles.textButtom}>Escala Individual</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Escalas')}>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => navigation.navigate('Escalas')}
+        >
           <Text style={styles.textButtom}>Escalas</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.buttonOut} onPress={() => { }}>
+        <TouchableOpacity style={styles.buttonOut} onPress={() => logout()}>
           <Text style={styles.textButtomOut}>Sair do aplicativo</Text>
         </TouchableOpacity>
       </View>
@@ -47,7 +68,7 @@ const styles = StyleSheet.create({
     marginBottom: 20
   },
   boxButtons: {
-    width: '80%',
+    width: '80%'
   },
   button: {
     alignItems: 'center',
@@ -59,18 +80,21 @@ const styles = StyleSheet.create({
   textButtom: {
     color: '#fff',
     fontSize: 16,
-    fontWeight: '700',
+    fontWeight: '700'
   },
   buttonOut: {
     alignItems: 'center',
     borderWidth: 1.5,
     borderColor: '#d63031',
+    borderColor: '#ced6e0',
+    backgroundColor: '#fff',
     borderRadius: 50,
     padding: 10,
     marginTop: 20
   },
   textButtomOut: {
     color: '#2f3640',
-    fontWeight: '700',
-  },
+    color: '#0984e3',
+    fontWeight: '700'
+  }
 });

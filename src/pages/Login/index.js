@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import {
   Text,
   View,
@@ -13,44 +13,24 @@ import {
 } from 'react-native';
 
 import firebase from '../../firebaseConfig';
+import { AuthContext } from '../../contexts/authContext';
 
 export default function Login({ changeStatus }) {
   const [type, setType] = useState('login');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [loading, setLoading] = useState(false);
+
+  const { loading, login, singUp } = useContext(AuthContext);
 
   function handleLogin() {
-    setLoading(true);
     Keyboard.dismiss();
     if (type === 'login') {
-      const user = firebase
-        .auth()
-        .signInWithEmailAndPassword(email, password)
-        .then((user) => {
-          changeStatus(user.user.uid);
-          setLoading(false);
-        })
-        .catch((err) => {
-          setLoading(false);
-          alert('Erro ao logar. \n' + err);
-          return;
-        });
+      login(email, password);
     } else {
-      const user = firebase
-        .auth()
-        .createUserWithEmailAndPassword(email, password)
-        .then((user) => {
-          changeStatus(user.user.uid);
-          setLoading(false);
-        })
-        .catch((err) => {
-          setLoading(false);
-          alert('Erro ao cadastrar usuário. \n' + err);
-          return;
-        });
+      singUp(email, password);
     }
   }
+
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <SafeAreaView style={styles.container}>
