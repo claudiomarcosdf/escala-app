@@ -1,4 +1,5 @@
 import { useEffect, createContext, useState } from 'react';
+import { Alert } from 'react-native';
 import firebase from '../firebaseConfig';
 
 export const EscalaContext = createContext({});
@@ -166,7 +167,7 @@ function EscalaProvider({ children }) {
     let existe = await Promise.all([escalaExiste(data)]);
 
     if (existe[0] == true) {
-      alert('A escala para a data informada já foi gerada!');
+      Alert.alert('Atenção', 'A escala para a data informada já foi gerada!');
       setBuilding(false);
       return;
     }

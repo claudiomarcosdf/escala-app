@@ -9,6 +9,7 @@ import {
   Alert,
   Keybord
 } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import { Feather } from '@expo/vector-icons';
 import { AntDesign } from '@expo/vector-icons';
 import { Calendar, LocaleConfig } from 'react-native-calendars';
@@ -78,6 +79,7 @@ export default function Escalas() {
     [dataAtual]: { selected: true, marked: true }
   });
   const [horaMarcada, setHoraMarcada] = useState({ horas: '', minutos: '' });
+  const navigation = useNavigation();
 
   const { escalas, setEscalas, getEscalas, loadingEscalas, excluirEscala } =
     useContext(EscalaContext);
@@ -147,7 +149,10 @@ export default function Escalas() {
         <View style={styles.boxComands}>
           <Text style={{ fontSize: 13, fontWeight: '600' }}>Escala do dia</Text>
           <View style={{ flexDirection: 'row' }}>
-            <TouchableOpacity style={styles.btnEscalar} onPress={() => {}}>
+            <TouchableOpacity
+              style={styles.btnEscalar}
+              onPress={() => navigation.navigate('EscalaIndividual')}
+            >
               <Text style={styles.textBtnEscalar}>Escalar coroinha</Text>
             </TouchableOpacity>
             <PrintEscala data={escalas ? escalas : []} />

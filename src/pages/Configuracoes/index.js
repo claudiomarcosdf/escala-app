@@ -1,5 +1,6 @@
 import { useEffect, useState, useContext } from 'react';
 import {
+  Alert,
   View,
   Text,
   TextInput,
@@ -23,12 +24,12 @@ export default function Configuracoes() {
   }, []);
 
   function handleSave() {
-    if (!nomeParoquia && !enderecoParoquia) {
-      alert('Favor informar nome e endereço da Paróquia!');
+    if (!nomeParoquia || !enderecoParoquia) {
+      Alert.alert('Atenção', 'Favor informar nome e endereço da Paróquia!');
       return;
     }
     salvarParoquia(nomeParoquia, enderecoParoquia);
-    alert('Salvo com sucesso!');
+    Alert.alert('Sucesso', 'Informações salvas com sucesso!');
   }
 
   return (

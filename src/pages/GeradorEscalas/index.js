@@ -52,9 +52,9 @@ export default function GeradorEscalas() {
     if (value == '') return true;
     const parsedQty = Number.parseInt(value);
     if (Number.isNaN(parsedQty)) {
-      alert('Horário inválido!');
+      Alert.alert('Atenção', 'Horário inválido!');
     } else if (parsedQty > limit) {
-      alert('Horário inválido!');
+      Alert.alert('Atenção', 'Horário inválido!');
     } else {
       return true;
     }
@@ -71,14 +71,14 @@ export default function GeradorEscalas() {
 
   function handleAdicionarHorario() {
     if (horaMarcada.horas == '' || horaMarcada.minutos == '')
-      alert('Favor informar horas e minutos!');
+      Alert.alert('Atenção', 'Favor informar horas e minutos!');
 
     const novoHorario = horaMarcada.horas + ':' + horaMarcada.minutos;
     const horarioJaExisteIndex = horariosDisponiveis.findIndex(
       (horario) => horario === novoHorario
     );
     if (horarioJaExisteIndex != -1) {
-      alert('O horário já existe!');
+      Alert.alert('Atenção', 'O horário já existe!');
       return;
     }
 
@@ -113,7 +113,7 @@ export default function GeradorEscalas() {
     //console.log('formato americano: ', dateNow);
     Keyboard.dismiss();
     if (horariosDisponiveis.length == 0) {
-      alert('Os horários das missas devem ser informados!');
+      Alert.alert('Atenção', 'Os horários das missas devem ser informados!');
       return;
     }
 

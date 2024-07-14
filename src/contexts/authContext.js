@@ -1,4 +1,5 @@
 import { useEffect, createContext, useState } from 'react';
+import { Alert } from 'react-native';
 
 import moment from 'moment-timezone';
 import firebase from '../firebaseConfig';
@@ -67,7 +68,13 @@ function AuthProvider({ children }) {
       })
       .catch((err) => {
         setLoading(false);
-        alert('Erro ao logar. \n' + err);
+        let tipoErro = err.toString();
+        if (tipoErro.includes('auth/invalid-email'))
+          tipoErro = 'Email inválido!';
+        if (tipoErro.includes('auth/invalid-credential'))
+          tipoErro = 'Senha inválida!';
+
+        Alert.alert('Acesso negado', tipoErro);
         return null;
       });
   }
@@ -89,7 +96,8 @@ function AuthProvider({ children }) {
       })
       .catch((err) => {
         setLoading(false);
-        alert('Erro ao cadastrar usuário. \n' + err);
+        Alert.alert('Atenção', 'Erro ao cadastrar usuário.');
+        //alert('Erro ao cadastrar usuário. \n' + err);
         return;
       });
   }
