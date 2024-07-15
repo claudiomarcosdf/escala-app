@@ -1,6 +1,7 @@
 import { useEffect, createContext, useState } from 'react';
 import { Alert } from 'react-native';
 import firebase from '../firebaseConfig';
+import { shuffleArray } from '../utils/helpers';
 
 export const EscalaContext = createContext({});
 
@@ -172,11 +173,12 @@ function EscalaProvider({ children }) {
       return;
     }
 
+    const coroinhasEmbaralhados = shuffleArray(coroinhas);
     const vagasHorarios = montarArrayComVagasEHorarios(horarios);
     const escalas = [];
     let vagasHorariosTemp = [...vagasHorarios];
 
-    coroinhas.forEach((coroinha) => {
+    coroinhasEmbaralhados.forEach((coroinha) => {
       let coroinhaJaEscalado = false;
 
       horarios.forEach((horario) => {
@@ -213,6 +215,44 @@ function EscalaProvider({ children }) {
     setFinish(true);
   }
 
+  async function escalarCoroinha(novaEscala) {
+    setBuilding(true);
+    let retorno = [];
+    await firebase
+      .database()
+      .ref('escalas')
+      .orderByChild('data')
+      .equalTo(novaEscala.data)
+      .once('value')
+      .then(function (snapshot) {
+        if (snapshot.val() != null) retorno = snapshot.val();
+      });
+
+    if (retorno.length !== 0) {
+      //converte obj em lista
+      const escalasList = Object.keys(retorno).map((key) => ({
+        id: key,
+        ...retorno[key]
+      }));
+      //busca se coroinha está nas escalas da data informada
+      const encontrouCoroinha = escalasList.some(
+        (escala) => escala.coroinha == novaEscala.coroinha
+      );
+
+      if (encontrouCoroinha) {
+        Alert.alert('Atenção', 'O coroinha já está escalado nesta data!');
+        setBuilding(false);
+        return false;
+      }
+    }
+
+    await salvarEscala(novaEscala);
+    Alert.alert('Sucesso', 'O coroinha escalado com sucesso!');
+
+    setBuilding(false);
+    return true;
+  }
+
   return (
     <EscalaContext.Provider
       value={{
@@ -224,7 +264,8 @@ function EscalaProvider({ children }) {
         escalas,
         setEscalas,
         loadingEscalas,
-        excluirEscala
+        excluirEscala,
+        escalarCoroinha
       }}
     >
       {children}

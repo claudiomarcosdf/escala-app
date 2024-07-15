@@ -1,4 +1,4 @@
-import { useState, useContext, useRef } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import {
   View,
   Text,
@@ -6,6 +6,7 @@ import {
   StyleSheet,
   SafeAreaView,
   TouchableOpacity,
+  TouchableWithoutFeedback,
   ActivityIndicator,
   Alert,
   Keyboard
@@ -13,6 +14,7 @@ import {
 import { Feather } from '@expo/vector-icons';
 import { format } from 'date-fns';
 import { Calendar, LocaleConfig } from 'react-native-calendars';
+import DateTimePicker from '@react-native-community/datetimepicker';
 import { ptBR } from '../../localeCalendar';
 
 LocaleConfig.locales['pt-br'] = ptBR;
@@ -24,12 +26,12 @@ import { getOnlyDateBr } from '../../utils/helpers';
 export default function GeradorEscalas() {
   let dataAtual = getOnlyDateBr();
 
-  const inputRef = useRef(null);
   const [dateNow, setDateNow] = useState(new Date(dataAtual));
   const [markedDates, setMarkedDates] = useState({
     [dataAtual]: { selected: true, marked: true }
   });
-  const [horaMarcada, setHoraMarcada] = useState({ horas: '', minutos: '' });
+  const [dateTimePicker, setDateTimePicker] = useState(new Date(dataAtual)); //para hora apenas
+  const [showTimePicker, setShowTimePicker] = useState(false);
   const [horariosDisponiveis, setHorariosDisponiveis] = useState([]);
 
   const { gerarEscala, building, finish, setFinish } =
@@ -48,43 +50,29 @@ export default function GeradorEscalas() {
     setMarkedDates(markedDay);
   }
 
-  function checkLimit(value, limit) {
-    if (value == '') return true;
-    const parsedQty = Number.parseInt(value);
-    if (Number.isNaN(parsedQty)) {
-      Alert.alert('Atenção', 'Horário inválido!');
-    } else if (parsedQty > limit) {
-      Alert.alert('Atenção', 'Horário inválido!');
-    } else {
-      return true;
-    }
-  }
-
-  function onCheckLimitHours(value) {
-    if (checkLimit(value, 23)) setHoraMarcada({ ...horaMarcada, horas: value });
-  }
-
-  function onCheckLimitMinuts(value) {
-    if (checkLimit(value, 59))
-      setHoraMarcada({ ...horaMarcada, minutos: value });
-  }
-
   function handleAdicionarHorario() {
-    if (horaMarcada.horas == '' || horaMarcada.minutos == '')
-      Alert.alert('Atenção', 'Favor informar horas e minutos!');
+    const dataEscolhida = dateNow;
+    const dataHoje = new Date(dataAtual);
+    if (dataEscolhida < dataHoje) {
+      Alert.alert('Atenção', 'A data selecionada é menor que a data atual.');
+      return;
+    }
 
-    const novoHorario = horaMarcada.horas + ':' + horaMarcada.minutos;
+    const horaMarcada = dateTimePicker.toLocaleTimeString('pt-BR', {
+      hour12: false,
+      hour: '2-digit',
+      minute: '2-digit'
+    }); // 00:00
+
     const horarioJaExisteIndex = horariosDisponiveis.findIndex(
-      (horario) => horario === novoHorario
+      (horario) => horario === horaMarcada
     );
     if (horarioJaExisteIndex != -1) {
       Alert.alert('Atenção', 'O horário já existe!');
       return;
     }
 
-    setHorariosDisponiveis((oldHorarios) => [...oldHorarios, novoHorario]);
-    setHoraMarcada({ horas: '', minutos: '' });
-    inputRef.current.focus();
+    setHorariosDisponiveis((oldHorarios) => [...oldHorarios, horaMarcada]);
   }
 
   function handleDeleteHorario(horarioSelecionado) {
@@ -109,6 +97,16 @@ export default function GeradorEscalas() {
     );
   }
 
+  const onChangeTimePicker = (event, selectedDate) => {
+    const currentDate = selectedDate;
+    setShowTimePicker(false);
+    setDateTimePicker(currentDate);
+  };
+
+  function onTimePicker() {
+    setShowTimePicker(true);
+  }
+
   async function handleGerar() {
     //console.log('formato americano: ', dateNow);
     Keyboard.dismiss();
@@ -121,6 +119,8 @@ export default function GeradorEscalas() {
     const onlyDate = date.valueOf() + date.getTimezoneOffset() * 60 * 1000;
     const dataFormatada = format(onlyDate, 'dd/MM/yyy');
     await gerarEscala(dataFormatada, horariosDisponiveis);
+    setDateTimePicker(new Date(dataAtual));
+    setHorariosDisponiveis([]);
   }
 
   return (
@@ -147,36 +147,37 @@ export default function GeradorEscalas() {
         </View>
 
         <View style={styles.boxHorario}>
-          <Text style={{ padding: 3 }}>{'Informe o horário: '}</Text>
-          <TextInput
-            ref={inputRef}
-            style={styles.inputHoras}
-            keyboardType={'numeric'}
-            maxLength={2}
-            value={horaMarcada.horas}
-            onChangeText={onCheckLimitHours}
-          />
-          <Text style={{ padding: 3 }}>{':'}</Text>
-          <TextInput
-            style={styles.inputMinutos}
-            keyboardType={'numeric'}
-            maxLength={2}
-            value={horaMarcada.minutos}
-            onChangeText={onCheckLimitMinuts}
-          />
+          <TouchableOpacity style={styles.btnHora} onPress={onTimePicker}>
+            <Text style={styles.textBtnHora}>Selecione o horário</Text>
+          </TouchableOpacity>
+          <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+            <TextInput
+              placeholder='Hora selecionada'
+              style={styles.textInputHora}
+              value={dateTimePicker.toLocaleTimeString('pt-BR', {
+                hour12: false,
+                hour: '2-digit',
+                minute: '2-digit'
+              })}
+              showSoftInputOnFocus={false}
+              selectTextOnFocus={false}
+              onChangeText={() => {}}
+            />
+          </TouchableWithoutFeedback>
+
           <TouchableOpacity
             style={styles.plusButton}
             onPress={handleAdicionarHorario}
           >
-            <Feather name='plus' size={17} color='#fff' />
+            <Feather name='plus' size={22} color='#fff' />
           </TouchableOpacity>
         </View>
 
-        <Text style={{ color: '#0652DD', fontWeight: '700' }}>
-          Horários das missas
+        <Text style={styles.textHorariosSelecionados}>
+          Horários das missas selecionados
         </Text>
         {horariosDisponiveis.length === 0 && (
-          <Text style={{ fontSize: 12 }}>Não informado</Text>
+          <Text style={{ fontSize: 12 }}>Nenhum selecionado</Text>
         )}
         <View style={{ flexDirection: 'row', marginBottom: 25 }}>
           {horariosDisponiveis.map((horario) => (
@@ -216,6 +217,17 @@ export default function GeradorEscalas() {
               <Text style={styles.textBtnFinish}>Fechar</Text>
             </TouchableOpacity>
           </View>
+        )}
+
+        {showTimePicker && (
+          <DateTimePicker
+            testID='dtTimePicker'
+            value={dateTimePicker}
+            mode={'time'}
+            locale='pt-BR'
+            is24Hour={true}
+            onChange={onChangeTimePicker}
+          />
         )}
       </View>
     </SafeAreaView>
@@ -261,38 +273,59 @@ const styles = StyleSheet.create({
   },
   boxHorario: {
     flexDirection: 'row',
-    marginBottom: 20
-  },
-  inputHoras: {
-    backgroundColor: '#FFF',
-    borderRadius: 4,
-    height: 30,
-    padding: 8,
-    borderWidth: 1,
-    borderColor: '#747d8c'
-  },
-  inputMinutos: {
-    backgroundColor: '#FFF',
-    borderRadius: 4,
-    height: 30,
-    padding: 8,
-    borderWidth: 1,
-    borderColor: '#747d8c'
+    marginBottom: 20,
+    alignItems: 'center'
   },
   plusButton: {
     alignItems: 'center',
     marginLeft: 10,
-    borderRadius: 4,
-    width: 40,
-    height: 30,
+    borderRadius: 50,
+    width: 55,
+    height: 35,
     padding: 4,
     borderWidth: 1,
-    backgroundColor: '#2d3436'
+    borderColor: '#2bcbba',
+    backgroundColor: '#0fb9b1'
+  },
+  btnHora: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 140,
+    height: 45,
+    borderRadius: 50,
+    borderTopRightRadius: 0,
+    borderBottomRightRadius: 0,
+    backgroundColor: '#0984e3'
+  },
+  textBtnHora: {
+    color: '#FFF',
+    fontSize: 13,
+    fontWeight: '600'
+  },
+  textInputHora: {
+    backgroundColor: '#F2f6fc',
+    borderRadius: 50,
+    borderTopLeftRadius: 0,
+    borderBottomLeftRadius: 0,
+    height: 45,
+    padding: 10,
+    paddingLeft: 20,
+    borderWidth: 1,
+    borderColor: '#0984e3',
+    fontWeight: '700',
+    width: 120
+  },
+  textHorariosSelecionados: {
+    marginBottom: 5,
+    fontSize: 16,
+    color: '#0652DD',
+    fontWeight: '700'
   },
   boxHorarioDisponivel: {
-    paddingLeft: 5,
-    paddingRight: 5,
-    marginRight: 6,
+    paddingLeft: 10,
+    paddingRight: 10,
+    marginRight: 4,
+    borderRadius: 5,
     fontWeight: '500',
     backgroundColor: '#ffeaa7'
   },

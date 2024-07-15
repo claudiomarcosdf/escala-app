@@ -20,58 +20,6 @@ import PrintEscala from '../../components/PrintEscala';
 import { EscalaContext } from '../../contexts/escalaContext';
 import { getOnlyDateBr, getDataToFilterFirebase } from '../../utils/helpers';
 
-// const escalas = [
-//   {
-//     key: 1,
-//     data: '11/07/2024',
-//     hora: '09:00',
-//     coroinha: 'Fulano de Tal',
-//     celular: '61 98745-3589'
-//   },
-//   {
-//     key: 2,
-//     data: '11/07/2024',
-//     hora: '11:00',
-//     coroinha: 'Fulano de Tal',
-//     celular: '61 98745-3589'
-//   },
-//   {
-//     key: 3,
-//     data: '11/07/2024',
-//     hora: '17:00',
-//     coroinha: 'Fulano de Tal',
-//     celular: '61 98745-3589'
-//   },
-//   {
-//     key: 4,
-//     data: '11/07/2024',
-//     hora: '18:00',
-//     coroinha: 'Fulano de Tal',
-//     celular: '61 98745-3589'
-//   },
-//   {
-//     key: 5,
-//     data: '11/07/2024',
-//     hora: '19:00',
-//     coroinha: 'Fulano de Tal',
-//     celular: '61 98745-3589'
-//   },
-//   {
-//     key: 6,
-//     data: '11/07/2024',
-//     hora: '21:00',
-//     coroinha: 'Fulano de Tal',
-//     celular: '61 98745-3589'
-//   },
-//   {
-//     key: 7,
-//     data: '11/07/2024',
-//     hora: '23:00',
-//     coroinha: 'Fulano de Tal',
-//     celular: '61 98745-3589'
-//   }
-// ];
-
 export default function Escalas() {
   let dataAtual = getOnlyDateBr();
   const [dateNow, setDateNow] = useState(new Date(dataAtual));
