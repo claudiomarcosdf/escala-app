@@ -89,8 +89,10 @@ const styles = StyleSheet.create({
     width: '100%',
     alignItems: 'center',
     backgroundColor: '#0984e3',
+    borderWidth: 1,
+    borderColor: '#18dcff',
     borderRadius: 50,
-    padding: 20,
+    padding: 15,
     marginBottom: 10
   },
   textButtom: {

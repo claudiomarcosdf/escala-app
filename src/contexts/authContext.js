@@ -73,6 +73,8 @@ function AuthProvider({ children }) {
           tipoErro = 'Email inválido!';
         if (tipoErro.includes('auth/invalid-credential'))
           tipoErro = 'Senha inválida!';
+        if (tipoErro.includes('auth/user-disabled'))
+          tipoErro = 'Usuário inativo. Favor contactar o administrador!';
 
         Alert.alert('Acesso negado', tipoErro);
         return null;
