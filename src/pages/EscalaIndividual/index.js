@@ -160,7 +160,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 10
   },
-  textTotal: { fontSize: 12, color: '#0652DD' },
+  textTotal: { fontSize: 12, color: '#0096c7' },
   list: {
     width: '100%',
     marginTop: 2,

@@ -99,6 +99,7 @@ const styles = StyleSheet.create({
     marginTop: 5,
     borderRadius: 8,
     backgroundColor: '#0984e3',
+    backgroundColor: '#0096c7',
     width: '100%'
   }
 });

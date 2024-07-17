@@ -12,6 +12,7 @@ import {
   Keyboard
 } from 'react-native';
 import { Feather } from '@expo/vector-icons';
+import { AntDesign } from '@expo/vector-icons';
 import { format } from 'date-fns';
 import { Calendar, LocaleConfig } from 'react-native-calendars';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -206,10 +207,11 @@ export default function GeradorEscalas() {
           </View>
         )}
         {finish && (
-          <View style={{ marginTop: 20, alignItems: 'center' }}>
-            <Text style={{ color: '#27ae60', fontWeight: '700' }}>
-              Escala gerada com sucesso!
-            </Text>
+          <View style={styles.boxMessage}>
+            <View style={styles.iconAndtext}>
+              <AntDesign name='checkcircle' size={16} color='#2ecc71' />
+              <Text style={styles.textMessage}>Escala gerada com sucesso!</Text>
+            </View>
             <TouchableOpacity
               onPress={() => setFinish(false)}
               style={styles.btnFinish}
@@ -264,6 +266,7 @@ const styles = StyleSheet.create({
     marginTop: 5,
     borderRadius: 8,
     backgroundColor: '#0984e3',
+    backgroundColor: '#0096c7',
     width: '100%'
   },
   btnText: {
@@ -284,8 +287,8 @@ const styles = StyleSheet.create({
     height: 35,
     padding: 4,
     borderWidth: 1,
-    borderColor: '#2bcbba',
-    backgroundColor: '#0fb9b1'
+    borderColor: '#02c39a',
+    backgroundColor: '#02c39a'
   },
   btnHora: {
     alignItems: 'center',
@@ -295,7 +298,7 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     borderTopRightRadius: 0,
     borderBottomRightRadius: 0,
-    backgroundColor: '#0984e3'
+    backgroundColor: '#0096c7'
   },
   textBtnHora: {
     color: '#FFF',
@@ -311,14 +314,14 @@ const styles = StyleSheet.create({
     padding: 10,
     paddingLeft: 20,
     borderWidth: 1,
-    borderColor: '#0984e3',
+    borderColor: '#0096c7',
     fontWeight: '700',
     width: 120
   },
   textHorariosSelecionados: {
     marginBottom: 5,
     fontSize: 16,
-    color: '#0652DD',
+    color: '#0096c7',
     fontWeight: '700'
   },
   boxHorarioDisponivel: {
@@ -336,14 +339,17 @@ const styles = StyleSheet.create({
     paddingtop: 2,
     paddingBottom: 2,
     borderRadius: 5,
-    marginTop: 2,
-    backgroundColor: '#27ae60',
+    marginTop: 4,
+    backgroundColor: '#2ecc71',
     alignItems: 'center',
     justifyContent: 'center'
   },
   textBtnFinish: {
     color: '#fff',
-    fontWeight: '400',
+    fontWeight: '500',
     fontSize: 13
-  }
+  },
+  boxMessage: { marginTop: 20, alignItems: 'center' },
+  iconAndtext: { flexDirection: 'row', alignItems: 'center' },
+  textMessage: { color: '#2ecc71', fontWeight: '700', marginLeft: 5 }
 });

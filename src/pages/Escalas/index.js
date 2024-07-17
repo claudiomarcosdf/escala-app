@@ -170,10 +170,10 @@ const styles = StyleSheet.create({
     marginRight: 10,
     alignItems: 'center',
     justifyContent: 'center',
-    height: 26,
-    paddingHorizontal: 10,
-    borderRadius: 50,
-    backgroundColor: '#0984e3'
+    height: 24,
+    paddingHorizontal: 12,
+    borderRadius: 5,
+    backgroundColor: '#0096c7'
   },
   // btnCompartilhar: {
   //   marginLeft: 0,

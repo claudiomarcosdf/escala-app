@@ -57,7 +57,7 @@ export default function Login({ changeStatus }) {
         <TouchableOpacity
           style={[
             styles.btnLogin,
-            { backgroundColor: type === 'login' ? '#0984e3' : '#141414' }
+            { backgroundColor: type === 'login' ? '#0096c7' : '#141414' }
           ]}
           onPress={handleLogin}
         >
@@ -73,7 +73,7 @@ export default function Login({ changeStatus }) {
           }
         >
           {loading ? (
-            <ActivityIndicator size={20} color='#0984e3' />
+            <ActivityIndicator size={20} color='#0096c7' />
           ) : (
             <Text style={{ textAlign: 'center' }}>
               {type === 'login' ? 'Criar uma conta' : 'Já possuo uma conta'}

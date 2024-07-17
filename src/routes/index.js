@@ -25,6 +25,7 @@ export default function Routes() {
     <Tab.Navigator
       screenOptions={{
         tabBarHideOnKeyboard: true,
+        tabBarActiveTintColor: '#0096c7',
         tabBarStyle: {
           borderTopWidth: 0
         }

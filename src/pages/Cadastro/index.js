@@ -296,7 +296,7 @@ const styles = StyleSheet.create({
     marginBotton: 10,
     marginTop: 5,
     borderRadius: 8,
-    backgroundColor: '#0984e3',
+    backgroundColor: '#0096c7',
     width: '100%'
   },
   boxTotalCoroinhas: {
@@ -312,7 +312,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 10
   },
-  textTotal: { fontSize: 12, color: '#0652DD' },
+  textTotal: { fontSize: 12, color: '#0096c7' },
   list: {
     width: '100%',
     marginTop: 2,

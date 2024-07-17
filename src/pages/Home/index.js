@@ -7,6 +7,8 @@ import {
   TouchableOpacity
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { FontAwesome6 } from '@expo/vector-icons';
+import { MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
 
 import { AuthContext } from '../../contexts/authContext';
 
@@ -19,30 +21,54 @@ export default function Home() {
       <View style={styles.areaButtons}>
         <View style={styles.boxButtons}>
           <View style={styles.title}>
-            <Text>HOME</Text>
+            <Text style={{ fontWeight: '600' }}>MENU</Text>
           </View>
           <TouchableOpacity
             style={styles.button}
             onPress={() => navigation.navigate('Cadastro')}
           >
+            <FontAwesome6
+              name='person-praying'
+              size={30}
+              color='#fff'
+              style={{ marginRight: 25 }}
+            />
             <Text style={styles.textButtom}>Cadastro de Coroinha</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.button}
             onPress={() => navigation.navigate('GeradorEscalas')}
           >
+            <MaterialCommunityIcons
+              name='calendar-clock'
+              size={30}
+              color='#fff'
+              style={{ marginRight: 25 }}
+            />
             <Text style={styles.textButtom}>Gerador de Escalas</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.button}
             onPress={() => navigation.navigate('EscalaIndividual')}
           >
+            <MaterialCommunityIcons
+              name='calendar-account'
+              size={30}
+              color='#fff'
+              style={{ marginRight: 25 }}
+            />
             <Text style={styles.textButtom}>Escala Individual</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.button}
             onPress={() => navigation.navigate('Escalas')}
           >
+            <MaterialCommunityIcons
+              name='calendar-month'
+              size={30}
+              color='#fff'
+              style={{ marginRight: 25 }}
+            />
             <Text style={styles.textButtom}>Escalas</Text>
           </TouchableOpacity>
 
@@ -70,7 +96,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   },
   title: {
-    fontWeight: '700',
     alignItems: 'center',
     marginBottom: 20
   },
@@ -82,23 +107,22 @@ const styles = StyleSheet.create({
   },
   boxButtons: {
     flex: 1,
-    width: '90%',
+    width: '100%',
     justifyContent: 'center'
   },
   button: {
-    width: '100%',
+    flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#0984e3',
-    borderWidth: 1,
-    borderColor: '#18dcff',
-    borderRadius: 50,
-    padding: 15,
-    marginBottom: 10
+    width: '100%',
+    borderRadius: 2,
+    backgroundColor: '#0096c7',
+    padding: 25,
+    marginBottom: 4
   },
   textButtom: {
     color: '#fff',
     fontSize: 16,
-    fontWeight: '700'
+    fontWeight: '500'
   },
   buttonOut: {
     width: '100%',
@@ -106,14 +130,14 @@ const styles = StyleSheet.create({
     borderWidth: 1.5,
     borderColor: '#ced6e0',
     backgroundColor: '#fff',
-    borderRadius: 50,
+    borderRadius: 2,
     padding: 10,
     marginTop: 20
   },
   textButtomOut: {
     color: '#2f3640',
-    color: '#0984e3',
-    fontWeight: '700'
+    color: '#0096c7',
+    fontWeight: '600'
   },
   developer: { fontSize: 9, fontStyle: 'italic', color: '#2d3436' }
 });

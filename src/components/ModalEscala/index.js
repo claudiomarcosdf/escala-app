@@ -149,7 +149,9 @@ export default function ModalEscala({ visible, setVisible, coroinha }) {
               style={styles.btnCancelar}
               onPress={handleCancelar}
             >
-              <Text style={[styles.btnText, { color: 'black' }]}>Cancelar</Text>
+              <Text style={[styles.btnText, { color: '#0096c7' }]}>
+                Cancelar
+              </Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -209,7 +211,7 @@ const styles = StyleSheet.create({
     height: 45,
     marginTop: 20,
     borderRadius: 8,
-    backgroundColor: '#0984e3',
+    backgroundColor: '#0096c7',
     width: '100%'
   },
   btnCancelar: {
@@ -219,7 +221,7 @@ const styles = StyleSheet.create({
     marginTop: 15,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: '#ced6e0',
+    borderColor: '#0096c7',
     backgroundColor: '#ffffff',
     width: '100%'
   },
@@ -236,7 +238,7 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     borderTopRightRadius: 0,
     borderBottomRightRadius: 0,
-    backgroundColor: '#0984e3'
+    backgroundColor: '#0096c7'
   },
   textBtnDataHora: {
     color: '#FFF',
@@ -253,7 +255,7 @@ const styles = StyleSheet.create({
     padding: 10,
     paddingLeft: 20,
     borderWidth: 1,
-    borderColor: '#0984e3',
+    borderColor: '#0096c7',
     fontWeight: '700',
     width: 120
   },
