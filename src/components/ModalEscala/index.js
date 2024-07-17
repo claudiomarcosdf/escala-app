@@ -48,14 +48,14 @@ export default function ModalEscala({ visible, setVisible, coroinha }) {
   }
 
   const onChange = (event, selectedDate) => {
+    const currentDate = selectedDate;
     const dataHoje = new Date(dataAtual);
-    if (selectedDate < dataHoje) {
+    setShow(false);
+    if (currentDate < dataHoje) {
       Alert.alert('Atenção', 'A data selecionada é menor que a data atual.');
       return;
     }
 
-    const currentDate = selectedDate;
-    setShow(false);
     setDate(currentDate);
   };
 
