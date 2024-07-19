@@ -9,6 +9,7 @@ import {
 import { FontAwesome6 } from '@expo/vector-icons';
 import { AntDesign } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
+import { getLabelHorario } from '../../utils/helpers';
 
 export default function ItemListaCoroinhaEscala({ data, selectCoroinha }) {
   return (
@@ -23,9 +24,16 @@ export default function ItemListaCoroinhaEscala({ data, selectCoroinha }) {
               {data.nome}
             </Text>
           </TouchableWithoutFeedback>
-          <TouchableWithoutFeedback onPress={() => selectCoroinha(data)}>
-            <Text style={styles.textCelular}>{data.celular}</Text>
-          </TouchableWithoutFeedback>
+          <View style={{ flexDirection: 'row' }}>
+            <TouchableWithoutFeedback>
+              <Text style={styles.textCelular}>{`${getLabelHorario(
+                data?.horario
+              )} | `}</Text>
+            </TouchableWithoutFeedback>
+            <TouchableWithoutFeedback>
+              <Text style={styles.textCelular}>{data.celular}</Text>
+            </TouchableWithoutFeedback>
+          </View>
         </View>
       </View>
       <View style={styles.escalarBox}>

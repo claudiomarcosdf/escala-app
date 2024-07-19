@@ -26,22 +26,22 @@ export default function ModalCoroinhasSelecionados({ visible, setVisible }) {
   const { coroinhasSelecionados, setCoroinhasSelecionados } =
     useContext(EscalaContext);
 
-  useEffect(() => {
-    setLoading(true);
-    if (coroinhas && coroinhas?.length != 0) {
-      const listSelected = coroinhas.map((coroinha) => {
-        return {
-          key: coroinha.key,
-          nome: coroinha.nome,
-          celular: coroinha.celular,
-          checked: false
-        };
-      });
+  // useEffect(() => {
+  //   setLoading(true);
+  //   if (coroinhas && coroinhas?.length != 0) {
+  //     const listSelected = coroinhas.map((coroinha) => {
+  //       return {
+  //         key: coroinha.key,
+  //         nome: coroinha.nome,
+  //         celular: coroinha.celular,
+  //         checked: false
+  //       };
+  //     });
 
-      setCoroinhasSelecionados(listSelected);
-    }
-    setLoading(false);
-  }, []);
+  //     setCoroinhasSelecionados(listSelected);
+  //   }
+  //   setLoading(false);
+  // }, []);
 
   function handleConfirmar() {
     const coroinhasConfirm = coroinhasSelecionados.filter(

@@ -9,6 +9,7 @@ import {
 import { FontAwesome6 } from '@expo/vector-icons';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
+import { getLabelHorario } from '../../utils/helpers';
 
 export default function ItemListaCoroinha({ data, deleteItem, editItem }) {
   return (
@@ -23,9 +24,17 @@ export default function ItemListaCoroinha({ data, deleteItem, editItem }) {
               {data.nome}
             </Text>
           </TouchableWithoutFeedback>
-          <TouchableWithoutFeedback onPress={() => editItem(data)}>
-            <Text style={styles.textCelular}>{data.celular}</Text>
-          </TouchableWithoutFeedback>
+
+          <View style={{ flexDirection: 'row' }}>
+            <TouchableWithoutFeedback>
+              <Text style={styles.textCelular}>{`${getLabelHorario(
+                data?.horario
+              )} | `}</Text>
+            </TouchableWithoutFeedback>
+            <TouchableWithoutFeedback onPress={() => editItem(data)}>
+              <Text style={styles.textCelular}>{data.celular}</Text>
+            </TouchableWithoutFeedback>
+          </View>
         </View>
       </View>
       <View style={styles.deleteBox}>

@@ -8,6 +8,7 @@ import {
 import Checkbox from 'expo-checkbox';
 
 import { FontAwesome6 } from '@expo/vector-icons';
+import { getLabelHorario } from '../../utils/helpers';
 
 export default function ItemListaCoroinhaChecked({ data, setChecked }) {
   return (
@@ -22,9 +23,16 @@ export default function ItemListaCoroinhaChecked({ data, setChecked }) {
               {data.nome}
             </Text>
           </TouchableWithoutFeedback>
-          <TouchableWithoutFeedback>
-            <Text style={styles.textCelular}>{data.celular}</Text>
-          </TouchableWithoutFeedback>
+          <View style={{ flexDirection: 'row' }}>
+            <TouchableWithoutFeedback>
+              <Text style={styles.textCelular}>{`${getLabelHorario(
+                data?.horario
+              )} | `}</Text>
+            </TouchableWithoutFeedback>
+            <TouchableWithoutFeedback>
+              <Text style={styles.textCelular}>{data.celular}</Text>
+            </TouchableWithoutFeedback>
+          </View>
         </View>
       </View>
       <View style={styles.checkBox}>

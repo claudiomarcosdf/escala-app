@@ -21,7 +21,8 @@ function CoroinhaPrivider({ children }) {
             let data = {
               key: childItem.key,
               nome: childItem.val().nome,
-              celular: childItem.val().celular
+              celular: childItem.val().celular,
+              horario: childItem.val().horario
             };
 
             setCoroinhas((oldCoroinhas) => [...oldCoroinhas, data].reverse());
@@ -37,7 +38,7 @@ function CoroinhaPrivider({ children }) {
     getDados();
   }, []);
 
-  async function incluirCoroinha(nome, celular) {
+  async function incluirCoroinha(nome, celular, horario) {
     let coroinha = firebase.database().ref('coroinhas');
     let chave = coroinha.push().key;
 
@@ -45,27 +46,30 @@ function CoroinhaPrivider({ children }) {
       .child(chave)
       .set({
         nome,
-        celular
+        celular,
+        horario
       })
       .then(() => {
         const data = {
           key: chave,
           nome,
-          celular
+          celular,
+          horario
         };
 
         setCoroinhas((oldCoroinhas) => [...oldCoroinhas, data].reverse());
       });
   }
 
-  async function alterarCoroinha(key, nome, celular) {
+  async function alterarCoroinha(key, nome, celular, horario) {
     firebase
       .database()
       .ref('coroinhas')
       .child(key)
       .update({
         nome,
-        celular
+        celular,
+        horario
       })
       .then(() => {
         const coroinhaIndex = coroinhas.findIndex(
@@ -74,6 +78,7 @@ function CoroinhaPrivider({ children }) {
         let coroinhasClone = coroinhas;
         coroinhasClone[coroinhaIndex].nome = nome;
         coroinhasClone[coroinhaIndex].celular = celular;
+        coroinhasClone[coroinhaIndex].horario = horario;
 
         setCoroinhas([...coroinhasClone]);
       });

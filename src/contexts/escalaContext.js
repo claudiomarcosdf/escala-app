@@ -1,7 +1,7 @@
 import { createContext, useContext, useState } from 'react';
 import { Alert } from 'react-native';
 import firebase from '../firebaseConfig';
-import { shuffleArray } from '../utils/helpers';
+import { shuffleArray, getOrderedHorario } from '../utils/helpers';
 import { CoroinhaContext } from './coroinhaContext';
 
 export const EscalaContext = createContext({});
@@ -150,12 +150,13 @@ function EscalaProvider({ children }) {
       return;
     }
 
-    const coroinhasEmbaralhados = shuffleArray(coroinhasSelecionados);
+    //const coroinhasEmbaralhados = shuffleArray(coroinhasSelecionados);
+    const coroinhasOrdenados = getOrderedHorario(coroinhasSelecionados);
     const vagasHorarios = montarArrayComVagasEHorarios(horarios);
     const escalas = [];
     let vagasHorariosTemp = [...vagasHorarios];
 
-    coroinhasEmbaralhados.forEach((coroinha) => {
+    coroinhasOrdenados.forEach((coroinha) => {
       let coroinhaJaEscalado = false;
 
       horarios.forEach((horario) => {
@@ -201,11 +202,13 @@ function EscalaProvider({ children }) {
           key: coroinha.key,
           nome: coroinha.nome,
           celular: coroinha.celular,
+          horario: coroinha.horario,
           checked: false
         };
       });
 
-      setCoroinhasSelecionados(listSelected);
+      const coroinhasOrdenados = getOrderedHorario(listSelected);
+      setCoroinhasSelecionados(coroinhasOrdenados);
     }
   }
 
@@ -261,7 +264,8 @@ function EscalaProvider({ children }) {
         excluirEscala,
         escalarCoroinha,
         coroinhasSelecionados,
-        setCoroinhasSelecionados
+        setCoroinhasSelecionados,
+        listaCoroinhasUnchecked
       }}
     >
       {children}

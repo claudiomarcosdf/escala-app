@@ -20,8 +20,8 @@ import Login from './src/components/Login';
 // console.log(shuffleArray(arrA)); // [5, 1, 3, 4, 2]
 
 const pessoas = [
-  { nome: 'CLAUDIO', celular: '99976-3771' },
-  { nome: 'ALESSANDRA', celular: '99935-9980' },
+  { nome: 'CLAUDIO', celular: '99976-3779' },
+  { nome: 'ALE', celular: '99935-9982' },
   { nome: 'NATHAN', celular: '99988-4455' },
   { nome: 'THIAGO', celular: '99944-1177' },
   { nome: 'LETÍCIA', celular: '99933-1172' },

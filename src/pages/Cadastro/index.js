@@ -10,6 +10,7 @@ import {
   Keyboard,
   Alert
 } from 'react-native';
+import Dropdown from 'react-native-input-select';
 import { Feather } from '@expo/vector-icons';
 import filter from 'lodash.filter';
 
@@ -21,6 +22,7 @@ export default function Cadastro() {
   const inputRef = useRef(null);
   const [nome, setNome] = useState(null);
   const [celular, setCelular] = useState(null);
+  const [horario, setHorario] = useState(null);
   const [key, setKey] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [coroinhasFiltered, setCoroinhasFiltered] = useState([]);
@@ -42,21 +44,23 @@ export default function Cadastro() {
     if (!nome || !celular) return;
 
     if (key) {
-      await alterarCoroinha(key, nome, celular);
+      await alterarCoroinha(key, nome, celular, horario);
       setCoroinhasFiltered(coroinhas);
       Keyboard.dismiss();
       setNome('');
       setCelular('');
+      setHorario(null);
       setKey(null);
       return;
     }
 
-    await incluirCoroinha(nome, celular);
+    await incluirCoroinha(nome, celular, horario);
     setCoroinhasFiltered(coroinhas);
     //setCoroinhasFiltered((oldCoroinhas) => [...oldCoroinhas, data].reverse());
 
     setNome(null);
     setCelular(null);
+    setHorario(null);
     Keyboard.dismiss();
   }
 
@@ -82,6 +86,7 @@ export default function Cadastro() {
     setKey(data.key);
     setNome(data.nome);
     setCelular(data.celular);
+    setHorario(data?.horario || null);
     inputRef.current.focus();
   }
 
@@ -89,6 +94,7 @@ export default function Cadastro() {
     setKey(null);
     setNome(null);
     setCelular(null);
+    setHorario(null);
     Keyboard.dismiss();
   }
 
@@ -134,6 +140,26 @@ export default function Cadastro() {
           style={styles.input}
           value={celular}
           onChangeText={(text) => setCelular(text)}
+        />
+        <Dropdown
+          placeholder='Selecione um horário...'
+          placeholderStyle={{ opacity: 0.5 }}
+          dropdownStyle={styles.dropdown}
+          options={[
+            { label: '1º Horário', value: 'AHR' },
+            { label: '2º Horário', value: 'BHR' },
+            { label: '3º Horário', value: 'CHR' },
+            { label: '4º Horário', value: 'DHR' },
+            { label: '5º Horário', value: 'EHR' },
+            { label: '6º Horário', value: 'FHR' },
+            { label: '7º Horário', value: 'GHR' },
+            { label: '8º Horário', value: 'HHR' },
+            { label: '9º Horário', value: 'IHR' },
+            { label: '10º Horário', value: 'JHR' }
+          ]}
+          selectedValue={horario}
+          onValueChange={(value) => setHorario(value)}
+          primaryColor={'#0096c7'}
         />
 
         <TouchableOpacity style={styles.btnCadastrar} onPress={handleAdd}>
@@ -217,6 +243,11 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#747d8c',
     width: '100%'
+  },
+  dropdown: {
+    borderColor: '#747d8c',
+    backgroundColor: '#FFF',
+    borderRadius: 4
   },
   btnText: {
     color: '#FFF',

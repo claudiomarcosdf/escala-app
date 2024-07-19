@@ -37,8 +37,14 @@ export default function GeradorEscalas() {
   const [horariosDisponiveis, setHorariosDisponiveis] = useState([]);
   const [visibleModalCoroinhas, setVisibleModalCoroinhas] = useState(false);
 
-  const { coroinhasSelecionados, gerarEscala, building, finish, setFinish } =
-    useContext(EscalaContext);
+  const {
+    coroinhasSelecionados,
+    gerarEscala,
+    building,
+    finish,
+    setFinish,
+    listaCoroinhasUnchecked
+  } = useContext(EscalaContext);
 
   function handleDayPress(date) {
     setDateNow(new Date(date.dateString));
@@ -108,6 +114,11 @@ export default function GeradorEscalas() {
 
   function onTimePicker() {
     setShowTimePicker(true);
+  }
+
+  function handleShowModal() {
+    listaCoroinhasUnchecked();
+    setVisibleModalCoroinhas(true);
   }
 
   async function handleGerar() {
@@ -202,7 +213,7 @@ export default function GeradorEscalas() {
         <View>
           <TouchableOpacity
             style={styles.btnCoroinhas}
-            onPress={() => setVisibleModalCoroinhas(true)}
+            onPress={() => handleShowModal()}
           >
             <Feather name='check-square' size={20} color='#fff' />
             <Text style={{ color: '#fff', fontWeight: '600', marginLeft: 10 }}>
