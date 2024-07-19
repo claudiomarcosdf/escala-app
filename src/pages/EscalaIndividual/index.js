@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState, useContext } from 'react';
 import {
   View,
   Text,
@@ -10,48 +10,19 @@ import {
 } from 'react-native';
 import filter from 'lodash.filter';
 
+import { CoroinhaContext } from '../../contexts/coroinhaContext';
 import firebase from '../../firebaseConfig';
 import ItemListaCoroinhaEscala from '../../components/ItemListaCoroinhaEscala';
 import ModalEscala from '../../components/ModalEscala';
 
 export default function EscalaIndividual() {
-  const [coroinhas, setCoroinhas] = useState([]);
+  const { coroinhas, setCoroinhas } = useContext(CoroinhaContext);
   const [coroinhaSelecionado, setCoroinhaSelecionado] = useState(null);
   const [key, setKey] = useState(null);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [coroinhasFiltered, setCoroinhasFiltered] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
-
-  useEffect(() => {
-    async function getDados() {
-      setCoroinhas([]);
-
-      await firebase
-        .database()
-        .ref('coroinhas')
-        .once('value', (snapshot) => {
-          snapshot?.forEach((childItem) => {
-            let data = {
-              key: childItem.key,
-              nome: childItem.val().nome,
-              celular: childItem.val().celular
-            };
-
-            setCoroinhas((oldCoroinhas) => [...oldCoroinhas, data].reverse());
-            setCoroinhasFiltered((oldCoroinhas) =>
-              [...oldCoroinhas, data].reverse()
-            );
-          });
-          setLoading(false);
-        })
-        .catch((err) => {
-          setLoading(false);
-        });
-    }
-
-    getDados();
-  }, []);
 
   function handleSearch(query) {
     setSearchQuery(query);

@@ -21,6 +21,7 @@ import { ptBR } from '../../localeCalendar';
 LocaleConfig.locales['pt-br'] = ptBR;
 LocaleConfig.defaultLocale = 'pt-br';
 
+import ModalCoroinhasSelecionados from '../../components/ModalCoroinhasSelecionados';
 import { EscalaContext } from '../../contexts/escalaContext';
 import { getOnlyDateBr } from '../../utils/helpers';
 
@@ -34,8 +35,9 @@ export default function GeradorEscalas() {
   const [dateTimePicker, setDateTimePicker] = useState(new Date(dataAtual)); //para hora apenas
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [horariosDisponiveis, setHorariosDisponiveis] = useState([]);
+  const [visibleModalCoroinhas, setVisibleModalCoroinhas] = useState(false);
 
-  const { gerarEscala, building, finish, setFinish } =
+  const { coroinhasSelecionados, gerarEscala, building, finish, setFinish } =
     useContext(EscalaContext);
 
   function handleDayPress(date) {
@@ -116,6 +118,11 @@ export default function GeradorEscalas() {
       return;
     }
 
+    if (coroinhasSelecionados.length == 0) {
+      Alert.alert('Atenção', 'Nenhum coroinha foi previamente selecionado!');
+      return;
+    }
+
     const date = new Date(dateNow);
     const onlyDate = date.valueOf() + date.getTimezoneOffset() * 60 * 1000;
     const dataFormatada = format(onlyDate, 'dd/MM/yyy');
@@ -192,6 +199,18 @@ export default function GeradorEscalas() {
           ))}
         </View>
 
+        <View>
+          <TouchableOpacity
+            style={styles.btnCoroinhas}
+            onPress={() => setVisibleModalCoroinhas(true)}
+          >
+            <Feather name='check-square' size={20} color='#fff' />
+            <Text style={{ color: '#fff', fontWeight: '600', marginLeft: 10 }}>
+              Coroinhas selecionados
+            </Text>
+          </TouchableOpacity>
+        </View>
+
         <TouchableOpacity
           style={styles.btnCadastrar}
           onPress={handleGerar}
@@ -231,6 +250,11 @@ export default function GeradorEscalas() {
             onChange={onChangeTimePicker}
           />
         )}
+
+        <ModalCoroinhasSelecionados
+          visible={visibleModalCoroinhas}
+          setVisible={setVisibleModalCoroinhas}
+        />
       </View>
     </SafeAreaView>
   );
@@ -263,7 +287,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     height: 45,
     marginBotton: 10,
-    marginTop: 5,
+    marginTop: 20,
     borderRadius: 8,
     backgroundColor: '#0984e3',
     backgroundColor: '#0096c7',
@@ -325,8 +349,8 @@ const styles = StyleSheet.create({
     fontWeight: '700'
   },
   boxHorarioDisponivel: {
-    paddingLeft: 10,
-    paddingRight: 10,
+    padding: 5,
+    paddingHorizontal: 10,
     marginRight: 4,
     borderRadius: 5,
     fontWeight: '500',
@@ -351,5 +375,12 @@ const styles = StyleSheet.create({
   },
   boxMessage: { marginTop: 20, alignItems: 'center' },
   iconAndtext: { flexDirection: 'row', alignItems: 'center' },
-  textMessage: { color: '#2ecc71', fontWeight: '700', marginLeft: 5 }
+  textMessage: { color: '#2ecc71', fontWeight: '700', marginLeft: 5 },
+  btnCoroinhas: {
+    flexDirection: 'row',
+    backgroundColor: '#02c39a',
+    borderRadius: 50,
+    padding: 4,
+    paddingHorizontal: 12
+  }
 });

@@ -2,7 +2,7 @@
   "expo": {
     "name": "escalaapp",
     "slug": "escalaapp",
-    "version": "1.0.0",
+    "version": "1.0.2",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -15,13 +15,20 @@
       "supportsTablet": true
     },
     "android": {
+      "versionCode": 2,
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#F2f6fc"
-      }
+      },
+      "package": "com.claudiomarcosdf.escalaapp"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "f90f6d6b-e0cf-44d7-8e40-6f092cf9150b"
+      }
     }
   }
 }

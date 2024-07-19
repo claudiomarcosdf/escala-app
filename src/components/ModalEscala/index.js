@@ -86,6 +86,8 @@ export default function ModalEscala({ visible, setVisible, coroinha }) {
             <TextInput
               placeholder='Nome'
               style={styles.input}
+              maxLength={47}
+              numberOfLines={1}
               value={nome || coroinha?.nome}
               showSoftInputOnFocus={false}
               selectTextOnFocus={false}
@@ -209,7 +211,10 @@ const styles = StyleSheet.create({
     borderColor: '#747d8c',
     width: '100%',
     fontSize: 15,
-    fontWeight: '700'
+    fontWeight: '700',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap'
   },
   btnEscalar: {
     alignItems: 'center',

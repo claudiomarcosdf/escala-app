@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useContext, useRef } from 'react';
 import {
   View,
   Text,
@@ -10,78 +10,40 @@ import {
   Keyboard,
   Alert
 } from 'react-native';
+import { Feather } from '@expo/vector-icons';
 import filter from 'lodash.filter';
 
 import firebase from '../../firebaseConfig';
 import ItemListaCoroinha from '../../components/ItemListaCoroinha';
-import { Feather } from '@expo/vector-icons';
+import { CoroinhaContext } from '../../contexts/coroinhaContext';
 
 export default function Cadastro() {
   const inputRef = useRef(null);
   const [nome, setNome] = useState(null);
   const [celular, setCelular] = useState(null);
-  const [coroinhas, setCoroinhas] = useState([]);
   const [key, setKey] = useState(null);
-  const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [coroinhasFiltered, setCoroinhasFiltered] = useState([]);
 
+  const {
+    loading,
+    coroinhas,
+    setCoroinhas,
+    incluirCoroinha,
+    alterarCoroinha,
+    excluirCoroinha
+  } = useContext(CoroinhaContext);
+
   useEffect(() => {
-    async function getDados() {
-      setCoroinhas([]);
-
-      await firebase
-        .database()
-        .ref('coroinhas') //'coroinhas/1'
-        .once('value', (snapshot) => {
-          snapshot?.forEach((childItem) => {
-            let data = {
-              key: childItem.key,
-              nome: childItem.val().nome,
-              celular: childItem.val().celular
-            };
-
-            setCoroinhas((oldCoroinhas) => [...oldCoroinhas, data].reverse());
-            setCoroinhasFiltered((oldCoroinhas) =>
-              [...oldCoroinhas, data].reverse()
-            );
-          });
-          setLoading(false);
-          //snapshot.val().nome
-          //snapshot.val().idade
-        })
-        .catch((err) => {
-          setLoading(false);
-        });
-    }
-
-    getDados();
+    setCoroinhasFiltered(coroinhas);
   }, []);
 
-  function handleAdd() {
+  async function handleAdd() {
     if (!nome || !celular) return;
 
     if (key) {
-      firebase
-        .database()
-        .ref('coroinhas')
-        .child(key)
-        .update({
-          nome,
-          celular
-        })
-        .then(() => {
-          const coroinhaIndex = coroinhas.findIndex(
-            (coroinha) => coroinha.key === key
-          );
-          let coroinhasClone = coroinhas;
-          coroinhasClone[coroinhaIndex].nome = nome;
-          coroinhasClone[coroinhaIndex].celular = celular;
-
-          setCoroinhas([...coroinhasClone]);
-          setCoroinhasFiltered([...coroinhasClone]);
-        });
-
+      await alterarCoroinha(key, nome, celular);
+      setCoroinhasFiltered(coroinhas);
       Keyboard.dismiss();
       setNome('');
       setCelular('');
@@ -89,34 +51,16 @@ export default function Cadastro() {
       return;
     }
 
-    let coroinha = firebase.database().ref('coroinhas');
-    let chave = coroinha.push().key;
-
-    coroinha
-      .child(chave)
-      .set({
-        nome,
-        celular
-      })
-      .then(() => {
-        const data = {
-          key: chave,
-          nome,
-          celular
-        };
-
-        setCoroinhas((oldCoroinhas) => [...oldCoroinhas, data].reverse());
-        setCoroinhasFiltered((oldCoroinhas) =>
-          [...oldCoroinhas, data].reverse()
-        );
-      });
+    await incluirCoroinha(nome, celular);
+    setCoroinhasFiltered(coroinhas);
+    //setCoroinhasFiltered((oldCoroinhas) => [...oldCoroinhas, data].reverse());
 
     setNome(null);
     setCelular(null);
     Keyboard.dismiss();
   }
 
-  function handleDelete(key, nome) {
+  async function handleDelete(key, nome) {
     if (!key) return;
 
     Alert.alert('Atenção', `Confirma exclusão do coroinha "${nome}"?`, [
@@ -127,18 +71,8 @@ export default function Cadastro() {
       {
         text: 'Continuar',
         onPress: () => {
-          firebase
-            .database()
-            .ref('coroinhas')
-            .child(key)
-            .remove()
-            .then(() => {
-              const newCoroinhasList = coroinhas.filter(
-                (item) => item.key !== key
-              );
-              setCoroinhas(newCoroinhasList);
-              setCoroinhasFiltered(newCoroinhasList);
-            });
+          excluirCoroinha(key);
+          setCoroinhasFiltered(coroinhas);
         }
       }
     ]);

@@ -1,43 +1,20 @@
-import { useEffect, createContext, useState } from 'react';
+import { createContext, useContext, useState } from 'react';
 import { Alert } from 'react-native';
 import firebase from '../firebaseConfig';
 import { shuffleArray } from '../utils/helpers';
+import { CoroinhaContext } from './coroinhaContext';
 
 export const EscalaContext = createContext({});
 
 function EscalaProvider({ children }) {
-  const [coroinhas, setCoroinhas] = useState([]);
+  const [coroinhasSelecionados, setCoroinhasSelecionados] = useState([]);
   const [escalaEncontrada, setEscalaEncontrada] = useState(false);
   const [escalas, setEscalas] = useState([]);
   const [loadingEscalas, setLoadingEscalas] = useState(false);
   const [building, setBuilding] = useState(false);
   const [finish, setFinish] = useState(false);
 
-  useEffect(() => {
-    async function getDados() {
-      setCoroinhas([]);
-
-      await firebase
-        .database()
-        .ref('coroinhas') //'coroinhas/1'
-        .once('value', (snapshot) => {
-          snapshot?.forEach((childItem) => {
-            let data = {
-              key: childItem.key,
-              nome: childItem.val().nome,
-              celular: childItem.val().celular
-            };
-
-            setCoroinhas((oldCoroinhas) => [...oldCoroinhas, data].reverse());
-          });
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    }
-
-    getDados();
-  }, []);
+  const { coroinhas } = useContext(CoroinhaContext);
 
   async function getEscalas(data) {
     setLoadingEscalas(true);
@@ -88,7 +65,7 @@ function EscalaProvider({ children }) {
   }
 
   function montarArrayComVagasEHorarios(horariosDisponiveis) {
-    const totalCoroinhas = coroinhas.length;
+    const totalCoroinhas = coroinhasSelecionados.length;
     const qtdHorariosDisponiveis = horariosDisponiveis.length;
     const coroinhasPorHorario = Math.floor(
       totalCoroinhas / qtdHorariosDisponiveis
@@ -173,7 +150,7 @@ function EscalaProvider({ children }) {
       return;
     }
 
-    const coroinhasEmbaralhados = shuffleArray(coroinhas);
+    const coroinhasEmbaralhados = shuffleArray(coroinhasSelecionados);
     const vagasHorarios = montarArrayComVagasEHorarios(horarios);
     const escalas = [];
     let vagasHorariosTemp = [...vagasHorarios];
@@ -213,6 +190,23 @@ function EscalaProvider({ children }) {
 
     setBuilding(false);
     setFinish(true);
+    listaCoroinhasUnchecked();
+  }
+
+  function listaCoroinhasUnchecked() {
+    setCoroinhasSelecionados([]);
+    if (coroinhas && coroinhas?.length != 0) {
+      const listSelected = coroinhas.map((coroinha) => {
+        return {
+          key: coroinha.key,
+          nome: coroinha.nome,
+          celular: coroinha.celular,
+          checked: false
+        };
+      });
+
+      setCoroinhasSelecionados(listSelected);
+    }
   }
 
   async function escalarCoroinha(novaEscala) {
@@ -265,7 +259,9 @@ function EscalaProvider({ children }) {
         setEscalas,
         loadingEscalas,
         excluirEscala,
-        escalarCoroinha
+        escalarCoroinha,
+        coroinhasSelecionados,
+        setCoroinhasSelecionados
       }}
     >
       {children}
