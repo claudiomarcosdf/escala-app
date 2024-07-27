@@ -41,7 +41,7 @@ export default function Cadastro() {
   }, []);
 
   async function handleAdd() {
-    if (!nome || !celular) return;
+    if (!nome || !celular || !horario) return;
 
     if (key) {
       await alterarCoroinha(key, nome, celular, horario);

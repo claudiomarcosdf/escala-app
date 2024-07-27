@@ -27,12 +27,14 @@ export default function ItemListaCoroinha({ data, deleteItem, editItem }) {
 
           <View style={{ flexDirection: 'row' }}>
             <TouchableWithoutFeedback>
-              <Text style={styles.textCelular}>{`${getLabelHorario(
-                data?.horario
-              )} | `}</Text>
+              <Text style={styles.textCelular}>
+                {getLabelHorario(data?.horario)}
+              </Text>
             </TouchableWithoutFeedback>
             <TouchableWithoutFeedback onPress={() => editItem(data)}>
-              <Text style={styles.textCelular}>{data.celular}</Text>
+              <Text style={styles.textCelular}>
+                {data.celular && ` | ${data.celular}`}
+              </Text>
             </TouchableWithoutFeedback>
           </View>
         </View>

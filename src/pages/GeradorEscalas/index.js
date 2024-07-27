@@ -121,6 +121,16 @@ export default function GeradorEscalas() {
     setVisibleModalCoroinhas(true);
   }
 
+  async function gerarEscalasFinalizar(embaralhar) {
+    const date = new Date(dateNow);
+    const onlyDate = date.valueOf() + date.getTimezoneOffset() * 60 * 1000;
+    const dataFormatada = format(onlyDate, 'dd/MM/yyy');
+
+    await gerarEscala(dataFormatada, horariosDisponiveis, embaralhar);
+    setDateTimePicker(new Date(dataAtual));
+    setHorariosDisponiveis([]);
+  }
+
   async function handleGerar() {
     //console.log('formato americano: ', dateNow);
     Keyboard.dismiss();
@@ -134,12 +144,20 @@ export default function GeradorEscalas() {
       return;
     }
 
-    const date = new Date(dateNow);
-    const onlyDate = date.valueOf() + date.getTimezoneOffset() * 60 * 1000;
-    const dataFormatada = format(onlyDate, 'dd/MM/yyy');
-    await gerarEscala(dataFormatada, horariosDisponiveis);
-    setDateTimePicker(new Date(dataAtual));
-    setHorariosDisponiveis([]);
+    Alert.alert('Embaralhar', `Deseja ordenar aleatoriamente os coroinhas?`, [
+      {
+        text: 'Cancelar',
+        style: 'cancel'
+      },
+      {
+        text: 'Sim',
+        onPress: () => gerarEscalasFinalizar(true)
+      },
+      {
+        text: 'Não',
+        onPress: () => gerarEscalasFinalizar(false)
+      }
+    ]);
   }
 
   return (

@@ -138,7 +138,7 @@ function EscalaProvider({ children }) {
       });
   }
 
-  async function gerarEscala(data, horarios) {
+  async function gerarEscala(data, horarios, embaralhar) {
     //Verificar se a escala do dia já foi gerada
     setFinish(false);
     setBuilding(true);
@@ -150,8 +150,11 @@ function EscalaProvider({ children }) {
       return;
     }
 
-    //const coroinhasEmbaralhados = shuffleArray(coroinhasSelecionados);
-    const coroinhasOrdenados = getOrderedHorario(coroinhasSelecionados);
+    let coroinhasOrdenados = [];
+    embaralhar
+      ? (coroinhasOrdenados = shuffleArray(coroinhasSelecionados))
+      : (coroinhasOrdenados = getOrderedHorario(coroinhasSelecionados));
+
     const vagasHorarios = montarArrayComVagasEHorarios(horarios);
     const escalas = [];
     let vagasHorariosTemp = [...vagasHorarios];

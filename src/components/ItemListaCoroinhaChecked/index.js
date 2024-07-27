@@ -25,12 +25,14 @@ export default function ItemListaCoroinhaChecked({ data, setChecked }) {
           </TouchableWithoutFeedback>
           <View style={{ flexDirection: 'row' }}>
             <TouchableWithoutFeedback>
-              <Text style={styles.textCelular}>{`${getLabelHorario(
-                data?.horario
-              )} | `}</Text>
+              <Text style={styles.textCelular}>
+                {getLabelHorario(data?.horario)}
+              </Text>
             </TouchableWithoutFeedback>
             <TouchableWithoutFeedback>
-              <Text style={styles.textCelular}>{data.celular}</Text>
+              <Text style={styles.textCelular}>
+                {data.celular && ` | ${data.celular}`}
+              </Text>
             </TouchableWithoutFeedback>
           </View>
         </View>
