@@ -19,6 +19,7 @@ import ItemListaEscala from '../../components/ItemListaEscala';
 import PrintEscala from '../../components/PrintEscala';
 import { EscalaContext } from '../../contexts/escalaContext';
 import { getOnlyDateBr, getDataToFilterFirebase } from '../../utils/helpers';
+import ModalFaltaAtraso from '../../components/ModalFaltaAtraso';
 
 export default function Escalas() {
   let dataAtual = getOnlyDateBr();
@@ -27,6 +28,8 @@ export default function Escalas() {
     [dataAtual]: { selected: true, marked: true }
   });
   const [horaMarcada, setHoraMarcada] = useState({ horas: '', minutos: '' });
+  const [modalVisible, setModalVisible] = useState(false);
+  const [escalaSelecionada, setEscalaSelecionada] = useState(null);
   const navigation = useNavigation();
 
   const { escalas, setEscalas, getEscalas, loadingEscalas, excluirEscala } =
@@ -72,6 +75,11 @@ export default function Escalas() {
     ]);
   }
 
+  function handleFaltasAtrasos(data) {
+    setEscalaSelecionada(data);
+    setModalVisible(true);
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.boxArea}>
@@ -112,7 +120,11 @@ export default function Escalas() {
           keyExtractor={(item) => item.key}
           data={escalas}
           renderItem={({ item }) => (
-            <ItemListaEscala data={item} deleteItem={handleDelete} />
+            <ItemListaEscala
+              data={item}
+              selectEscala={handleFaltasAtrasos}
+              deleteItem={handleDelete}
+            />
           )}
           ListEmptyComponent={
             loadingEscalas ? (
@@ -127,6 +139,11 @@ export default function Escalas() {
               </View>
             )
           }
+        />
+        <ModalFaltaAtraso
+          visible={modalVisible}
+          setVisible={setModalVisible}
+          escala={escalaSelecionada}
         />
       </View>
     </SafeAreaView>

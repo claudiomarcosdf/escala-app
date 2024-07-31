@@ -33,7 +33,9 @@ function EscalaProvider({ children }) {
             data: childItem.val().data,
             hora: childItem.val().hora,
             coroinha: childItem.val().coroinha,
-            celular: childItem.val().celular
+            celular: childItem.val().celular,
+            falta: childItem.val().falta,
+            atraso: childItem.val().atraso
           };
 
           escalasTemp.push(data);
@@ -174,7 +176,9 @@ function EscalaProvider({ children }) {
             coroinha: coroinha.nome,
             celular: coroinha.celular,
             data: data,
-            hora: vagaHorarioFinded.horario
+            hora: vagaHorarioFinded.horario,
+            atraso: false,
+            falta: false
           };
 
           escalas.push(newEscala);
@@ -216,6 +220,7 @@ function EscalaProvider({ children }) {
   }
 
   async function escalarCoroinha(novaEscala) {
+    //Pode escalar no mesmo dia, EXCETO no mesmo horário
     setBuilding(true);
     let retorno = [];
     await firebase
@@ -234,13 +239,18 @@ function EscalaProvider({ children }) {
         id: key,
         ...retorno[key]
       }));
-      //busca se coroinha está nas escalas da data informada
+      //busca se coroinha está nas escalas da data e hora informadas
       const encontrouCoroinha = escalasList.some(
-        (escala) => escala.coroinha == novaEscala.coroinha
+        (escala) =>
+          escala.coroinha == novaEscala.coroinha &&
+          escala.hora == novaEscala.hora
       );
 
       if (encontrouCoroinha) {
-        Alert.alert('Atenção', 'O coroinha já está escalado nesta data!');
+        Alert.alert(
+          'Atenção',
+          'O coroinha já está escalado nesta data e horário!'
+        );
         setBuilding(false);
         return false;
       }
@@ -251,6 +261,30 @@ function EscalaProvider({ children }) {
 
     setBuilding(false);
     return true;
+  }
+
+  async function lancarFaltaAtraso(escala) {
+    await firebase
+      .database()
+      .ref('escalas')
+      .child(escala.key)
+      .update({
+        ...escala
+      })
+      .then(() => {
+        const escalaIndex = escalas.findIndex(
+          (item) => item.key === escala.key
+        );
+        let escalasClone = escalas;
+        escalasClone[escalaIndex].coroinha = escala.coroinha;
+        escalasClone[escalaIndex].celular = escala.celular;
+        escalasClone[escalaIndex].data = escala.data;
+        escalasClone[escalaIndex].hora = escala.hora;
+        escalasClone[escalaIndex].falta = escala.falta;
+        escalasClone[escalaIndex].atraso = escala.atraso;
+
+        setEscalas([...escalasClone]);
+      });
   }
 
   return (
@@ -268,7 +302,8 @@ function EscalaProvider({ children }) {
         escalarCoroinha,
         coroinhasSelecionados,
         setCoroinhasSelecionados,
-        listaCoroinhasUnchecked
+        listaCoroinhasUnchecked,
+        lancarFaltaAtraso
       }}
     >
       {children}

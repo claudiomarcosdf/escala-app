@@ -8,7 +8,7 @@ import {
 
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
-export default function ItemListaEscala({ data, deleteItem }) {
+export default function ItemListaEscala({ data, deleteItem, selectEscala }) {
   return (
     <View style={styles.container}>
       <View style={styles.iconCalendarBox}>
@@ -24,12 +24,14 @@ export default function ItemListaEscala({ data, deleteItem }) {
             <Text style={styles.textData}>{data.data}</Text>
             <Text style={styles.textHora}>{data.hora}</Text>
           </View>
-          <View>
-            <Text numberOfLines={1} style={styles.textNome}>
-              {data.coroinha}
-            </Text>
-            <Text style={styles.textCelular}>{data.celular}</Text>
-          </View>
+          <TouchableWithoutFeedback onPress={() => selectEscala(data)}>
+            <View>
+              <Text numberOfLines={1} style={styles.textNome}>
+                {data.coroinha}
+              </Text>
+              <Text style={styles.textCelular}>{data.celular}</Text>
+            </View>
+          </TouchableWithoutFeedback>
         </View>
       </View>
       <View style={styles.deleteBox}>

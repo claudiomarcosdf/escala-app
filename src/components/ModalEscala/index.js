@@ -40,7 +40,9 @@ export default function ModalEscala({ visible, setVisible, coroinha }) {
       coroinha: coroinha.nome,
       celular: coroinha.celular,
       data: dataSelecionada,
-      hora: horaSelecionada
+      hora: horaSelecionada,
+      atraso: false,
+      falta: false
     };
 
     const gerouEscala = await escalarCoroinha(novaEscala);

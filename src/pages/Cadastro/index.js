@@ -124,7 +124,7 @@ export default function Cadastro() {
               style={styles.btnCancelEdit}
               onPress={handleCancelEdit}
             >
-              <Text style={{ color: '#e74c3c', fontSize: 13 }}>Cancelar</Text>
+              <Text style={{ color: '#fff', fontSize: 13 }}>Cancelar</Text>
             </TouchableOpacity>
           </View>
         )}
@@ -299,15 +299,15 @@ const styles = StyleSheet.create({
     marginBottom: 5,
     height: 30,
     width: '100%',
-    backgroundColor: '#fab1a0'
+    backgroundColor: '#ffcccc'
   },
   btnCancelEdit: {
     height: 20,
-    borderWidth: 1,
-    borderColor: '#e74c3c',
+    borderWidth: 0,
+    backgroundColor: '#e74c3c',
     borderRadius: 5,
-    paddingRight: 5,
-    paddingLeft: 5,
+    paddingRight: 8,
+    paddingLeft: 8,
     marginLeft: 10
   }
 });
