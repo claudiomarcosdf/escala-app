@@ -16,6 +16,15 @@ function getDataToFilterFirebase(dataAmericana) {
   return day + '/' + month + '/' + year;
 }
 
+function getAmericanDate(dataBrasil) {
+  //31/07/2024
+  let day = dataBrasil.substring(0, 2);
+  let month = dataBrasil.substring(3, 5);
+  let year = dataBrasil.substring(6, 10);
+
+  return year + '-' + month + '-' + day;
+}
+
 //Função para embaralhar/randomizar array coroinhas
 function shuffleArray(arr) {
   // Loop em todos os elementos
@@ -69,5 +78,6 @@ export {
   getDataToFilterFirebase,
   shuffleArray,
   getLabelHorario,
-  getOrderedHorario
+  getOrderedHorario,
+  getAmericanDate
 };

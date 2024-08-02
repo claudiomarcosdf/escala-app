@@ -18,7 +18,11 @@ import { ptBR } from '../../localeCalendar';
 import ItemListaEscala from '../../components/ItemListaEscala';
 import PrintEscala from '../../components/PrintEscala';
 import { EscalaContext } from '../../contexts/escalaContext';
-import { getOnlyDateBr, getDataToFilterFirebase } from '../../utils/helpers';
+import {
+  getOnlyDateBr,
+  getDataToFilterFirebase,
+  getAmericanDate
+} from '../../utils/helpers';
 import ModalFaltaAtraso from '../../components/ModalFaltaAtraso';
 
 export default function Escalas() {
@@ -76,6 +80,10 @@ export default function Escalas() {
   }
 
   function handleFaltasAtrasos(data) {
+    const dataEscala = new Date(getAmericanDate(data.data));
+    const dataHoje = new Date(dataAtual);
+    if (dataEscala < new Date(dataAtual)) return;
+
     setEscalaSelecionada(data);
     setModalVisible(true);
   }
