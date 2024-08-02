@@ -122,7 +122,7 @@ const styles = StyleSheet.create({
     marginTop: 5,
     paddingTop: 15,
     paddingHorizontal: 5,
-    height: 500,
+    height: 255,
     borderRadius: 5,
     backgroundColor: '#F2f6fc',
     alignItems: 'center'
@@ -152,12 +152,14 @@ const styles = StyleSheet.create({
   boxFalta: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
     width: '100%',
     paddingHorizontal: 10,
     backgroundColor: '#fff'
   },
   textLabel: {
-    width: 50
+    width: 50,
+    paddingLeft: 5,
+    fontWeight: '600'
   }
 });

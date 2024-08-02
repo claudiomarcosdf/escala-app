@@ -77,6 +77,8 @@ export default function PrintEscala({ data }) {
                     <th>Horário</th>
                     <th>Coroinha</th>
                     <th>Celular</th>
+                    <th>Atraso</th>
+                    <th>Falta</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -85,8 +87,16 @@ export default function PrintEscala({ data }) {
                       (escala) =>
                         `<tr class="list" key=${escala.key}>
                   <td class="hora">${escala.hora}</td>
-                  <td style="text-align: left;" class="name">${escala.coroinha}</td>
+                  <td style="text-align: left;" class="name">${
+                    escala.coroinha
+                  }</td>
                   <td style="text-align: left;">${escala.celular}</td>
+                  <td style="text-align: left;">${getDescricao(
+                    escala.atraso
+                  )}</td>
+                  <td style="text-align: left;">${getDescricao(
+                    escala.falta
+                  )}</td>
                   </tr>`
                     )
                     .join('')}
@@ -132,6 +142,10 @@ export default function PrintEscala({ data }) {
       </TouchableOpacity>
     </>
   );
+}
+
+function getDescricao(value) {
+  return value ? 'Sim' : '';
 }
 
 const styles = StyleSheet.create({

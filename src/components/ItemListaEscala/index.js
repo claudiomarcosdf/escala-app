@@ -12,7 +12,7 @@ export default function ItemListaEscala({ data, deleteItem, selectEscala }) {
   return (
     <View style={styles.container}>
       <View style={styles.iconCalendarBox}>
-        <View style={styles.iconBox}>
+        <View style={[styles.iconBox, destak(data)]}>
           <MaterialCommunityIcons
             name='calendar-clock'
             size={25}
@@ -45,6 +45,14 @@ export default function ItemListaEscala({ data, deleteItem, selectEscala }) {
       </View>
     </View>
   );
+}
+
+function destak(data) {
+  return data?.falta
+    ? { borderColor: '#ee5253' }
+    : data?.atraso
+    ? { borderColor: '#f39c12' }
+    : {};
 }
 
 const styles = StyleSheet.create({
@@ -96,7 +104,9 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     backgroundColor: '#dfe4ea',
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
+    borderWidth: 2,
+    borderColor: '#dfe4ea'
   },
   deleteBox: {
     alignItems: 'center',
