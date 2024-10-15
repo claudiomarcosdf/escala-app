@@ -7,6 +7,7 @@ import {
   SafeAreaView,
   TouchableOpacity,
   FlatList,
+  Switch,
   Keyboard,
   Alert
 } from 'react-native';
@@ -15,59 +16,65 @@ import { Feather } from '@expo/vector-icons';
 import filter from 'lodash.filter';
 
 import firebase from '../../firebaseConfig';
-import ItemListaCoroinha from '../../components/ItemListaCoroinha';
-import { CoroinhaContext } from '../../contexts/coroinhaContext';
+import ItemListaUsuario from '../../components/ItemListaUsuario';
+import { UsuarioContext } from '../../contexts/usuarioContext';
 
 export default function Cadastro() {
   const inputRef = useRef(null);
   const [nome, setNome] = useState(null);
   const [celular, setCelular] = useState(null);
-  const [horario, setHorario] = useState(null);
+  const [tipo, setTipo] = useState(null);
   const [key, setKey] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
-  const [coroinhasFiltered, setCoroinhasFiltered] = useState([]);
+  const [usuariosFiltered, setUsuariosFiltered] = useState([]);
+
+  const [ativo, setAtivo] = useState(false);
+  const toggleSwitch = () => setAtivo((previousState) => !previousState);
 
   const {
     loading,
-    coroinhas,
-    setCoroinhas,
-    incluirCoroinha,
-    alterarCoroinha,
-    excluirCoroinha
-  } = useContext(CoroinhaContext);
+    usuarios,
+    setUsuarios,
+    incluirUsuario,
+    alterarUsuario,
+    excluirUsuario
+  } = useContext(UsuarioContext);
 
   useEffect(() => {
-    setCoroinhasFiltered(coroinhas);
+    setUsuariosFiltered(usuarios);
   }, []);
 
-  async function handleAdd() {
-    if (!nome || !celular || !horario) return;
+  async function handleSave() {
+    if (!nome || !tipo) return;
 
     if (key) {
-      await alterarCoroinha(key, nome, celular, horario);
-      setCoroinhasFiltered(coroinhas);
+      await alterarUsuario(key, nome, celular, tipo, ativo);
+      setUsuariosFiltered(usuarios);
       Keyboard.dismiss();
       setNome('');
       setCelular('');
-      setHorario(null);
+      setTipo(null);
+      setAtivo(false);
       setKey(null);
       return;
     }
 
-    await incluirCoroinha(nome, celular, horario);
-    setCoroinhasFiltered(coroinhas);
-    //setCoroinhasFiltered((oldCoroinhas) => [...oldCoroinhas, data].reverse());
+    //Inclusão NÃO disponível para o administrador porque é devida ao próprio usuário
+    //await incluirUsuario(nome, celular, tipo, ativo);
+    //setUsuariosFiltered(usuarios);
 
+    Alert.alert('Atenção', 'O cadastro é realizado pelo próprio usuário.');
     setNome(null);
     setCelular(null);
-    setHorario(null);
+    setTipo(null);
+    setAtivo(false);
     Keyboard.dismiss();
   }
 
   async function handleDelete(key, nome) {
     if (!key) return;
 
-    Alert.alert('Atenção', `Confirma exclusão do coroinha "${nome}"?`, [
+    Alert.alert('Atenção', `Confirma exclusão do usuário "${nome}"?`, [
       {
         text: 'Cancelar',
         style: 'cancel'
@@ -75,8 +82,8 @@ export default function Cadastro() {
       {
         text: 'Continuar',
         onPress: () => {
-          excluirCoroinha(key);
-          setCoroinhasFiltered(coroinhas);
+          excluirUsuario(key);
+          setUsuariosFiltered(usuarios);
         }
       }
     ]);
@@ -86,7 +93,8 @@ export default function Cadastro() {
     setKey(data.key);
     setNome(data.nome);
     setCelular(data.celular);
-    setHorario(data?.horario || null);
+    setTipo(data?.tipo || null);
+    setAtivo(data?.ativo);
     inputRef.current.focus();
   }
 
@@ -94,25 +102,26 @@ export default function Cadastro() {
     setKey(null);
     setNome(null);
     setCelular(null);
-    setHorario(null);
+    setTipo(null);
+    setAtivo(false);
     Keyboard.dismiss();
   }
 
   function handleSearch(query) {
     setSearchQuery(query);
     const formattedQuery = query.toLowerCase();
-    const filteredData = filter(coroinhasFiltered, (coroinha) => {
-      if (coroinha.nome.toLowerCase().includes(formattedQuery)) return true;
+    const filteredData = filter(usuariosFiltered, (usuario) => {
+      if (usuario.nome.toLowerCase().includes(formattedQuery)) return true;
       return false;
     });
 
-    setCoroinhas(filteredData);
+    setUsuarios(filteredData);
   }
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.boxAreaCadastro}>
-        <Text style={styles.titleText}>Cadastro de Coroinha</Text>
+        <Text style={styles.titleText}>Cadastro de Usuários</Text>
 
         {key && (
           <View style={styles.boxMessageEdit}>
@@ -128,6 +137,20 @@ export default function Cadastro() {
             </TouchableOpacity>
           </View>
         )}
+
+        <View style={styles.boxStatus}>
+          <Text style={{ fontSize: 13, marginLeft: 5 }}>
+            {ativo ? 'Ativo' : 'Inativo'}
+          </Text>
+          <Switch
+            style={styles.customSwitch}
+            trackColor={{ false: '#767577', true: '#81b0ff' }}
+            thumbColor={ativo ? '#f5dd4b' : '#f4f3f4'}
+            ios_backgroundColor='#3e3e3e'
+            onValueChange={toggleSwitch}
+            value={ativo}
+          />
+        </View>
         <TextInput
           placeholder='Nome'
           style={styles.input}
@@ -142,27 +165,22 @@ export default function Cadastro() {
           onChangeText={(text) => setCelular(text)}
         />
         <Dropdown
-          placeholder='Selecione um horário...'
+          placeholder='Selecione o tipo...'
           placeholderStyle={{ opacity: 0.5 }}
           dropdownStyle={styles.dropdown}
           options={[
-            { label: '1º Horário', value: 'AHR' },
-            { label: '2º Horário', value: 'BHR' },
-            { label: '3º Horário', value: 'CHR' },
-            { label: '4º Horário', value: 'DHR' },
-            { label: '5º Horário', value: 'EHR' },
-            { label: '6º Horário', value: 'FHR' },
-            { label: '7º Horário', value: 'GHR' },
-            { label: '8º Horário', value: 'HHR' },
-            { label: '9º Horário', value: 'IHR' },
-            { label: '10º Horário', value: 'JHR' }
+            { label: 'Administrador', value: 'Administrador' },
+            { label: 'Coroinha', value: 'Coroinha' },
+            { label: 'Acólito', value: 'Acólito' },
+            { label: 'Cerimoniário', value: 'Cerimoniário' },
+            { label: 'Celebrante', value: 'Celebrante' }
           ]}
-          selectedValue={horario}
-          onValueChange={(value) => setHorario(value)}
+          selectedValue={tipo}
+          onValueChange={(value) => setTipo(value)}
           primaryColor={'#0096c7'}
         />
 
-        <TouchableOpacity style={styles.btnCadastrar} onPress={handleAdd}>
+        <TouchableOpacity style={styles.btnCadastrar} onPress={handleSave}>
           <Text style={styles.btnText}>{key ? 'Editar' : 'Cadastrar'}</Text>
         </TouchableOpacity>
 
@@ -180,18 +198,18 @@ export default function Cadastro() {
         </View>
 
         <View style={styles.boxTotalCoroinhas}>
-          <Text style={styles.textTotal}>Coroinhas cadastrados: </Text>
+          <Text style={styles.textTotal}>Usuários cadastrados: </Text>
           <Text style={[styles.textTotal, { fontWeight: '700' }]}>
-            {coroinhas.length != 0 ? coroinhas.length : 0}
+            {usuarios.length != 0 ? usuarios.length : 0}
           </Text>
         </View>
 
         <FlatList
           style={styles.list}
           keyExtractor={(item) => item.key}
-          data={coroinhas}
+          data={usuarios}
           renderItem={({ item }) => (
-            <ItemListaCoroinha
+            <ItemListaUsuario
               data={item}
               deleteItem={handleDelete}
               editItem={handleEdit}
@@ -205,7 +223,7 @@ export default function Cadastro() {
             ) : (
               <View style={styles.textMessage}>
                 <Text style={{ fontSize: 14, color: '#ee5253' }}>
-                  Nenhum coroinha cadastrado!
+                  Nenhum usuário cadastrado!
                 </Text>
               </View>
             )
@@ -263,6 +281,19 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     backgroundColor: '#0096c7',
     width: '100%'
+  },
+  boxStatus: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    height: 20,
+    width: '100%',
+    padding: 0,
+    marginBottom: 2
+  },
+  customSwitch: {
+    padding: 0,
+    margin: 0,
+    transform: [{ scaleX: 0.8 }, { scaleY: 0.8 }]
   },
   boxTotalCoroinhas: {
     flexDirection: 'row',

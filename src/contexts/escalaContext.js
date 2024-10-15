@@ -198,26 +198,26 @@ function EscalaProvider({ children }) {
 
     setBuilding(false);
     setFinish(true);
-    listaCoroinhasUnchecked();
+    //listaCoroinhasUnchecked();
   }
 
-  function listaCoroinhasUnchecked() {
-    setCoroinhasSelecionados([]);
-    if (coroinhas && coroinhas?.length != 0) {
-      const listSelected = coroinhas.map((coroinha) => {
-        return {
-          key: coroinha.key,
-          nome: coroinha.nome,
-          celular: coroinha.celular,
-          horario: coroinha.horario,
-          checked: false
-        };
-      });
+  // function listaCoroinhasUnchecked() {
+  //   setCoroinhasSelecionados([]);
+  //   if (coroinhas && coroinhas?.length != 0) {
+  //     const listSelected = coroinhas.map((coroinha) => {
+  //       return {
+  //         key: coroinha.key,
+  //         nome: coroinha.nome,
+  //         celular: coroinha.celular,
+  //         horario: coroinha.horario,
+  //         checked: false
+  //       };
+  //     });
 
-      const coroinhasOrdenados = getOrderedHorario(listSelected);
-      setCoroinhasSelecionados(coroinhasOrdenados);
-    }
-  }
+  //     const coroinhasOrdenados = getOrderedHorario(listSelected);
+  //     setCoroinhasSelecionados(coroinhasOrdenados);
+  //   }
+  // }
 
   async function escalarCoroinha(novaEscala) {
     //Pode escalar no mesmo dia, EXCETO no mesmo horário
@@ -302,7 +302,6 @@ function EscalaProvider({ children }) {
         escalarCoroinha,
         coroinhasSelecionados,
         setCoroinhasSelecionados,
-        listaCoroinhasUnchecked,
         lancarFaltaAtraso
       }}
     >

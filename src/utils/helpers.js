@@ -45,6 +45,10 @@ function getOrderedHorario(array) {
   );
 }
 
+function getStatus(value) {
+  return value ? 'Ativo' : 'Inativo';
+}
+
 function getLabelHorario(value) {
   switch (value) {
     case 'AHR':
@@ -79,5 +83,6 @@ export {
   shuffleArray,
   getLabelHorario,
   getOrderedHorario,
-  getAmericanDate
+  getAmericanDate,
+  getStatus
 };

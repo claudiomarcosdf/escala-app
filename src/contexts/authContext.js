@@ -17,15 +17,15 @@ function AuthProvider({ children }) {
       setLoading(true);
       pegarParoquia();
 
-      const storageUser = await AsyncStorage.getItem('coroinhaUser');
+      const storageUser = await AsyncStorage.getItem('appCoroinhaUser');
 
       if (storageUser) {
         const today = new Date(moment.tz('America/Sao_Paulo').format());
         const storageObj = JSON.parse(storageUser);
 
-        //se venceu
+        //se expirou
         if (storageObj.exp < today.getTime()) {
-          await AsyncStorage.removeItem('coroinhaUser');
+          await AsyncStorage.removeItem('appCoroinhaUser');
           setUser(null);
         } else setUser(JSON.parse(storageUser));
       } else {
@@ -36,18 +36,80 @@ function AuthProvider({ children }) {
     loadStorage();
   }, []);
 
-  async function saveToStorage({ uid, email }) {
+  async function saveToStorage({ uid, email, nome, tipo, ativo }) {
     let today = new Date(moment.tz('America/Sao_Paulo').format());
     let dataExpiracao = today;
     dataExpiracao.setHours(today.getHours() + 2); // Adiciona 2 horas
 
-    const coroinhaUser = {
+    const appCoroinhaUser = {
       uid,
       email,
+      nome,
+      tipo,
+      ativo,
       exp: dataExpiracao.getTime()
     };
     if (email)
-      await AsyncStorage.setItem('coroinhaUser', JSON.stringify(coroinhaUser));
+      await AsyncStorage.setItem(
+        'appCoroinhaUser',
+        JSON.stringify(appCoroinhaUser)
+      );
+  }
+
+  async function saveUsuario(
+    uid,
+    email,
+    nome,
+    celular,
+    tipo = '',
+    ativo = false
+  ) {
+    let usuario = firebase.database().ref('usuarios');
+    let chave = uid;
+
+    usuario
+      .child(chave)
+      .set({
+        email,
+        nome,
+        celular,
+        tipo,
+        ativo
+      })
+      .then(() => {
+        const data = {
+          key: chave,
+          email,
+          nome,
+          celular,
+          tipo,
+          ativo
+        };
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
+  async function getUsuario(userLogged) {
+    const idUsuario = 'usuarios/' + userLogged.uid;
+    await firebase
+      .database()
+      .ref(idUsuario)
+      .on('value', (snapshot) => {
+        const data = snapshot.val();
+
+        if (data != null) {
+          if (data.ativo) {
+            setUser({ ...data }); //user.user.uid
+            saveToStorage(data);
+          } else {
+            Alert.alert('Acesso negado', 'Usuário inativo.');
+            setUser(null);
+          }
+        }
+        setLoading(false);
+      });
   }
 
   async function login(email, password) {
@@ -62,15 +124,15 @@ function AuthProvider({ children }) {
           exp: 0
         };
 
-        setUser(userLogged); //user.user.uid
-        saveToStorage(userLogged);
-        setLoading(false);
+        getUsuario(userLogged);
       })
       .catch((err) => {
         setLoading(false);
         let tipoErro = err.toString();
         if (tipoErro.includes('auth/invalid-email'))
           tipoErro = 'Email inválido!';
+        if (tipoErro.includes('auth/missing-password'))
+          tipoErro = 'A Senha é obrigatória!';
         if (tipoErro.includes('auth/invalid-credential'))
           tipoErro = 'Senha inválida!';
         if (tipoErro.includes('auth/user-disabled'))
@@ -81,7 +143,8 @@ function AuthProvider({ children }) {
       });
   }
 
-  async function singUp(email, password) {
+  //cadastro
+  async function singUp(email, nome, celular, password) {
     setLoading(true);
     await firebase
       .auth()
@@ -92,8 +155,8 @@ function AuthProvider({ children }) {
           email: user.user.email,
           exp: 0
         };
-        setUser(userLogged); //user.user.uid
-        saveToStorage(userLogged);
+        setUser(null); // Novos usuários necessitam ser ativados pelo admin
+        saveUsuario(userLogged.uid, email, nome, celular);
         setLoading(false);
       })
       .catch((err) => {
@@ -105,8 +168,16 @@ function AuthProvider({ children }) {
   }
 
   async function logout() {
-    await AsyncStorage.removeItem('coroinhaUser');
-    setUser(null);
+    await firebase
+      .auth()
+      .signOut()
+      .then(() => {
+        AsyncStorage.removeItem('appCoroinhaUser');
+        setUser(null);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   }
 
   //---------- DADOS DA PARÓQUIA -------------------

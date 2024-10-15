@@ -1,5 +1,6 @@
 import { useState, useContext } from 'react';
 import {
+  Alert,
   Text,
   View,
   Image,
@@ -15,19 +16,43 @@ import {
 import firebase from '../../firebaseConfig';
 import { AuthContext } from '../../contexts/authContext';
 
-export default function Login({ changeStatus }) {
-  const [type, setType] = useState('login');
+export default function Login({ loginType = 'login' }) {
+  const [type, setType] = useState(loginType);
   const [email, setEmail] = useState('');
+  const [nome, setNome] = useState('');
+  const [celular, setCelular] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
 
   const { loading, login, singUp } = useContext(AuthContext);
 
-  function handleLogin() {
+  function setLogin() {
+    setType('login');
+    setNome('');
+    setCelular('');
+    setPassword('');
+    setConfirmPassword('');
+  }
+
+  async function handleLogin() {
     Keyboard.dismiss();
+
     if (type === 'login') {
-      login(email, password);
+      await login(email, password);
     } else {
-      singUp(email, password);
+      if (!email || !nome || !password || !confirmPassword) {
+        Alert.alert('Atenção', 'Dados obrigatórios em branco.');
+        return;
+      }
+
+      if (password != confirmPassword) {
+        Alert.alert('Atenção', 'A senha não confere.');
+        return;
+      }
+
+      await singUp(email, nome, celular, password);
+      Alert.alert('Sucesso', 'Conta criada. Aguarde o administrador ativá-la.');
+      setLogin();
     }
   }
 
@@ -46,13 +71,44 @@ export default function Login({ changeStatus }) {
           value={email}
           onChangeText={(text) => setEmail(text)}
         />
+
+        {type === 'cadastrar' && (
+          <>
+            <TextInput
+              placeholder='Nome completo'
+              style={styles.input}
+              value={nome}
+              onChangeText={(text) => setNome(text)}
+            />
+
+            <TextInput
+              placeholder='Celular'
+              style={styles.input}
+              value={celular}
+              onChangeText={(text) => setCelular(text)}
+            />
+          </>
+        )}
+
         <TextInput
-          placeholder='***********'
+          placeholder='Senha'
           secureTextEntry={true}
           style={styles.input}
           value={password}
           onChangeText={(text) => setPassword(text)}
         />
+
+        {type === 'cadastrar' && (
+          <>
+            <TextInput
+              placeholder='Confirmar senha'
+              secureTextEntry={true}
+              style={styles.input}
+              value={confirmPassword}
+              onChangeText={(text) => setConfirmPassword(text)}
+            />
+          </>
+        )}
 
         <TouchableOpacity
           style={[

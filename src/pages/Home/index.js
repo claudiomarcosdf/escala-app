@@ -37,10 +37,22 @@ export default function Home() {
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.button}
-            onPress={() => navigation.navigate('GeradorEscalas')}
+            onPress={() => navigation.navigate('CadastroHorarios')}
           >
             <MaterialCommunityIcons
               name='calendar-clock'
+              size={30}
+              color='#fff'
+              style={{ marginRight: 25 }}
+            />
+            <Text style={styles.textButtom}>Horários das Missas</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => navigation.navigate('GeradorEscalas')}
+          >
+            <MaterialCommunityIcons
+              name='timer-cog-outline'
               size={30}
               color='#fff'
               style={{ marginRight: 25 }}

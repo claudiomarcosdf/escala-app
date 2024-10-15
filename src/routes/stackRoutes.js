@@ -2,7 +2,9 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import Home from '../pages/Home';
 import Cadastro from '../pages/Cadastro';
+import CadastroHorarios from '../pages/Horarios';
 import EscalaIndividual from '../pages/EscalaIndividual';
+import EscolhaHorarios from '../pages/EscolhaHorarios';
 
 const Stack = createNativeStackNavigator();
 
@@ -10,26 +12,33 @@ export default function StackRoutes() {
   return (
     <Stack.Navigator>
       <Stack.Screen
-        name="Home"
+        name='Home'
         component={Home}
         options={{
-          headerShown: false,
+          headerShown: false
         }}
       />
       <Stack.Screen
-        name="Cadastro"
+        name='Cadastro'
         component={Cadastro}
         options={{
-          headerShown: false,
+          headerShown: false
         }}
       />
       <Stack.Screen
-        name="EscalaIndividual"
-        component={EscalaIndividual}
+        name='CadastroHorarios'
+        component={CadastroHorarios}
         options={{
-          headerShown: false,
+          headerShown: false
         }}
       />
-    </Stack.Navigator >
+      <Stack.Screen
+        name='EscalaIndividual'
+        component={EscalaIndividual}
+        options={{
+          headerShown: false
+        }}
+      />
+    </Stack.Navigator>
   );
 }

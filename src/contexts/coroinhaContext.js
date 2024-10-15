@@ -40,7 +40,7 @@ function CoroinhaPrivider({ children }) {
 
   async function incluirCoroinha(nome, celular, horario) {
     let coroinha = firebase.database().ref('coroinhas');
-    let chave = coroinha.push().key;
+    let chave = coroinha.push().key; //build new key
 
     coroinha
       .child(chave)
