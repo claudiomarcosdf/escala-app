@@ -42,6 +42,8 @@ function UsuarioProvider({ children }) {
   }, []);
 
   async function incluirUsuario(uid, nome, celular, tipo = '', ativo = false) {
+    //Inclusão NÃO disponível para o administrador porque é devida ao próprio usuário
+
     let usuario = firebase.database().ref('usuarios');
     //let chave = usuario.push().key; //build new key
     let chave = uid;
@@ -112,51 +114,6 @@ function UsuarioProvider({ children }) {
       });
   }
 
-  /**
-   *
-   *  HORÁRIOS ESCOLHIDOS PELO USUÁRIO
-   */
-  async function getHorariosUsuario(key) {
-    await firebase
-      .database()
-      .ref('horariosUsuario')
-      .child(key)
-      .remove()
-      .then(() => {
-        const newHorariosUsuariosList = horariosUsuario.filter(
-          (item) => item.key !== key
-        );
-        setHorariosUsuario(newHorariosUsuariosList);
-      });
-  }
-
-  async function incluirHorariosUsuario(uid, data, horarios) {
-    let horarioUsuarioDb = firebase.database().ref('horariosUsuario');
-    let chave = horarioUsuarioDb.push().key; //build new key
-    let chaveUsuario = uid;
-
-    usuario
-      .child(chave)
-      .set({
-        chaveUsuario,
-        data,
-        horarios
-      })
-      .then(() => {
-        const data = {
-          key: chave,
-          chaveUsuario,
-          data,
-          horarios
-        };
-
-        setHorariosUsuario((old) => [...old, data].reverse());
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }
-
   return (
     <UsuarioContext.Provider
       value={{
@@ -165,9 +122,7 @@ function UsuarioProvider({ children }) {
         setUsuarios,
         incluirUsuario,
         alterarUsuario,
-        excluirUsuario,
-        getHorariosUsuario,
-        incluirHorariosUsuario
+        excluirUsuario
       }}
     >
       {children}

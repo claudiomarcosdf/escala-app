@@ -42,7 +42,7 @@ function AuthProvider({ children }) {
     dataExpiracao.setHours(today.getHours() + 2); // Adiciona 2 horas
 
     const appCoroinhaUser = {
-      uid,
+      key: uid,
       email,
       nome,
       tipo,
@@ -101,8 +101,8 @@ function AuthProvider({ children }) {
 
         if (data != null) {
           if (data.ativo) {
-            setUser({ ...data }); //user.user.uid
-            saveToStorage(data);
+            setUser({ key: userLogged.uid, ...data }); //user.user.uid
+            saveToStorage({ uid: userLogged.uid, ...data });
           } else {
             Alert.alert('Acesso negado', 'Usuário inativo.');
             setUser(null);

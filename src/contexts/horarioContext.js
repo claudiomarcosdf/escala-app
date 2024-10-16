@@ -5,7 +5,7 @@ import firebase from '../firebaseConfig';
 
 export const HorarioContext = createContext({});
 
-function HorarioPrivider({ children }) {
+function HorarioProvider({ children }) {
   const [horarios, setHorarios] = useState(null);
   const [loading, setLoading] = useState(false);
   const [finish, setFinish] = useState(false);
@@ -115,6 +115,27 @@ function HorarioPrivider({ children }) {
       });
   }
 
+  async function getHorariosAtuais(dataBR) {
+    //Retorna os horários cujas datas são maiores que a informada (data atual)
+    await firebase
+      .database()
+      .ref('horarios')
+      .orderByChild('data')
+      .startAt(dataBR)
+      .once('value')
+      .then(function (snapshot) {
+        if (snapshot.val() != null) {
+          const objHorarios = Object.keys(snapshot.val()).map((key) => ({
+            key: key,
+            ...snapshot.val()[key]
+          }));
+
+          //console.log(objHorarios);
+          setHorarios(objHorarios);
+        } else setHorarios(null);
+      });
+  }
+
   return (
     <HorarioContext.Provider
       value={{
@@ -127,7 +148,8 @@ function HorarioPrivider({ children }) {
         setFinish,
         alterarHorarios,
         excluirHorarios,
-        getHorarios
+        getHorarios,
+        getHorariosAtuais
       }}
     >
       {children}
@@ -135,4 +157,4 @@ function HorarioPrivider({ children }) {
   );
 }
 
-export default HorarioPrivider;
+export default HorarioProvider;

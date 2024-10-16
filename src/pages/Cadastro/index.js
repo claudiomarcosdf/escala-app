@@ -31,14 +31,8 @@ export default function Cadastro() {
   const [ativo, setAtivo] = useState(false);
   const toggleSwitch = () => setAtivo((previousState) => !previousState);
 
-  const {
-    loading,
-    usuarios,
-    setUsuarios,
-    incluirUsuario,
-    alterarUsuario,
-    excluirUsuario
-  } = useContext(UsuarioContext);
+  const { loading, usuarios, setUsuarios, alterarUsuario, excluirUsuario } =
+    useContext(UsuarioContext);
 
   useEffect(() => {
     setUsuariosFiltered(usuarios);

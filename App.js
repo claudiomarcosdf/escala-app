@@ -8,6 +8,7 @@ import UsuarioProvider from './src/contexts/usuarioContext';
 import CoroinhaProvider from './src/contexts/coroinhaContext';
 import EscalaProvider from './src/contexts/escalaContext';
 import HorarioProvider from './src/contexts/horarioContext';
+import HorarioUsuarioProvider from './src/contexts/horariosUsuarioContext';
 
 export default function escalaapp() {
   return (
@@ -15,11 +16,13 @@ export default function escalaapp() {
       <AuthProvider>
         <UsuarioProvider>
           <HorarioProvider>
-            <CoroinhaProvider>
-              <EscalaProvider>
-                <Routes />
-              </EscalaProvider>
-            </CoroinhaProvider>
+            <HorarioUsuarioProvider>
+              <CoroinhaProvider>
+                <EscalaProvider>
+                  <Routes />
+                </EscalaProvider>
+              </CoroinhaProvider>
+            </HorarioUsuarioProvider>
           </HorarioProvider>
         </UsuarioProvider>
       </AuthProvider>

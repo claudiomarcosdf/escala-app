@@ -6,37 +6,88 @@ import {
   FlatList,
   StyleSheet,
   SafeAreaView,
-  TouchableOpacity
+  TouchableOpacity,
+  ActivityIndicator
 } from 'react-native';
 import Dropdown from 'react-native-input-select';
 import { AuthContext } from '../../contexts/authContext';
 import { HorarioContext } from '../../contexts/horarioContext';
 import { UsuarioContext } from '../../contexts/usuarioContext';
+import { getDataToFilterFirebase } from '../../utils/helpers';
+import { HorarioUsuarioContext } from '../../contexts/horariosUsuarioContext';
+import ItemListaHorarioUsuario from '../../components/ItemListaHorarioUsuario';
 
 export default function EscolhaHorarios() {
+  let dataAtual = getDataToFilterFirebase();
+
   const [data, setData] = useState(null);
   const [horariosSelecionado, setHorariosSelecionados] = useState([]);
   const { user } = useContext(AuthContext);
-  const { getHorariosUsuario, incluirHorariosUsuario } =
-    useContext(UsuarioContext);
+  const { getHorariosAtuais, horarios } = useContext(HorarioContext);
+  const {
+    getHorariosUsuario,
+    horariosUsuario,
+    incluirHorariosUsuario,
+    excluirHorariosUsuario,
+    loading,
+    saving
+  } = useContext(HorarioUsuarioContext);
 
   useEffect(() => {
     //selecionar as datas maiores que o dia atual
+    async function buscaHorarios() {
+      await getHorariosAtuais(dataAtual);
+      await getHorariosUsuario(dataAtual, user.key);
+    }
+
+    buscaHorarios();
   }, []);
 
   async function handleSave() {
-    // if (!data || !horariosSelecionado) {
-    //   Alert.alert('Atenção', 'Favor informar o dia e os horários.');
-    //   return;
-    // }
-    //await incluirHorariosUsuario(user.uid, data, horariosSelecionado);
-    // Alert.alert('Sucesso', 'Informações salvas com sucesso!');
+    if (!data || !horariosSelecionado) {
+      Alert.alert('Atenção', 'Favor informar o dia e os horários.');
+      return;
+    }
+    await incluirHorariosUsuario(user, data, horariosSelecionado);
+  }
+
+  function getDatas() {
+    return horarios.map((horario) => {
+      return { label: horario.data, value: horario.data };
+    });
+  }
+
+  function getHorariosFiltrados() {
+    if (!horarios || !data) return;
+
+    let dataSelecionada = horarios.filter((horario) => horario.data == data);
+    return dataSelecionada[0].horarios.map((hora) => {
+      return { label: hora, value: hora };
+    });
+  }
+
+  async function handleDelete(key, data) {
+    if (!key) return;
+
+    Alert.alert('Atenção', `Excluir horários do dia "${data}"?`, [
+      {
+        text: 'Cancelar',
+        style: 'cancel'
+      },
+      {
+        text: 'Continuar',
+        onPress: () => {
+          excluirHorariosUsuario(key);
+        }
+      }
+    ]);
   }
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.boxAreaElements}>
         <Text style={styles.titleText}>Candidate-se às Missas</Text>
+        <Text style={styles.titleUsuario}>{user?.nome}</Text>
 
         <Dropdown
           placeholder='Selecione o dia...'
@@ -47,15 +98,12 @@ export default function EscolhaHorarios() {
             fontWeight: '900'
           }}
           dropdownStyle={styles.dropdown}
-          options={[
-            { label: '15/10/2024', value: '15/10/2024' },
-            { label: '16/10/2024', value: '16/10/2024' },
-            { label: '26/10/2024', value: '26/10/2024' },
-            { label: '27/10/2024', value: '27/10/2024' },
-            { label: '30/10/2024', value: '30/10/2024' }
-          ]}
+          options={horarios ? getDatas() : null}
           selectedValue={data}
-          onValueChange={(value) => setData(value)}
+          onValueChange={(value) => {
+            setHorariosSelecionados([]);
+            setData(value);
+          }}
           primaryColor={'#0096c7'}
         />
 
@@ -64,12 +112,7 @@ export default function EscolhaHorarios() {
           placeholderStyle={{ opacity: 0.5 }}
           dropdownStyle={styles.dropdown}
           isMultiple
-          options={[
-            { label: '09:00', value: '09:00' },
-            { label: '11:00', value: '11:00' },
-            { label: '17:00', value: '17:00' },
-            { label: '20:00', value: '20:00' }
-          ]}
+          options={horarios ? getHorariosFiltrados() : null}
           listControls={{
             selectAllText: 'Marcar todos',
             unselectAllText: 'Desmarcar todos'
@@ -80,11 +123,18 @@ export default function EscolhaHorarios() {
         />
 
         <TouchableOpacity style={styles.btnSalvar} onPress={handleSave}>
-          <Text style={styles.btnText}>Salvar</Text>
+          <Text style={styles.btnText}>
+            {saving ? 'Salvando...' : 'Salvar'}
+          </Text>
         </TouchableOpacity>
+        {saving && (
+          <View style={{ marginTop: 20 }}>
+            <ActivityIndicator size={20} color='#0984e3' />
+          </View>
+        )}
 
-        {/* <View style={styles.boxTotalHorarios}>
-          <Text style={styles.textTotal}>Horários cadastrados: </Text>
+        <View style={styles.boxTotalHorarios}>
+          <Text style={styles.textTotal}>Horários escolhidos: </Text>
           <Text style={[styles.textTotal, { fontWeight: '700' }]}>
             {horariosUsuario.length != 0 ? horariosUsuario.length : 0}
           </Text>
@@ -95,11 +145,7 @@ export default function EscolhaHorarios() {
           keyExtractor={(item) => item.key}
           data={horariosUsuario}
           renderItem={({ item }) => (
-            <ItemListaUsuario
-              data={item}
-              deleteItem={handleDelete}
-              editItem={handleEdit}
-            />
+            <ItemListaHorarioUsuario data={item} deleteItem={handleDelete} />
           )}
           ListEmptyComponent={
             loading ? (
@@ -109,12 +155,12 @@ export default function EscolhaHorarios() {
             ) : (
               <View style={styles.textMessage}>
                 <Text style={{ fontSize: 14, color: '#ee5253' }}>
-                  Nenhum usuário cadastrado!
+                  Nenhum horário escolhido!
                 </Text>
               </View>
             )
           }
-        /> */}
+        />
       </View>
     </SafeAreaView>
   );
@@ -137,6 +183,11 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: '#2f3640',
     marginBottom: 15
+  },
+  titleUsuario: {
+    fontWeight: '500',
+    color: '#0984e3',
+    marginBottom: 10
   },
   dropdown: {
     borderColor: '#747d8c',
@@ -169,11 +220,23 @@ const styles = StyleSheet.create({
     backgroundColor: '#0096c7',
     width: '100%'
   },
+  boxTotalHorarios: {
+    flexDirection: 'row',
+    width: '100%',
+    marginTop: 10,
+    paddingHorizontal: 5
+  },
   list: {
     width: '100%',
     marginTop: 2,
     padding: 5,
     borderRadius: 8,
     backgroundColor: '#dfe4ea'
+  },
+  textTotal: { fontSize: 12, color: '#0096c7' },
+  textMessage: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 20
   }
 });
