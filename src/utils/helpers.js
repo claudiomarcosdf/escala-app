@@ -25,6 +25,16 @@ function getAmericanDate(dataBrasil) {
   return year + '-' + month + '-' + day;
 }
 
+function getFullDateBR(dataBR) {
+  //sabado, 01 de janeiro de 2087
+  const dateString = getAmericanDate(dataBR);
+  const date = new Date(dateString);
+
+  return date.toLocaleString('pt-BR', {
+    dateStyle: 'full'
+  });
+}
+
 //Função para embaralhar/randomizar array coroinhas
 function shuffleArray(arr) {
   // Loop em todos os elementos
@@ -84,5 +94,6 @@ export {
   getLabelHorario,
   getOrderedHorario,
   getAmericanDate,
+  getFullDateBR,
   getStatus
 };

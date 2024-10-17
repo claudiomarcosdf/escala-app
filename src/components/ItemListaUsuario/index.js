@@ -12,6 +12,12 @@ import { Ionicons } from '@expo/vector-icons';
 import { getStatus } from '../../utils/helpers';
 
 export default function ItemListaUsuario({ data, deleteItem, editItem }) {
+  function getTipoEStatus() {
+    const fullText = `${data?.tipo}  |  ${getStatus(data?.ativo)}`;
+    const statusOnly = getStatus(data?.ativo);
+    return data?.tipo ? fullText : statusOnly;
+  }
+
   return (
     <View style={styles.container}>
       <View style={styles.personBox}>
@@ -27,9 +33,7 @@ export default function ItemListaUsuario({ data, deleteItem, editItem }) {
 
           <View style={{ flexDirection: 'row' }}>
             <TouchableWithoutFeedback>
-              <Text style={styles.textCelular}>{`${data?.tipo}  |  ${getStatus(
-                data?.ativo
-              )}`}</Text>
+              <Text style={styles.textCelular}>{getTipoEStatus()}</Text>
             </TouchableWithoutFeedback>
             <TouchableWithoutFeedback onPress={() => editItem(data)}>
               <Text style={styles.textCelular}>

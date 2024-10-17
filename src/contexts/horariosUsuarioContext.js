@@ -9,6 +9,7 @@ function HorarioUsuarioProvider({ children }) {
   const [horariosUsuario, setHorariosUsuario] = useState([]);
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [horariosCandidatosDia, setHorariosCanditatosDia] = useState([]);
 
   async function horarioEscolhidoExiste(data, userkey) {
     let retorno = false;
@@ -133,6 +134,39 @@ function HorarioUsuarioProvider({ children }) {
       });
   }
 
+  async function getHorariosCandidadosDoDia(dataBR) {
+    //Retorna os horários de TODOS os usuários candidatos do dia
+    setLoading(true);
+    setHorariosCanditatosDia([]);
+    await firebase
+      .database()
+      .ref('horariosusuario')
+      .orderByChild('data')
+      .equalTo(dataBR)
+      .once('value', (snapshot) => {
+        if (snapshot.val() != null) {
+          const objHorariosCandidatos = Object.keys(snapshot.val()).map(
+            (key) => ({
+              key: key,
+              ...snapshot.val()[key]
+            })
+          );
+
+          if (objHorariosCandidatos.length != 0)
+            setHorariosCanditatosDia(
+              [...objHorariosCandidatos].sort(({ data: a }, { data: b }) =>
+                a > b ? -1 : a < b ? 1 : 0
+              )
+            );
+        }
+        setLoading(false);
+      })
+      .catch((err) => {
+        setLoading(false);
+        console.log(err);
+      });
+  }
+
   return (
     <HorarioUsuarioContext.Provider
       value={{
@@ -144,7 +178,10 @@ function HorarioUsuarioProvider({ children }) {
         excluirHorariosUsuario,
         saving,
         setSaving,
-        getHorariosUsuario
+        getHorariosUsuario,
+        getHorariosCandidadosDoDia,
+        setHorariosCanditatosDia,
+        horariosCandidatosDia
       }}
     >
       {children}

@@ -115,7 +115,7 @@ function HorarioProvider({ children }) {
       });
   }
 
-  async function getHorariosAtuais(dataBR) {
+  async function getHorariosAtivos(dataBR) {
     //Retorna os horários cujas datas são maiores que a informada (data atual)
     await firebase
       .database()
@@ -149,7 +149,7 @@ function HorarioProvider({ children }) {
         alterarHorarios,
         excluirHorarios,
         getHorarios,
-        getHorariosAtuais
+        getHorariosAtivos
       }}
     >
       {children}

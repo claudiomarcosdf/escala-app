@@ -1,8 +1,9 @@
-import { useEffect, useState, useContext } from 'react';
+import { useEffect, useMemo, useState, useContext } from 'react';
 import {
   View,
   Text,
   TextInput,
+  FlatList,
   StyleSheet,
   SafeAreaView,
   TouchableOpacity,
@@ -11,140 +12,93 @@ import {
   Alert,
   Keyboard
 } from 'react-native';
+import Dropdown from 'react-native-input-select';
 import { Feather } from '@expo/vector-icons';
 import { AntDesign } from '@expo/vector-icons';
 import { format } from 'date-fns';
-import { Calendar, LocaleConfig } from 'react-native-calendars';
-import DateTimePicker from '@react-native-community/datetimepicker';
 import { ptBR } from '../../localeCalendar';
 
-LocaleConfig.locales['pt-br'] = ptBR;
-LocaleConfig.defaultLocale = 'pt-br';
-
-import ModalCoroinhasSelecionados from '../../components/ModalCoroinhasSelecionados';
+import { HorarioContext } from '../../contexts/horarioContext';
 import { EscalaContext } from '../../contexts/escalaContext';
-import { getOnlyDateBr } from '../../utils/helpers';
+import { HorarioUsuarioContext } from '../../contexts/horariosUsuarioContext';
+import { getDataToFilterFirebase, getFullDateBR } from '../../utils/helpers';
+import ItemListaHorarioUsuario from '../../components/ItemListaHorarioUsuario';
 
 export default function GeradorEscalas() {
-  let dataAtual = getOnlyDateBr();
-
+  let dataAtual = getDataToFilterFirebase();
+  const [dataSelecionada, setDataSelecionada] = useState(null);
+  const [horariosDoDia, setHorariosDoDia] = useState([]);
   const [dateNow, setDateNow] = useState(new Date(dataAtual));
-  const [markedDates, setMarkedDates] = useState({
-    [dataAtual]: { selected: true, marked: true }
-  });
-  const [dateTimePicker, setDateTimePicker] = useState(new Date(dataAtual)); //para hora apenas
-  const [showTimePicker, setShowTimePicker] = useState(false);
-  const [horariosDisponiveis, setHorariosDisponiveis] = useState([]);
-  const [visibleModalCoroinhas, setVisibleModalCoroinhas] = useState(false);
 
+  const { getHorariosAtivos, horarios } = useContext(HorarioContext);
   const {
-    coroinhasSelecionados,
-    gerarEscala,
-    building,
-    finish,
-    setFinish,
-    listaCoroinhasUnchecked
-  } = useContext(EscalaContext);
+    loading: loadingCandidatos,
+    setHorariosCanditatosDia,
+    getHorariosCandidadosDoDia,
+    horariosCandidatosDia,
+    excluirHorariosUsuario
+  } = useContext(HorarioUsuarioContext);
+  const { gerarEscala, building, finish, setFinish } =
+    useContext(EscalaContext);
 
-  function handleDayPress(date) {
-    setDateNow(new Date(date.dateString));
+  useEffect(() => {
+    //seleciona as datas maiores que o dia atual
+    async function buscaHorarios() {
+      await getHorariosAtivos(dataAtual);
+    }
+    buscaHorarios();
+  }, []);
 
-    let markedDay = {};
-    markedDay[date.dateString] = {
-      selected: true,
-      selectedColor: '#3b3dbf',
-      textColor: '#fff'
-    };
+  useMemo(() => {
+    exibeHorariosDoDia();
+  }, [dataSelecionada]);
 
-    setMarkedDates(markedDay);
+  function getDatas() {
+    return horarios.map((horario) => {
+      return { label: getFullDateBR(horario.data), value: horario.data };
+    });
   }
 
-  function handleAdicionarHorario() {
-    const dataEscolhida = dateNow;
-    const dataHoje = new Date(dataAtual);
-    if (dataEscolhida < dataHoje) {
-      Alert.alert('Atenção', 'A data selecionada é menor que a data atual.');
+  function exibeHorariosDoDia() {
+    if (!horarios) return;
+    if (!dataSelecionada) {
+      setHorariosDoDia([]);
       return;
     }
 
-    const horaMarcada = dateTimePicker.toLocaleTimeString('pt-BR', {
-      hour12: false,
-      hour: '2-digit',
-      minute: '2-digit'
-    }); // 00:00
-
-    const horarioJaExisteIndex = horariosDisponiveis.findIndex(
-      (horario) => horario === horaMarcada
+    const objDataSelecionada = horarios.filter(
+      (horario) => horario.data == dataSelecionada
     );
-    if (horarioJaExisteIndex != -1) {
-      Alert.alert('Atenção', 'O horário já existe!');
-      return;
-    }
-
-    setHorariosDisponiveis((oldHorarios) => [...oldHorarios, horaMarcada]);
+    setHorariosDoDia(objDataSelecionada[0].horarios);
   }
 
-  function handleDeleteHorario(horarioSelecionado) {
-    Alert.alert(
-      'Atenção',
-      `Confirma exclusão do horário "${horarioSelecionado}"`,
-      [
-        {
-          text: 'Cancelar',
-          style: 'cancel'
-        },
-        {
-          text: 'Continuar',
-          onPress: () => {
-            const newListHoariosDisponiveis = horariosDisponiveis.filter(
-              (horario) => horario !== horarioSelecionado
-            );
-            setHorariosDisponiveis([...newListHoariosDisponiveis]);
-          }
-        }
-      ]
-    );
-  }
-
-  const onChangeTimePicker = (event, selectedDate) => {
-    const currentDate = selectedDate;
-    setShowTimePicker(false);
-    setDateTimePicker(currentDate);
-  };
-
-  function onTimePicker() {
-    setShowTimePicker(true);
-  }
-
-  function handleShowModal() {
-    listaCoroinhasUnchecked();
-    setVisibleModalCoroinhas(true);
+  function getTotalCandidatos() {
+    return dataSelecionada
+      ? horariosCandidatosDia.length != 0
+        ? horariosCandidatosDia.length
+        : 0
+      : 0;
   }
 
   async function gerarEscalasFinalizar(embaralhar) {
-    const date = new Date(dateNow);
-    const onlyDate = date.valueOf() + date.getTimezoneOffset() * 60 * 1000;
-    const dataFormatada = format(onlyDate, 'dd/MM/yyy');
-
-    await gerarEscala(dataFormatada, horariosDisponiveis, embaralhar);
-    setDateTimePicker(new Date(dataAtual));
-    setHorariosDisponiveis([]);
+    //console.log(horariosCandidatosDia);
+    await gerarEscala(
+      dataSelecionada,
+      horariosDoDia,
+      horariosCandidatosDia,
+      embaralhar
+    );
+    setDataSelecionada(null);
   }
 
   async function handleGerar() {
-    //console.log('formato americano: ', dateNow);
     Keyboard.dismiss();
-    if (horariosDisponiveis.length == 0) {
-      Alert.alert('Atenção', 'Os horários das missas devem ser informados!');
+    if (!dataSelecionada || horariosCandidatosDia.length == 0) {
+      Alert.alert('Atenção', 'Não há candidatos para esta data!');
       return;
     }
 
-    if (coroinhasSelecionados.length == 0) {
-      Alert.alert('Atenção', 'Nenhum coroinha foi previamente selecionado!');
-      return;
-    }
-
-    Alert.alert('Embaralhar', `Deseja ordenar aleatoriamente os coroinhas?`, [
+    Alert.alert('Embaralhar', `Deseja ordenar aleatoriamente os candidatos?`, [
       {
         text: 'Cancelar',
         style: 'cancel'
@@ -160,6 +114,28 @@ export default function GeradorEscalas() {
     ]);
   }
 
+  async function handleChangeData(value) {
+    setDataSelecionada(value);
+    await getHorariosCandidadosDoDia(value);
+  }
+
+  async function handleDelete(key, data) {
+    if (!key) return;
+
+    Alert.alert('Atenção', `Excluir horários do candidato?`, [
+      {
+        text: 'Cancelar',
+        style: 'cancel'
+      },
+      {
+        text: 'Continuar',
+        onPress: () => {
+          excluirHorariosUsuario(key);
+        }
+      }
+    ]);
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.boxArea}>
@@ -167,81 +143,41 @@ export default function GeradorEscalas() {
           <Text style={styles.titleText}>Gerador de Escalas</Text>
         </View>
 
-        <View style={styles.boxCalendar}>
-          <Calendar
-            current={dataAtual}
-            onDayPress={handleDayPress}
-            markedDates={markedDates}
-            enableSwipeMonths={true}
-            style={{ borderRadius: 5 }}
-            theme={{
-              //todayTextColor: '#ff0000',
-              todayTextColor: '#000',
-              selectedDayBackgroundColor: '#00adf5',
-              selectedDayTextColor: '#fff'
+        <View style={styles.boxDropdown}>
+          <Dropdown
+            placeholder='Selecione o dia...'
+            placeholderStyle={{ opacity: 0.5 }}
+            selectedItemStyle={{
+              color: '#0096c7',
+              fontSize: 16,
+              fontWeight: '900'
             }}
+            dropdownStyle={styles.dropdown}
+            options={horarios ? getDatas() : null}
+            selectedValue={dataSelecionada}
+            onValueChange={(value) => {
+              handleChangeData(value);
+            }}
+            primaryColor={'#0096c7'}
           />
         </View>
 
-        <View style={styles.boxHorario}>
-          <TouchableOpacity style={styles.btnHora} onPress={onTimePicker}>
-            <Text style={styles.textBtnHora}>Selecione o horário</Text>
-          </TouchableOpacity>
-          <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-            <TextInput
-              placeholder='Hora selecionada'
-              style={styles.textInputHora}
-              value={dateTimePicker.toLocaleTimeString('pt-BR', {
-                hour12: false,
-                hour: '2-digit',
-                minute: '2-digit'
-              })}
-              showSoftInputOnFocus={false}
-              selectTextOnFocus={false}
-              onChangeText={() => {}}
-            />
-          </TouchableWithoutFeedback>
-
-          <TouchableOpacity
-            style={styles.plusButton}
-            onPress={handleAdicionarHorario}
-          >
-            <Feather name='plus' size={22} color='#fff' />
-          </TouchableOpacity>
-        </View>
-
         <Text style={styles.textHorariosSelecionados}>
-          Horários das missas selecionados
+          Horários das missas do dia
         </Text>
-        {horariosDisponiveis.length === 0 && (
-          <Text style={{ fontSize: 12 }}>Nenhum selecionado</Text>
+        {horariosDoDia.length === 0 && (
+          <Text style={{ fontSize: 12 }}>Nenhuma data selecionada</Text>
         )}
-        <View style={{ flexDirection: 'row', marginBottom: 25 }}>
-          {horariosDisponiveis.map((horario) => (
-            <Text
-              key={horario}
-              style={styles.boxHorarioDisponivel}
-              onPress={() => handleDeleteHorario(horario)}
-            >
+        <View style={{ flexDirection: 'row', marginBottom: 20 }}>
+          {horariosDoDia.map((horario) => (
+            <Text key={horario} style={styles.boxHorarioDisponivel}>
               {horario}
             </Text>
           ))}
         </View>
 
-        <View>
-          <TouchableOpacity
-            style={styles.btnCoroinhas}
-            onPress={() => handleShowModal()}
-          >
-            <Feather name='check-square' size={20} color='#fff' />
-            <Text style={{ color: '#fff', fontWeight: '600', marginLeft: 10 }}>
-              Coroinhas selecionados
-            </Text>
-          </TouchableOpacity>
-        </View>
-
         <TouchableOpacity
-          style={styles.btnCadastrar}
+          style={styles.btnGerar}
           onPress={handleGerar}
           disabled={building ? true : false}
         >
@@ -269,20 +205,37 @@ export default function GeradorEscalas() {
           </View>
         )}
 
-        {showTimePicker && (
-          <DateTimePicker
-            testID='dtTimePicker'
-            value={dateTimePicker}
-            mode={'time'}
-            locale='pt-BR'
-            is24Hour={true}
-            onChange={onChangeTimePicker}
-          />
-        )}
+        <View style={styles.boxTotalCandidatos}>
+          <Text style={styles.textTotalCandidados}>Total de candidados: </Text>
+          <Text style={[styles.textTotalCandidados, { fontWeight: '700' }]}>
+            {getTotalCandidatos()}
+          </Text>
+        </View>
 
-        <ModalCoroinhasSelecionados
-          visible={visibleModalCoroinhas}
-          setVisible={setVisibleModalCoroinhas}
+        <FlatList
+          style={styles.list}
+          keyExtractor={(item) => item.key}
+          data={dataSelecionada ? horariosCandidatosDia : []}
+          renderItem={({ item }) => (
+            <ItemListaHorarioUsuario
+              fullFields
+              data={item}
+              deleteItem={handleDelete}
+            />
+          )}
+          ListEmptyComponent={
+            loadingCandidatos ? (
+              <View style={styles.textMessageList}>
+                <Text style={styles.textMessageList}>Carregando...</Text>
+              </View>
+            ) : (
+              <View style={styles.textMessageList}>
+                <Text style={{ fontSize: 14, color: '#ee5253' }}>
+                  Nenhum candidato para este dia!
+                </Text>
+              </View>
+            )
+          }
         />
       </View>
     </SafeAreaView>
@@ -307,16 +260,21 @@ const styles = StyleSheet.create({
     color: '#2f3640',
     marginBottom: 8
   },
-  boxCalendar: {
+  boxDropdown: {
     width: '100%',
-    marginBottom: 25
+    marginBottom: 3
   },
-  btnCadastrar: {
+  dropdown: {
+    borderColor: '#747d8c',
+    backgroundColor: '#FFF',
+    borderRadius: 4
+  },
+  btnGerar: {
     alignItems: 'center',
     justifyContent: 'center',
     height: 45,
     marginBotton: 10,
-    marginTop: 20,
+    marginTop: 3,
     borderRadius: 8,
     backgroundColor: '#0984e3',
     backgroundColor: '#0096c7',
@@ -326,50 +284,6 @@ const styles = StyleSheet.create({
     color: '#FFF',
     fontSize: 14,
     fontWeight: '600'
-  },
-  boxHorario: {
-    flexDirection: 'row',
-    marginBottom: 20,
-    alignItems: 'center'
-  },
-  plusButton: {
-    alignItems: 'center',
-    marginLeft: 10,
-    borderRadius: 50,
-    width: 55,
-    height: 35,
-    padding: 4,
-    borderWidth: 1,
-    borderColor: '#02c39a',
-    backgroundColor: '#02c39a'
-  },
-  btnHora: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: 140,
-    height: 45,
-    borderRadius: 50,
-    borderTopRightRadius: 0,
-    borderBottomRightRadius: 0,
-    backgroundColor: '#0096c7'
-  },
-  textBtnHora: {
-    color: '#FFF',
-    fontSize: 13,
-    fontWeight: '600'
-  },
-  textInputHora: {
-    backgroundColor: '#F2f6fc',
-    borderRadius: 50,
-    borderTopLeftRadius: 0,
-    borderBottomLeftRadius: 0,
-    height: 45,
-    padding: 10,
-    paddingLeft: 20,
-    borderWidth: 1,
-    borderColor: '#0096c7',
-    fontWeight: '700',
-    width: 120
   },
   textHorariosSelecionados: {
     marginBottom: 5,
@@ -386,8 +300,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#ffeaa7'
   },
   btnFinish: {
-    // width: 70,
-    // height: 20,
     paddingHorizontal: 10,
     paddingtop: 2,
     paddingBottom: 2,
@@ -405,11 +317,23 @@ const styles = StyleSheet.create({
   boxMessage: { marginTop: 20, alignItems: 'center' },
   iconAndtext: { flexDirection: 'row', alignItems: 'center' },
   textMessage: { color: '#2ecc71', fontWeight: '700', marginLeft: 5 },
-  btnCoroinhas: {
+  boxTotalCandidatos: {
     flexDirection: 'row',
-    backgroundColor: '#02c39a',
-    borderRadius: 50,
-    padding: 4,
-    paddingHorizontal: 12
+    width: '100%',
+    marginTop: 18,
+    paddingHorizontal: 5
+  },
+  textTotalCandidados: { fontSize: 12, color: '#0096c7' },
+  list: {
+    width: '100%',
+    marginTop: 4,
+    padding: 5,
+    borderRadius: 8,
+    backgroundColor: '#dfe4ea'
+  },
+  textMessageList: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 20
   }
 });

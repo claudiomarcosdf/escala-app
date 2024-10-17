@@ -32,13 +32,14 @@ function EscalaProvider({ children }) {
             key: childItem.key,
             data: childItem.val().data,
             hora: childItem.val().hora,
-            usuario: childItem.val().usuario,
-            tipousuario: childItem.val().tipousuario,
+            coroinha: childItem.val().coroinha,
+            celular: childItem.val().celular,
             falta: childItem.val().falta,
             atraso: childItem.val().atraso
           };
 
           escalasTemp.push(data);
+          //setEscalas((oldEscalas) => [...oldEscalas, data]);
         });
         setEscalas(
           escalasTemp.sort((a, b) =>
@@ -63,6 +64,53 @@ function EscalaProvider({ children }) {
         const newEscalaList = escalas.filter((item) => item.key !== key);
         setEscalas(newEscalaList);
       });
+  }
+
+  function montarArrayComVagasEHorarios(horariosDisponiveis) {
+    const totalCoroinhas = coroinhasSelecionados.length;
+    const qtdHorariosDisponiveis = horariosDisponiveis.length;
+    const coroinhasPorHorario = Math.floor(
+      totalCoroinhas / qtdHorariosDisponiveis
+    ); //parte inteira
+    const sobraCoroinhas = totalCoroinhas % qtdHorariosDisponiveis;
+
+    //montar o array vagasHorarios
+    const vagasHorarios = [];
+    for (var i = 0; i < qtdHorariosDisponiveis; i++) {
+      const itemVagaHorario = {
+        horario: horariosDisponiveis[i],
+        vagas: coroinhasPorHorario
+      };
+      vagasHorarios.push(itemVagaHorario);
+    }
+
+    if (vagasHorarios.length !== 0) {
+      const newArrayVagasHorarios = [...vagasHorarios];
+
+      for (var i = 0; i < sobraCoroinhas; i++) {
+        newArrayVagasHorarios[i].vagas = newArrayVagasHorarios[i].vagas + 1;
+      }
+      return newArrayVagasHorarios;
+    }
+
+    return vagasHorarios;
+  }
+
+  function subtraiVaga(vagasHorariosTemp, horario) {
+    const newArrayVagasHorarios = [...vagasHorariosTemp];
+    const arrayVagasHorariosUpdated = newArrayVagasHorarios.map(
+      (vagaHorarioObj) => {
+        if (vagaHorarioObj.horario == horario && vagaHorarioObj.vagas > 0) {
+          return {
+            horario: vagaHorarioObj.horario,
+            vagas: vagaHorarioObj.vagas - 1
+          };
+        }
+        return { ...vagaHorarioObj };
+      }
+    );
+
+    return arrayVagasHorariosUpdated;
   }
 
   async function escalaExiste(data) {
@@ -92,32 +140,7 @@ function EscalaProvider({ children }) {
       });
   }
 
-  function atualizaVagasPreenchidas(vagasPreenchidasTemp, horario) {
-    const newArrayVagasPreenchidas = [...vagasPreenchidasTemp];
-    const arrayVagasPreenchidasUpdated = newArrayVagasPreenchidas.map(
-      (objVagaPreenchida) => {
-        if (objVagaPreenchida.horario == horario) {
-          return {
-            horario: objVagaPreenchida.horario,
-            totalPreenchidas: objVagaPreenchida.totalPreenchidas + 1
-          };
-        }
-        return { ...objVagaPreenchida };
-      }
-    );
-
-    return arrayVagasPreenchidasUpdated;
-  }
-
-  /**
-   *
-   * @param {*} data : 01/01/2087
-   * @param {*} horarios : [{data, horarios:[], keyusuario, nomeusuario, tipousuario}]
-   * @param {*} horariosdoDia : ['00:00', '00:00']
-   * @param {*} embaralhar : true or false
-   * @returns
-   */
-  async function gerarEscala(data, horariosDoDia, horarios, embaralhar) {
+  async function gerarEscala(data, horarios, embaralhar) {
     //Verificar se a escala do dia já foi gerada
     setFinish(false);
     setBuilding(true);
@@ -129,61 +152,74 @@ function EscalaProvider({ children }) {
       return;
     }
 
-    let horariosOrdenados = [];
+    let coroinhasOrdenados = [];
     embaralhar
-      ? (horariosOrdenados = shuffleArray(horarios))
-      : (horariosOrdenados = getOrderedHorario(horarios));
+      ? (coroinhasOrdenados = shuffleArray(coroinhasSelecionados))
+      : (coroinhasOrdenados = getOrderedHorario(coroinhasSelecionados));
 
+    const vagasHorarios = montarArrayComVagasEHorarios(horarios);
     const escalas = [];
-    const qtdeVagasPorHorario = 10; //obter das confgs do APP
+    let vagasHorariosTemp = [...vagasHorarios];
 
-    let vagasPreenchidas = horariosDoDia.map((horario) => {
-      //[{ horario: '', totalPreenchidas: 0}]
-      return {
-        horario,
-        totalPreenchidas: 0
-      };
-    });
+    coroinhasOrdenados.forEach((coroinha) => {
+      let coroinhaJaEscalado = false;
 
-    horariosOrdenados.forEach(
-      ({ keyusuario, nomeusuario: candidato, tipousuario, horarios }) => {
-        horarios.forEach((horario) => {
-          const vagaPreenchidaFinded = vagasPreenchidas.find(
-            (vagaHorario) => vagaHorario.horario == horario
+      horarios.forEach((horario) => {
+        const vagaHorarioFinded = vagasHorariosTemp.find(
+          (vagaHorario) => vagaHorario.horario == horario
+        );
+        if (!vagaHorarioFinded) return;
+
+        if (vagaHorarioFinded.vagas > 0 && !coroinhaJaEscalado) {
+          //incluir coroinha na escala no referido horário
+          const newEscala = {
+            coroinha: coroinha.nome,
+            celular: coroinha.celular,
+            data: data,
+            hora: vagaHorarioFinded.horario,
+            atraso: false,
+            falta: false
+          };
+
+          escalas.push(newEscala);
+          vagasHorariosTemp = subtraiVaga(
+            vagasHorariosTemp,
+            vagaHorarioFinded.horario
           );
-          let totalVagasPreenchidasDoHorario =
-            vagaPreenchidaFinded.totalPreenchidas;
-
-          if (totalVagasPreenchidasDoHorario <= qtdeVagasPorHorario) {
-            //incluir coroinha na escala no referido horário
-            const newEscala = {
-              keyusuario,
-              usuario: candidato,
-              tipousuario,
-              data,
-              hora: horario,
-              atraso: false,
-              falta: false
-            };
-            escalas.push(newEscala);
-            vagasPreenchidas = atualizaVagasPreenchidas(
-              vagasPreenchidas,
-              horario
-            );
-          }
-        });
-      }
-    ); //end forEach
+          coroinhaJaEscalado = true;
+        }
+      });
+    }); //end forEach
 
     for (var i = 0; i < escalas.length; i++) {
       await Promise.all([salvarEscala(escalas[i])]);
+      //await salvarEscala(escalas[i]);
     }
 
     setBuilding(false);
     setFinish(true);
+    //listaCoroinhasUnchecked();
   }
 
-  async function escalarUsuario(novaEscala) {
+  // function listaCoroinhasUnchecked() {
+  //   setCoroinhasSelecionados([]);
+  //   if (coroinhas && coroinhas?.length != 0) {
+  //     const listSelected = coroinhas.map((coroinha) => {
+  //       return {
+  //         key: coroinha.key,
+  //         nome: coroinha.nome,
+  //         celular: coroinha.celular,
+  //         horario: coroinha.horario,
+  //         checked: false
+  //       };
+  //     });
+
+  //     const coroinhasOrdenados = getOrderedHorario(listSelected);
+  //     setCoroinhasSelecionados(coroinhasOrdenados);
+  //   }
+  // }
+
+  async function escalarCoroinha(novaEscala) {
     //Pode escalar no mesmo dia, EXCETO no mesmo horário
     setBuilding(true);
     let retorno = [];
@@ -203,21 +239,25 @@ function EscalaProvider({ children }) {
         id: key,
         ...retorno[key]
       }));
-      //busca se usuario está nas escalas da data e hora informadas
-      const encontrouUsuario = escalasList.some(
+      //busca se coroinha está nas escalas da data e hora informadas
+      const encontrouCoroinha = escalasList.some(
         (escala) =>
-          escala.pessoa == novaEscala.pessoa && escala.hora == novaEscala.hora
+          escala.coroinha == novaEscala.coroinha &&
+          escala.hora == novaEscala.hora
       );
 
-      if (encontrouUsuario) {
-        Alert.alert('Atenção', 'Pessoa já está escalada nesta data e horário!');
+      if (encontrouCoroinha) {
+        Alert.alert(
+          'Atenção',
+          'O coroinha já está escalado nesta data e horário!'
+        );
         setBuilding(false);
         return false;
       }
     }
 
     await salvarEscala(novaEscala);
-    Alert.alert('Sucesso', 'Pessoa escalada com sucesso!');
+    Alert.alert('Sucesso', 'O coroinha escalado com sucesso!');
 
     setBuilding(false);
     return true;
@@ -236,9 +276,8 @@ function EscalaProvider({ children }) {
           (item) => item.key === escala.key
         );
         let escalasClone = escalas;
-        escalasClone[escalaIndex].keypessoa = escala.keypessoa;
-        escalasClone[escalaIndex].pessoa = escala.pessoa;
-        escalasClone[escalaIndex].tipopessoa = escala.tipopessoa;
+        escalasClone[escalaIndex].coroinha = escala.coroinha;
+        escalasClone[escalaIndex].celular = escala.celular;
         escalasClone[escalaIndex].data = escala.data;
         escalasClone[escalaIndex].hora = escala.hora;
         escalasClone[escalaIndex].falta = escala.falta;
@@ -260,7 +299,7 @@ function EscalaProvider({ children }) {
         setEscalas,
         loadingEscalas,
         excluirEscala,
-        escalarUsuario,
+        escalarCoroinha,
         coroinhasSelecionados,
         setCoroinhasSelecionados,
         lancarFaltaAtraso

@@ -13,7 +13,7 @@ import Dropdown from 'react-native-input-select';
 import { AuthContext } from '../../contexts/authContext';
 import { HorarioContext } from '../../contexts/horarioContext';
 import { UsuarioContext } from '../../contexts/usuarioContext';
-import { getDataToFilterFirebase } from '../../utils/helpers';
+import { getDataToFilterFirebase, getFullDateBR } from '../../utils/helpers';
 import { HorarioUsuarioContext } from '../../contexts/horariosUsuarioContext';
 import ItemListaHorarioUsuario from '../../components/ItemListaHorarioUsuario';
 
@@ -23,7 +23,7 @@ export default function EscolhaHorarios() {
   const [data, setData] = useState(null);
   const [horariosSelecionado, setHorariosSelecionados] = useState([]);
   const { user } = useContext(AuthContext);
-  const { getHorariosAtuais, horarios } = useContext(HorarioContext);
+  const { getHorariosAtivos, horarios } = useContext(HorarioContext);
   const {
     getHorariosUsuario,
     horariosUsuario,
@@ -36,7 +36,7 @@ export default function EscolhaHorarios() {
   useEffect(() => {
     //selecionar as datas maiores que o dia atual
     async function buscaHorarios() {
-      await getHorariosAtuais(dataAtual);
+      await getHorariosAtivos(dataAtual);
       await getHorariosUsuario(dataAtual, user.key);
     }
 
@@ -53,7 +53,7 @@ export default function EscolhaHorarios() {
 
   function getDatas() {
     return horarios.map((horario) => {
-      return { label: horario.data, value: horario.data };
+      return { label: getFullDateBR(horario.data), value: horario.data };
     });
   }
 

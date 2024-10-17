@@ -17,39 +17,37 @@ import { format } from 'date-fns';
 import { Calendar, LocaleConfig } from 'react-native-calendars';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { ptBR } from '../../localeCalendar';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 LocaleConfig.locales['pt-br'] = ptBR;
 LocaleConfig.defaultLocale = 'pt-br';
 
-import { HorarioContext } from '../../contexts/horarioContext';
+import ModalCoroinhasSelecionados from '../../components/ModalCoroinhasSelecionados';
+import { EscalaContext } from '../../contexts/escalaContext';
 import { getOnlyDateBr } from '../../utils/helpers';
 
-export default function CadastroHorarios() {
+export default function GeradorEscalas() {
   let dataAtual = getOnlyDateBr();
 
   const [dateNow, setDateNow] = useState(new Date(dataAtual));
   const [markedDates, setMarkedDates] = useState({
     [dataAtual]: { selected: true, marked: true }
-    // ['2024-10-14']: { disabled: true, disableTouchEvent: true }
   });
   const [dateTimePicker, setDateTimePicker] = useState(new Date(dataAtual)); //para hora apenas
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [horariosDisponiveis, setHorariosDisponiveis] = useState([]);
+  const [visibleModalCoroinhas, setVisibleModalCoroinhas] = useState(false);
 
   const {
-    loading,
-    incluirHorarios,
-    excluirHorarios,
+    coroinhasSelecionados,
+    gerarEscala,
+    building,
     finish,
     setFinish,
-    getHorarios,
-    horarios
-  } = useContext(HorarioContext);
+    listaCoroinhasUnchecked
+  } = useContext(EscalaContext);
 
-  async function handleDayPress(date) {
-    const selectedDate = new Date(date.dateString);
-    setDateNow(selectedDate);
+  function handleDayPress(date) {
+    setDateNow(new Date(date.dateString));
 
     let markedDay = {};
     markedDay[date.dateString] = {
@@ -59,7 +57,6 @@ export default function CadastroHorarios() {
     };
 
     setMarkedDates(markedDay);
-    await getHorarios(selectedDate);
   }
 
   function handleAdicionarHorario() {
@@ -87,7 +84,7 @@ export default function CadastroHorarios() {
     setHorariosDisponiveis((oldHorarios) => [...oldHorarios, horaMarcada]);
   }
 
-  function handleDeleteHorarioSelecionado(horarioSelecionado) {
+  function handleDeleteHorario(horarioSelecionado) {
     Alert.alert(
       'Atenção',
       `Confirma exclusão do horário "${horarioSelecionado}"`,
@@ -119,44 +116,46 @@ export default function CadastroHorarios() {
     setShowTimePicker(true);
   }
 
-  async function salvarHorariosFinalizar() {
+  function handleShowModal() {
+    listaCoroinhasUnchecked();
+    setVisibleModalCoroinhas(true);
+  }
+
+  async function gerarEscalasFinalizar(embaralhar) {
     const date = new Date(dateNow);
     const onlyDate = date.valueOf() + date.getTimezoneOffset() * 60 * 1000;
     const dataFormatada = format(onlyDate, 'dd/MM/yyy');
 
-    await incluirHorarios(dataFormatada, horariosDisponiveis);
+    await gerarEscala(dataFormatada, horariosDisponiveis, embaralhar);
     setDateTimePicker(new Date(dataAtual));
     setHorariosDisponiveis([]);
   }
 
-  async function handleCadastrar() {
+  async function handleGerar() {
+    //console.log('formato americano: ', dateNow);
     Keyboard.dismiss();
     if (horariosDisponiveis.length == 0) {
       Alert.alert('Atenção', 'Os horários das missas devem ser informados!');
       return;
     }
 
-    Alert.alert('Salvar horário(s)', `Confirma?`, [
+    if (coroinhasSelecionados.length == 0) {
+      Alert.alert('Atenção', 'Nenhum coroinha foi previamente selecionado!');
+      return;
+    }
+
+    Alert.alert('Embaralhar', `Deseja ordenar aleatoriamente os coroinhas?`, [
       {
         text: 'Cancelar',
         style: 'cancel'
       },
       {
         text: 'Sim',
-        onPress: () => salvarHorariosFinalizar()
-      }
-    ]);
-  }
-
-  function handleDeleteHorario(horarios) {
-    Alert.alert('Atenção', `Excluir horários do dia ${horarios.data}?`, [
-      {
-        text: 'Cancelar',
-        style: 'cancel'
+        onPress: () => gerarEscalasFinalizar(true)
       },
       {
-        text: 'Excluir',
-        onPress: () => excluirHorarios(horarios.key)
+        text: 'Não',
+        onPress: () => gerarEscalasFinalizar(false)
       }
     ]);
   }
@@ -165,7 +164,7 @@ export default function CadastroHorarios() {
     <SafeAreaView style={styles.container}>
       <View style={styles.boxArea}>
         <View>
-          <Text style={styles.titleText}>Horários das Missas</Text>
+          <Text style={styles.titleText}>Gerador de Escalas</Text>
         </View>
 
         <View style={styles.boxCalendar}>
@@ -222,23 +221,35 @@ export default function CadastroHorarios() {
             <Text
               key={horario}
               style={styles.boxHorarioDisponivel}
-              onPress={() => handleDeleteHorarioSelecionado(horario)}
+              onPress={() => handleDeleteHorario(horario)}
             >
               {horario}
             </Text>
           ))}
         </View>
 
+        <View>
+          <TouchableOpacity
+            style={styles.btnCoroinhas}
+            onPress={() => handleShowModal()}
+          >
+            <Feather name='check-square' size={20} color='#fff' />
+            <Text style={{ color: '#fff', fontWeight: '600', marginLeft: 10 }}>
+              Coroinhas selecionados
+            </Text>
+          </TouchableOpacity>
+        </View>
+
         <TouchableOpacity
           style={styles.btnCadastrar}
-          onPress={handleCadastrar}
-          disabled={loading ? true : false}
+          onPress={handleGerar}
+          disabled={building ? true : false}
         >
           <Text style={styles.btnText}>
-            {loading ? 'Salvando Horários...' : 'Cadastrar horários'}
+            {building ? 'Gerando Escalas...' : 'Gerar Escalas'}
           </Text>
         </TouchableOpacity>
-        {loading && (
+        {building && (
           <View style={{ marginTop: 20 }}>
             <ActivityIndicator size={20} color='#0984e3' />
           </View>
@@ -247,44 +258,13 @@ export default function CadastroHorarios() {
           <View style={styles.boxMessage}>
             <View style={styles.iconAndtext}>
               <AntDesign name='checkcircle' size={16} color='#2ecc71' />
-              <Text style={styles.textMessage}>
-                Horários cadastrados com sucesso!
-              </Text>
+              <Text style={styles.textMessage}>Escala gerada com sucesso!</Text>
             </View>
             <TouchableOpacity
               onPress={() => setFinish(false)}
               style={styles.btnFinish}
             >
               <Text style={styles.textBtnFinish}>Fechar</Text>
-            </TouchableOpacity>
-          </View>
-        )}
-
-        {horarios && (
-          <View
-            style={{
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              padding: 8,
-              marginTop: 30,
-              borderWidth: 1,
-              borderColor: '#2ecc71',
-              borderRadius: 5
-            }}
-          >
-            <Text
-              style={{ fontWeight: '500' }}
-            >{`Horários do dia ${horarios.data}`}</Text>
-            <Text style={{ fontWeight: '700', marginBottom: 5 }}>
-              {horarios?.horarios.join(' - ')}
-            </Text>
-            <TouchableOpacity onPress={() => handleDeleteHorario(horarios)}>
-              <MaterialCommunityIcons
-                name='trash-can-outline'
-                size={25}
-                color='#ee5253'
-              />
             </TouchableOpacity>
           </View>
         )}
@@ -299,6 +279,11 @@ export default function CadastroHorarios() {
             onChange={onChangeTimePicker}
           />
         )}
+
+        <ModalCoroinhasSelecionados
+          visible={visibleModalCoroinhas}
+          setVisible={setVisibleModalCoroinhas}
+        />
       </View>
     </SafeAreaView>
   );
@@ -324,13 +309,14 @@ const styles = StyleSheet.create({
   },
   boxCalendar: {
     width: '100%',
-    marginBottom: 15
+    marginBottom: 25
   },
   btnCadastrar: {
     alignItems: 'center',
     justifyContent: 'center',
-    height: 40,
+    height: 45,
     marginBotton: 10,
+    marginTop: 20,
     borderRadius: 8,
     backgroundColor: '#0984e3',
     backgroundColor: '#0096c7',
@@ -343,7 +329,7 @@ const styles = StyleSheet.create({
   },
   boxHorario: {
     flexDirection: 'row',
-    marginBottom: 10,
+    marginBottom: 20,
     alignItems: 'center'
   },
   plusButton: {
@@ -361,7 +347,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     width: 140,
-    height: 40,
+    height: 45,
     borderRadius: 50,
     borderTopRightRadius: 0,
     borderBottomRightRadius: 0,
@@ -377,7 +363,7 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     borderTopLeftRadius: 0,
     borderBottomLeftRadius: 0,
-    height: 40,
+    height: 45,
     padding: 10,
     paddingLeft: 20,
     borderWidth: 1,
@@ -387,7 +373,7 @@ const styles = StyleSheet.create({
   },
   textHorariosSelecionados: {
     marginBottom: 5,
-    fontSize: 14,
+    fontSize: 16,
     color: '#0096c7',
     fontWeight: '700'
   },
@@ -418,5 +404,12 @@ const styles = StyleSheet.create({
   },
   boxMessage: { marginTop: 20, alignItems: 'center' },
   iconAndtext: { flexDirection: 'row', alignItems: 'center' },
-  textMessage: { color: '#2ecc71', fontWeight: '700', marginLeft: 5 }
+  textMessage: { color: '#2ecc71', fontWeight: '700', marginLeft: 5 },
+  btnCoroinhas: {
+    flexDirection: 'row',
+    backgroundColor: '#02c39a',
+    borderRadius: 50,
+    padding: 4,
+    paddingHorizontal: 12
+  }
 });
