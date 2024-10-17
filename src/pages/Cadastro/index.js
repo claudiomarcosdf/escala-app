@@ -16,8 +16,8 @@ import { Feather } from '@expo/vector-icons';
 import filter from 'lodash.filter';
 
 import firebase from '../../firebaseConfig';
-import ItemListaUsuario from '../../components/ItemListaUsuario';
-import { UsuarioContext } from '../../contexts/usuarioContext';
+import ItemListaPessoa from '../../components/ItemListaPessoa';
+import { PessoaContext } from '../../contexts/pessoaContext';
 
 export default function Cadastro() {
   const inputRef = useRef(null);
@@ -26,24 +26,24 @@ export default function Cadastro() {
   const [tipo, setTipo] = useState(null);
   const [key, setKey] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
-  const [usuariosFiltered, setUsuariosFiltered] = useState([]);
+  const [pessoasFiltered, setPessoasFiltered] = useState([]);
 
   const [ativo, setAtivo] = useState(false);
   const toggleSwitch = () => setAtivo((previousState) => !previousState);
 
-  const { loading, usuarios, setUsuarios, alterarUsuario, excluirUsuario } =
-    useContext(UsuarioContext);
+  const { loading, pessoas, setPessoas, alterarPessoa, excluirPessoa } =
+    useContext(PessoaContext);
 
   useEffect(() => {
-    setUsuariosFiltered(usuarios);
+    setPessoasFiltered(pessoas);
   }, []);
 
   async function handleSave() {
     if (!nome || !tipo) return;
 
     if (key) {
-      await alterarUsuario(key, nome, celular, tipo, ativo);
-      setUsuariosFiltered(usuarios);
+      await alterarPessoa(key, nome, celular, tipo, ativo);
+      setPessoasFiltered(pessoas);
       Keyboard.dismiss();
       setNome('');
       setCelular('');
@@ -54,10 +54,10 @@ export default function Cadastro() {
     }
 
     //Inclusão NÃO disponível para o administrador porque é devida ao próprio usuário
-    //await incluirUsuario(nome, celular, tipo, ativo);
-    //setUsuariosFiltered(usuarios);
+    //await incluirPessoa(nome, celular, tipo, ativo);
+    //setPessoasFiltered(pessoas);
 
-    Alert.alert('Atenção', 'O cadastro é realizado pelo próprio usuário.');
+    Alert.alert('Atenção', 'O cadastro é realizado pela própria pessoa.');
     setNome(null);
     setCelular(null);
     setTipo(null);
@@ -68,7 +68,7 @@ export default function Cadastro() {
   async function handleDelete(key, nome) {
     if (!key) return;
 
-    Alert.alert('Atenção', `Confirma exclusão do usuário "${nome}"?`, [
+    Alert.alert('Atenção', `Confirma exclusão de "${nome}"?`, [
       {
         text: 'Cancelar',
         style: 'cancel'
@@ -76,8 +76,8 @@ export default function Cadastro() {
       {
         text: 'Continuar',
         onPress: () => {
-          excluirUsuario(key);
-          setUsuariosFiltered(usuarios);
+          excluirPessoa(key);
+          setPessoasFiltered(pessoas);
         }
       }
     ]);
@@ -104,18 +104,18 @@ export default function Cadastro() {
   function handleSearch(query) {
     setSearchQuery(query);
     const formattedQuery = query.toLowerCase();
-    const filteredData = filter(usuariosFiltered, (usuario) => {
-      if (usuario.nome.toLowerCase().includes(formattedQuery)) return true;
+    const filteredData = filter(pessoasFiltered, (pessoa) => {
+      if (pessoa.nome.toLowerCase().includes(formattedQuery)) return true;
       return false;
     });
 
-    setUsuarios(filteredData);
+    setPessoas(filteredData);
   }
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.boxAreaCadastro}>
-        <Text style={styles.titleText}>Cadastro de Usuários</Text>
+        <Text style={styles.titleText}>Cadastro de Pessoas</Text>
 
         {key && (
           <View style={styles.boxMessageEdit}>
@@ -192,18 +192,18 @@ export default function Cadastro() {
         </View>
 
         <View style={styles.boxTotalCoroinhas}>
-          <Text style={styles.textTotal}>Usuários cadastrados: </Text>
+          <Text style={styles.textTotal}>Pessoas cadastradas: </Text>
           <Text style={[styles.textTotal, { fontWeight: '700' }]}>
-            {usuarios.length != 0 ? usuarios.length : 0}
+            {pessoas.length != 0 ? pessoas.length : 0}
           </Text>
         </View>
 
         <FlatList
           style={styles.list}
           keyExtractor={(item) => item.key}
-          data={usuarios}
+          data={pessoas}
           renderItem={({ item }) => (
-            <ItemListaUsuario
+            <ItemListaPessoa
               data={item}
               deleteItem={handleDelete}
               editItem={handleEdit}
@@ -217,7 +217,7 @@ export default function Cadastro() {
             ) : (
               <View style={styles.textMessage}>
                 <Text style={{ fontSize: 14, color: '#ee5253' }}>
-                  Nenhum usuário cadastrado!
+                  Nenhuma pessoa cadastrada!
                 </Text>
               </View>
             )

@@ -12,10 +12,10 @@ import {
 import Dropdown from 'react-native-input-select';
 import { AuthContext } from '../../contexts/authContext';
 import { HorarioContext } from '../../contexts/horarioContext';
-import { UsuarioContext } from '../../contexts/usuarioContext';
+import { PessoaContext } from '../../contexts/pessoaContext';
 import { getDataToFilterFirebase, getFullDateBR } from '../../utils/helpers';
-import { HorarioUsuarioContext } from '../../contexts/horariosUsuarioContext';
-import ItemListaHorarioUsuario from '../../components/ItemListaHorarioUsuario';
+import { HorarioPessoaContext } from '../../contexts/horariosPessoaContext';
+import ItemListaHorarioPessoa from '../../components/ItemListaHorarioPessoa';
 
 export default function EscolhaHorarios() {
   let dataAtual = getDataToFilterFirebase();
@@ -25,19 +25,19 @@ export default function EscolhaHorarios() {
   const { user } = useContext(AuthContext);
   const { getHorariosAtivos, horarios } = useContext(HorarioContext);
   const {
-    getHorariosUsuario,
-    horariosUsuario,
-    incluirHorariosUsuario,
-    excluirHorariosUsuario,
+    getHorariosPessoa,
+    horariosPessoa,
+    incluirHorariosPessoa,
+    excluirHorariosPessoa,
     loading,
     saving
-  } = useContext(HorarioUsuarioContext);
+  } = useContext(HorarioPessoaContext);
 
   useEffect(() => {
     //selecionar as datas maiores que o dia atual
     async function buscaHorarios() {
       await getHorariosAtivos(dataAtual);
-      await getHorariosUsuario(dataAtual, user.key);
+      await getHorariosPessoa(dataAtual, user.key);
     }
 
     buscaHorarios();
@@ -48,7 +48,7 @@ export default function EscolhaHorarios() {
       Alert.alert('Atenção', 'Favor informar o dia e os horários.');
       return;
     }
-    await incluirHorariosUsuario(user, data, horariosSelecionado);
+    await incluirHorariosPessoa(user, data, horariosSelecionado);
   }
 
   function getDatas() {
@@ -77,7 +77,7 @@ export default function EscolhaHorarios() {
       {
         text: 'Continuar',
         onPress: () => {
-          excluirHorariosUsuario(key);
+          excluirHorariosPessoa(key);
         }
       }
     ]);
@@ -87,7 +87,7 @@ export default function EscolhaHorarios() {
     <SafeAreaView style={styles.container}>
       <View style={styles.boxAreaElements}>
         <Text style={styles.titleText}>Candidate-se às Missas</Text>
-        <Text style={styles.titleUsuario}>{user?.nome}</Text>
+        <Text style={styles.titlePessoa}>{user?.nome}</Text>
 
         <Dropdown
           placeholder='Selecione o dia...'
@@ -136,16 +136,16 @@ export default function EscolhaHorarios() {
         <View style={styles.boxTotalHorarios}>
           <Text style={styles.textTotal}>Horários escolhidos: </Text>
           <Text style={[styles.textTotal, { fontWeight: '700' }]}>
-            {horariosUsuario.length != 0 ? horariosUsuario.length : 0}
+            {horariosPessoa.length != 0 ? horariosPessoa.length : 0}
           </Text>
         </View>
 
         <FlatList
           style={styles.list}
           keyExtractor={(item) => item.key}
-          data={horariosUsuario}
+          data={horariosPessoa}
           renderItem={({ item }) => (
-            <ItemListaHorarioUsuario data={item} deleteItem={handleDelete} />
+            <ItemListaHorarioPessoa data={item} deleteItem={handleDelete} />
           )}
           ListEmptyComponent={
             loading ? (
@@ -184,7 +184,7 @@ const styles = StyleSheet.create({
     color: '#2f3640',
     marginBottom: 15
   },
-  titleUsuario: {
+  titlePessoa: {
     fontWeight: '500',
     color: '#0984e3',
     marginBottom: 10

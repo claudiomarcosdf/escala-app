@@ -11,7 +11,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
 import { getStatus } from '../../utils/helpers';
 
-export default function ItemListaHorarioUsuario({
+export default function ItemListaHorarioPessoa({
   data,
   deleteItem,
   fullFields
@@ -20,16 +20,16 @@ export default function ItemListaHorarioUsuario({
     return (
       <View>
         <TouchableWithoutFeedback>
-          <Text numberOfLines={1} style={styles.textUsuario}>
-            {`${data?.nomeusuario} (${data?.tipousuario})`}
+          <Text numberOfLines={1} style={styles.textPessoa}>
+            {`${data?.nomepessoa} (${data?.tipopessoa})`}
           </Text>
         </TouchableWithoutFeedback>
 
         <View style={{ flexDirection: 'row' }}>
           <TouchableWithoutFeedback>
-            <Text numberOfLines={1} style={styles.textDataUsuario}>
+            <Text numberOfLines={1} style={styles.textDataPessoa}>
               {data?.data}
-              <Text style={styles.textHorarioUsuario}>
+              <Text style={styles.textHorarioPessoa}>
                 {` - ${data?.horarios.join(' - ')}`}
               </Text>
             </Text>
@@ -39,7 +39,7 @@ export default function ItemListaHorarioUsuario({
     );
   }
 
-  function usuarioView() {
+  function pessoaView() {
     return (
       <View>
         <TouchableWithoutFeedback>
@@ -62,7 +62,7 @@ export default function ItemListaHorarioUsuario({
         <View style={styles.iconHorarioBox}>
           <MaterialCommunityIcons name='timetable' size={22} color='#2f3640' />
         </View>
-        {fullFields ? AdministradorView() : usuarioView()}
+        {fullFields ? AdministradorView() : pessoaView()}
       </View>
       <View style={styles.deleteBox}>
         <TouchableOpacity onPress={() => deleteItem(data?.key, data?.data)}>
@@ -88,7 +88,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     backgroundColor: '#fff'
   },
-  textUsuario: {
+  textPessoa: {
     width: 230,
     color: '#2f3640',
     fontSize: 13,
@@ -97,12 +97,12 @@ const styles = StyleSheet.create({
     textOverflow: 'ellipsis',
     whiteSpace: 'nowrap'
   },
-  textDataUsuario: {
+  textDataPessoa: {
     color: '#2f3640',
     fontSize: 10,
     fontWeight: '700'
   },
-  textHorarioUsuario: {
+  textHorarioPessoa: {
     color: '#e74c3c',
     fontSize: 10,
     fontWeight: '500'

@@ -33,7 +33,7 @@ export default function Home() {
               color='#fff'
               style={{ marginRight: 25 }}
             />
-            <Text style={styles.textButtom}>Cadastro de Coroinha</Text>
+            <Text style={styles.textButtom}>Cadastro de Pessoa</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.button}

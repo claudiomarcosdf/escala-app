@@ -2,19 +2,15 @@ import { createContext, useContext, useState } from 'react';
 import { Alert } from 'react-native';
 import firebase from '../firebaseConfig';
 import { shuffleArray, getOrderedHorario } from '../utils/helpers';
-import { CoroinhaContext } from './coroinhaContext';
 
 export const EscalaContext = createContext({});
 
 function EscalaProvider({ children }) {
-  const [coroinhasSelecionados, setCoroinhasSelecionados] = useState([]);
   const [escalaEncontrada, setEscalaEncontrada] = useState(false);
   const [escalas, setEscalas] = useState([]);
   const [loadingEscalas, setLoadingEscalas] = useState(false);
   const [building, setBuilding] = useState(false);
   const [finish, setFinish] = useState(false);
-
-  const { coroinhas } = useContext(CoroinhaContext);
 
   async function getEscalas(data) {
     setLoadingEscalas(true);
@@ -32,8 +28,8 @@ function EscalaProvider({ children }) {
             key: childItem.key,
             data: childItem.val().data,
             hora: childItem.val().hora,
-            usuario: childItem.val().usuario,
-            tipousuario: childItem.val().tipousuario,
+            pessoa: childItem.val().pessoa,
+            tipopessoa: childItem.val().tipopessoa,
             falta: childItem.val().falta,
             atraso: childItem.val().atraso
           };
@@ -112,7 +108,7 @@ function EscalaProvider({ children }) {
   /**
    *
    * @param {*} data : 01/01/2087
-   * @param {*} horarios : [{data, horarios:[], keyusuario, nomeusuario, tipousuario}]
+   * @param {*} horarios : [{data, horarios:[], keypessoa, nomepessoa, tipopessoa}]
    * @param {*} horariosdoDia : ['00:00', '00:00']
    * @param {*} embaralhar : true or false
    * @returns
@@ -146,7 +142,7 @@ function EscalaProvider({ children }) {
     });
 
     horariosOrdenados.forEach(
-      ({ keyusuario, nomeusuario: candidato, tipousuario, horarios }) => {
+      ({ keypessoa, nomepessoa: candidato, tipopessoa, horarios }) => {
         horarios.forEach((horario) => {
           const vagaPreenchidaFinded = vagasPreenchidas.find(
             (vagaHorario) => vagaHorario.horario == horario
@@ -155,11 +151,11 @@ function EscalaProvider({ children }) {
             vagaPreenchidaFinded.totalPreenchidas;
 
           if (totalVagasPreenchidasDoHorario <= qtdeVagasPorHorario) {
-            //incluir coroinha na escala no referido horário
+            //incluir pessoa na escala no referido horário
             const newEscala = {
-              keyusuario,
-              usuario: candidato,
-              tipousuario,
+              keypessoa,
+              pessoa: candidato,
+              tipopessoa,
               data,
               hora: horario,
               atraso: false,
@@ -183,7 +179,7 @@ function EscalaProvider({ children }) {
     setFinish(true);
   }
 
-  async function escalarUsuario(novaEscala) {
+  async function escalarPessoa(novaEscala) {
     //Pode escalar no mesmo dia, EXCETO no mesmo horário
     setBuilding(true);
     let retorno = [];
@@ -203,14 +199,14 @@ function EscalaProvider({ children }) {
         id: key,
         ...retorno[key]
       }));
-      //busca se usuario está nas escalas da data e hora informadas
-      const encontrouUsuario = escalasList.some(
+      //busca se pessoa está nas escalas da data e hora informadas
+      const encontrouPessoa = escalasList.some(
         (escala) =>
           escala.pessoa == novaEscala.pessoa && escala.hora == novaEscala.hora
       );
 
-      if (encontrouUsuario) {
-        Alert.alert('Atenção', 'Pessoa já está escalada nesta data e horário!');
+      if (encontrouPessoa) {
+        Alert.alert('Atenção', 'Pessoa já escalada nesta data e horário!');
         setBuilding(false);
         return false;
       }
@@ -260,9 +256,7 @@ function EscalaProvider({ children }) {
         setEscalas,
         loadingEscalas,
         excluirEscala,
-        escalarUsuario,
-        coroinhasSelecionados,
-        setCoroinhasSelecionados,
+        escalarPessoa,
         lancarFaltaAtraso
       }}
     >

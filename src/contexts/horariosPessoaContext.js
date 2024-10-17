@@ -3,45 +3,61 @@ import { format } from 'date-fns';
 import { Alert } from 'react-native';
 import firebase from '../firebaseConfig';
 
-export const HorarioUsuarioContext = createContext({});
+export const HorarioPessoaContext = createContext({});
 
-function HorarioUsuarioProvider({ children }) {
-  const [horariosUsuario, setHorariosUsuario] = useState([]);
+function HorarioPessoaProvider({ children }) {
+  const [horariosPessoa, setHorariosPessoa] = useState([]);
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [horariosCandidatosDia, setHorariosCanditatosDia] = useState([]);
+
+  //Caso a escala exista não deixa excluir horariopessoa
+  async function escalaExiste(data) {
+    let retorno = false;
+    await firebase
+      .database()
+      .ref('escalas')
+      .orderByChild('data')
+      .equalTo(data)
+      .once('value')
+      .then(function (snapshot) {
+        if (snapshot.val() != null) retorno = true;
+      });
+
+    return retorno;
+  }
 
   async function horarioEscolhidoExiste(data, userkey) {
     let retorno = false;
     await firebase
       .database()
-      .ref('horariosusuario')
+      .ref('horariospessoa')
       .orderByChild('data')
       .equalTo(data)
       .once('value')
       .then(function (snapshot) {
         if (snapshot.val() != null) {
-          const objHorariosUsuario = Object.keys(snapshot.val()).map((key) => ({
+          const objHorariosPessoa = Object.keys(snapshot.val()).map((key) => ({
             key: key,
             ...snapshot.val()[key]
           }));
 
-          const horariosUsuario = objHorariosUsuario.filter(
-            (objHorario) => objHorario.keyusuario == userkey
+          const horariosPessoa = objHorariosPessoa.filter(
+            (objHorario) => objHorario.keypessoa == userkey
           );
 
-          if (horariosUsuario.length != 0) retorno = true;
+          if (horariosPessoa.length != 0) retorno = true;
         }
       });
 
     return retorno;
   }
 
-  async function incluirHorariosUsuario(user, data, horarios) {
+  async function incluirHorariosPessoa(user, data, horarios) {
     //salva horários escolhidos
     setSaving(true);
-    let horariosUsuariodb = firebase.database().ref('horariosusuario');
-    let chave = horariosUsuariodb.push().key; //build new key
+    let horariosPessoadb = firebase.database().ref('horariospessoa');
+    let chave = horariosPessoadb.push().key; //build new key
 
     let existe = await Promise.all([horarioEscolhidoExiste(data, user.key)]);
 
@@ -51,29 +67,29 @@ function HorarioUsuarioProvider({ children }) {
       return;
     }
 
-    horariosUsuariodb
+    horariosPessoadb
       .child(chave)
       .set({
-        keyusuario: user.key,
-        nomeusuario: user.nome,
-        tipousuario: user.tipo,
+        keypessoa: user.key,
+        nomepessoa: user.nome,
+        tipopessoa: user.tipo,
         data,
         horarios
       })
       .then(() => {
         const dados = {
           key: chave,
-          keyusuario: user.key,
-          nomeusuario: user.nome,
-          tipousuario: user.tipo,
+          keypessoa: user.key,
+          nomepessoa: user.nome,
+          tipopessoa: user.tipo,
           data,
           horarios
         };
 
         Alert.alert('Sucesso', 'Horários salvos com sucesso!');
         setSaving(false);
-        setHorariosUsuario((oldHorariosUsuario) =>
-          [...oldHorariosUsuario, dados].sort(({ data: a }, { data: b }) =>
+        setHorariosPessoa((oldHorariosPessoa) =>
+          [...oldHorariosPessoa, dados].sort(({ data: a }, { data: b }) =>
             a > b ? -1 : a < b ? 1 : 0
           )
         );
@@ -85,43 +101,50 @@ function HorarioUsuarioProvider({ children }) {
       });
   }
 
-  async function excluirHorariosUsuario(key) {
+  async function excluirHorariosPessoa(key, data) {
+    let existe = await Promise.all([escalaExiste(data)]);
+
+    if (existe[0] == true) {
+      Alert.alert('Atenção', 'A escala para esta data já foi gerada!');
+      return;
+    }
+
     await firebase
       .database()
-      .ref('horariosusuario')
+      .ref('horariospessoa')
       .child(key)
       .remove()
       .then(() => {
-        const newHorariosList = horariosUsuario.filter(
+        const newHorariosList = horariosPessoa.filter(
           (item) => item.key !== key
         );
-        setHorariosUsuario(newHorariosList);
+        setHorariosPessoa(newHorariosList);
       });
   }
 
-  async function getHorariosUsuario(dataBR, userkey) {
+  async function getHorariosPessoa(dataBR, userkey) {
     //Retorna os horários cujas datas são maiores que a informada (data atual)
     setLoading(true);
-    setHorariosUsuario([]);
+    setHorariosPessoa([]);
     await firebase
       .database()
-      .ref('horariosusuario')
+      .ref('horariospessoa')
       .orderByChild('data')
       .startAt(dataBR)
       .once('value', (snapshot) => {
         if (snapshot.val() != null) {
-          const objHorariosUsuario = Object.keys(snapshot.val()).map((key) => ({
+          const objHorariosPessoa = Object.keys(snapshot.val()).map((key) => ({
             key: key,
             ...snapshot.val()[key]
           }));
 
-          const horariosUsuarioList = objHorariosUsuario.filter(
-            (objHorario) => objHorario.keyusuario == userkey
+          const horariosPessoaList = objHorariosPessoa.filter(
+            (objHorario) => objHorario.keypessoa == userkey
           );
 
-          if (horariosUsuarioList.length != 0)
-            setHorariosUsuario(
-              [...horariosUsuarioList].sort(({ data: a }, { data: b }) =>
+          if (horariosPessoaList.length != 0)
+            setHorariosPessoa(
+              [...horariosPessoaList].sort(({ data: a }, { data: b }) =>
                 a > b ? -1 : a < b ? 1 : 0
               )
             );
@@ -135,12 +158,12 @@ function HorarioUsuarioProvider({ children }) {
   }
 
   async function getHorariosCandidadosDoDia(dataBR) {
-    //Retorna os horários de TODOS os usuários candidatos do dia
+    //Retorna os horários de TODOS as pessoas candidatas do dia
     setLoading(true);
     setHorariosCanditatosDia([]);
     await firebase
       .database()
-      .ref('horariosusuario')
+      .ref('horariospessoa')
       .orderByChild('data')
       .equalTo(dataBR)
       .once('value', (snapshot) => {
@@ -168,25 +191,25 @@ function HorarioUsuarioProvider({ children }) {
   }
 
   return (
-    <HorarioUsuarioContext.Provider
+    <HorarioPessoaContext.Provider
       value={{
         loading,
         setLoading,
-        horariosUsuario,
-        setHorariosUsuario,
-        incluirHorariosUsuario,
-        excluirHorariosUsuario,
+        horariosPessoa,
+        setHorariosPessoa,
+        incluirHorariosPessoa,
+        excluirHorariosPessoa,
         saving,
         setSaving,
-        getHorariosUsuario,
+        getHorariosPessoa,
         getHorariosCandidadosDoDia,
         setHorariosCanditatosDia,
         horariosCandidatosDia
       }}
     >
       {children}
-    </HorarioUsuarioContext.Provider>
+    </HorarioPessoaContext.Provider>
   );
 }
 
-export default HorarioUsuarioProvider;
+export default HorarioPessoaProvider;

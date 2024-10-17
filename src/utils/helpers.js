@@ -35,7 +35,7 @@ function getFullDateBR(dataBR) {
   });
 }
 
-//Função para embaralhar/randomizar array coroinhas
+//Função para embaralhar/randomizar array pessoas
 function shuffleArray(arr) {
   // Loop em todos os elementos
   for (let i = arr.length - 1; i > 0; i--) {
@@ -48,7 +48,7 @@ function shuffleArray(arr) {
   return arr;
 }
 
-//Função para ordenar o array coroinhas pelo horário
+//Função para ordenar o array pessoas pelo horário
 function getOrderedHorario(array) {
   return array.sort((a, b) =>
     a.horario > b.horario ? 1 : b.horario > a.horario ? -1 : 0

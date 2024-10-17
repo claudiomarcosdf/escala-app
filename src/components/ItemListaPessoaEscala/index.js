@@ -7,17 +7,16 @@ import {
 } from 'react-native';
 
 import { FontAwesome6 } from '@expo/vector-icons';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { AntDesign } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
-import { getStatus } from '../../utils/helpers';
+import { getLabelHorario } from '../../utils/helpers';
 
-export default function ItemListaUsuario({ data, deleteItem, editItem }) {
-  function getTipoEStatus() {
-    const fullText = `${data?.tipo}  |  ${getStatus(data?.ativo)}`;
-    const statusOnly = getStatus(data?.ativo);
-    return data?.tipo ? fullText : statusOnly;
+export default function ItemListaPessoaEscala({ data, selectPessoa }) {
+  function destak(data) {
+    return data?.tipo == 'Administrador'
+      ? { color: '#ee5253' }
+      : { color: '#2f3640' };
   }
-
   return (
     <View style={styles.container}>
       <View style={styles.personBox}>
@@ -25,17 +24,18 @@ export default function ItemListaUsuario({ data, deleteItem, editItem }) {
           <FontAwesome6 name='person-praying' size={25} color='#2f3640' />
         </View>
         <View>
-          <TouchableWithoutFeedback onPress={() => editItem(data)}>
+          <TouchableWithoutFeedback onPress={() => selectPessoa(data)}>
             <Text numberOfLines={1} style={styles.textNome}>
               {data.nome}
             </Text>
           </TouchableWithoutFeedback>
-
           <View style={{ flexDirection: 'row' }}>
             <TouchableWithoutFeedback>
-              <Text style={styles.textCelular}>{getTipoEStatus()}</Text>
+              <Text style={[styles.textTipoPessoa, destak(data)]}>
+                {data?.tipo}
+              </Text>
             </TouchableWithoutFeedback>
-            <TouchableWithoutFeedback onPress={() => editItem(data)}>
+            <TouchableWithoutFeedback>
               <Text style={styles.textCelular}>
                 {data.celular && ` | ${data.celular}`}
               </Text>
@@ -43,13 +43,9 @@ export default function ItemListaUsuario({ data, deleteItem, editItem }) {
           </View>
         </View>
       </View>
-      <View style={styles.deleteBox}>
-        <TouchableOpacity onPress={() => deleteItem(data.key, data.nome)}>
-          <MaterialCommunityIcons
-            name='trash-can-outline'
-            size={20}
-            color='#ee5253'
-          />
+      <View style={styles.escalarBox}>
+        <TouchableOpacity onPress={() => selectPessoa(data)}>
+          <AntDesign name='right' size={20} color='#95a5a6' />
         </TouchableOpacity>
       </View>
     </View>
@@ -76,7 +72,11 @@ const styles = StyleSheet.create({
     textOverflow: 'ellipsis',
     whiteSpace: 'nowrap'
   },
-  textCelular: {
+  textTipoPessoa: {
+    color: '#2f3640',
+    fontSize: 12
+  },
+  textTipoCelular: {
     color: '#2f3640',
     fontSize: 12
   },
@@ -93,7 +93,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center'
   },
-  deleteBox: {
+  escalarBox: {
     alignItems: 'center',
     justifyContent: 'center'
   }

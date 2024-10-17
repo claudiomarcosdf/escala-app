@@ -2,21 +2,21 @@ import { useEffect, createContext, useState } from 'react';
 import { Alert } from 'react-native';
 import firebase from '../firebaseConfig';
 
-export const UsuarioContext = createContext({});
+export const PessoaContext = createContext({});
 
-function UsuarioProvider({ children }) {
-  const [usuarios, setUsuarios] = useState([]);
+function PessoaProvider({ children }) {
+  const [pessoas, setPessoas] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [horariosUsuario, setHorariosUsuario] = useState(false);
+  const [horariosPessoa, setHorariosPessoa] = useState(false);
 
   useEffect(() => {
     setLoading(true);
     async function getDados() {
-      setUsuarios([]);
+      setPessoas([]);
 
       await firebase
         .database()
-        .ref('usuarios') //'usuarios/1'
+        .ref('pessoas') //'pessoas/1'
         .once('value', (snapshot) => {
           snapshot?.forEach((childItem) => {
             let data = {
@@ -28,7 +28,7 @@ function UsuarioProvider({ children }) {
               ativo: childItem.val().ativo
             };
 
-            setUsuarios((oldUsuarios) => [...oldUsuarios, data].reverse());
+            setPessoas((oldPessoas) => [...oldPessoas, data].reverse());
             setLoading(false);
           });
         })
@@ -41,14 +41,14 @@ function UsuarioProvider({ children }) {
     getDados();
   }, []);
 
-  async function incluirUsuario(uid, nome, celular, tipo = '', ativo = false) {
+  async function incluirPessoa(uid, nome, celular, tipo = '', ativo = false) {
     //Inclusão NÃO disponível para o administrador porque é devida ao próprio usuário
 
-    let usuario = firebase.database().ref('usuarios');
-    //let chave = usuario.push().key; //build new key
+    let pessoa = firebase.database().ref('pessoas');
+    //let chave = pessoa.push().key; //build new key
     let chave = uid;
 
-    usuario
+    pessoa
       .child(chave)
       .set({
         email,
@@ -67,17 +67,17 @@ function UsuarioProvider({ children }) {
           ativo
         };
 
-        setUsuarios((oldUsuarios) => [...oldUsuarios, data].reverse());
+        setPessoas((oldPessoas) => [...oldPessoas, data].reverse());
       })
       .catch((err) => {
         console.log(err);
       });
   }
 
-  async function alterarUsuario(key, nome, celular, tipo, ativo) {
+  async function alterarPessoa(key, nome, celular, tipo, ativo) {
     firebase
       .database()
-      .ref('usuarios')
+      .ref('pessoas')
       .child(key)
       .update({
         nome,
@@ -86,48 +86,46 @@ function UsuarioProvider({ children }) {
         ativo
       })
       .then(() => {
-        const usuarioIndex = usuarios.findIndex(
-          (usuario) => usuario.key === key
-        );
-        let usuariosClone = usuarios;
-        usuariosClone[usuarioIndex].nome = nome;
-        usuariosClone[usuarioIndex].celular = celular;
-        usuariosClone[usuarioIndex].tipo = tipo;
-        usuariosClone[usuarioIndex].ativo = ativo;
+        const pessoaIndex = pessoas.findIndex((pessoa) => pessoa.key === key);
+        let pessoasClone = pessoas;
+        pessoasClone[pessoaIndex].nome = nome;
+        pessoasClone[pessoaIndex].celular = celular;
+        pessoasClone[pessoaIndex].tipo = tipo;
+        pessoasClone[pessoaIndex].ativo = ativo;
 
-        setUsuarios([...usuariosClone]);
+        setPessoas([...pessoasClone]);
       })
       .catch((error) => {
         console.log(error);
       });
   }
 
-  async function excluirUsuario(key) {
+  async function excluirPessoa(key) {
     await firebase
       .database()
-      .ref('usuarios')
+      .ref('pessoas')
       .child(key)
       .remove()
       .then(() => {
-        const newUsuariosList = usuarios.filter((item) => item.key !== key);
-        setUsuarios(newUsuariosList);
+        const newPessoasList = pessoas.filter((item) => item.key !== key);
+        setPessoas(newPessoasList);
       });
   }
 
   return (
-    <UsuarioContext.Provider
+    <PessoaContext.Provider
       value={{
         loading,
-        usuarios,
-        setUsuarios,
-        incluirUsuario,
-        alterarUsuario,
-        excluirUsuario
+        pessoas,
+        setPessoas,
+        incluirPessoa,
+        alterarPessoa,
+        excluirPessoa
       }}
     >
       {children}
-    </UsuarioContext.Provider>
+    </PessoaContext.Provider>
   );
 }
 
-export default UsuarioProvider;
+export default PessoaProvider;

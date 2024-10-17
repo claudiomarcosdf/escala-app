@@ -17,7 +17,7 @@ function AuthProvider({ children }) {
       setLoading(true);
       pegarParoquia();
 
-      const storageUser = await AsyncStorage.getItem('appCoroinhaUser');
+      const storageUser = await AsyncStorage.getItem('appskl');
 
       if (storageUser) {
         const today = new Date(moment.tz('America/Sao_Paulo').format());
@@ -25,7 +25,7 @@ function AuthProvider({ children }) {
 
         //se expirou
         if (storageObj.exp < today.getTime()) {
-          await AsyncStorage.removeItem('appCoroinhaUser');
+          await AsyncStorage.removeItem('appskl');
           setUser(null);
         } else setUser(JSON.parse(storageUser));
       } else {
@@ -41,7 +41,7 @@ function AuthProvider({ children }) {
     let dataExpiracao = today;
     dataExpiracao.setHours(today.getHours() + 2); // Adiciona 2 horas
 
-    const appCoroinhaUser = {
+    const appskl = {
       key: uid,
       email,
       nome,
@@ -49,14 +49,10 @@ function AuthProvider({ children }) {
       ativo,
       exp: dataExpiracao.getTime()
     };
-    if (email)
-      await AsyncStorage.setItem(
-        'appCoroinhaUser',
-        JSON.stringify(appCoroinhaUser)
-      );
+    if (email) await AsyncStorage.setItem('appskl', JSON.stringify(appskl));
   }
 
-  async function saveUsuario(
+  async function savePessoa(
     uid,
     email,
     nome,
@@ -64,10 +60,10 @@ function AuthProvider({ children }) {
     tipo = '',
     ativo = false
   ) {
-    let usuario = firebase.database().ref('usuarios');
+    let pessoa = firebase.database().ref('pessoas');
     let chave = uid;
 
-    usuario
+    pessoa
       .child(chave)
       .set({
         email,
@@ -91,11 +87,11 @@ function AuthProvider({ children }) {
       });
   }
 
-  async function getUsuario(userLogged) {
-    const idUsuario = 'usuarios/' + userLogged.uid;
+  async function getPessoa(userLogged) {
+    const idPessoa = 'pessoas/' + userLogged.uid;
     await firebase
       .database()
-      .ref(idUsuario)
+      .ref(idPessoa)
       .on('value', (snapshot) => {
         const data = snapshot.val();
 
@@ -124,7 +120,7 @@ function AuthProvider({ children }) {
           exp: 0
         };
 
-        getUsuario(userLogged);
+        getPessoa(userLogged);
       })
       .catch((err) => {
         setLoading(false);
@@ -156,7 +152,7 @@ function AuthProvider({ children }) {
           exp: 0
         };
         setUser(null); // Novos usuários necessitam ser ativados pelo admin
-        saveUsuario(userLogged.uid, email, nome, celular);
+        savePessoa(userLogged.uid, email, nome, celular);
         setLoading(false);
       })
       .catch((err) => {
@@ -172,7 +168,7 @@ function AuthProvider({ children }) {
       .auth()
       .signOut()
       .then(() => {
-        AsyncStorage.removeItem('appCoroinhaUser');
+        AsyncStorage.removeItem('appskl');
         setUser(null);
       })
       .catch((error) => {
@@ -187,12 +183,12 @@ function AuthProvider({ children }) {
       nome,
       endereco
     };
-    await AsyncStorage.setItem('coroinhaApp', JSON.stringify(data));
+    await AsyncStorage.setItem('appsklconfig', JSON.stringify(data));
     setParoquia(data);
   }
 
   async function pegarParoquia() {
-    const storageUser = await AsyncStorage.getItem('coroinhaApp');
+    const storageUser = await AsyncStorage.getItem('appsklconfig');
 
     if (!storageUser) setParoquia(null);
     else setParoquia(JSON.parse(storageUser));

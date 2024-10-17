@@ -4,27 +4,24 @@ import { NavigationContainer } from '@react-navigation/native';
 import Routes from './src/routes';
 
 import AuthProvider from './src/contexts/authContext';
-import UsuarioProvider from './src/contexts/usuarioContext';
-import CoroinhaProvider from './src/contexts/coroinhaContext';
+import PessoaProvider from './src/contexts/pessoaContext';
 import EscalaProvider from './src/contexts/escalaContext';
 import HorarioProvider from './src/contexts/horarioContext';
-import HorarioUsuarioProvider from './src/contexts/horariosUsuarioContext';
+import HorarioPessoaProvider from './src/contexts/horariosPessoaContext';
 
 export default function escalaapp() {
   return (
     <NavigationContainer>
       <AuthProvider>
-        <UsuarioProvider>
+        <PessoaProvider>
           <HorarioProvider>
-            <HorarioUsuarioProvider>
-              <CoroinhaProvider>
-                <EscalaProvider>
-                  <Routes />
-                </EscalaProvider>
-              </CoroinhaProvider>
-            </HorarioUsuarioProvider>
+            <HorarioPessoaProvider>
+              <EscalaProvider>
+                <Routes />
+              </EscalaProvider>
+            </HorarioPessoaProvider>
           </HorarioProvider>
-        </UsuarioProvider>
+        </PessoaProvider>
       </AuthProvider>
     </NavigationContainer>
   );

@@ -20,9 +20,9 @@ import { ptBR } from '../../localeCalendar';
 
 import { HorarioContext } from '../../contexts/horarioContext';
 import { EscalaContext } from '../../contexts/escalaContext';
-import { HorarioUsuarioContext } from '../../contexts/horariosUsuarioContext';
+import { HorarioPessoaContext } from '../../contexts/horariosPessoaContext';
 import { getDataToFilterFirebase, getFullDateBR } from '../../utils/helpers';
-import ItemListaHorarioUsuario from '../../components/ItemListaHorarioUsuario';
+import ItemListaHorarioPessoa from '../../components/ItemListaHorarioPessoa';
 
 export default function GeradorEscalas() {
   let dataAtual = getDataToFilterFirebase();
@@ -36,8 +36,8 @@ export default function GeradorEscalas() {
     setHorariosCanditatosDia,
     getHorariosCandidadosDoDia,
     horariosCandidatosDia,
-    excluirHorariosUsuario
-  } = useContext(HorarioUsuarioContext);
+    excluirHorariosPessoa
+  } = useContext(HorarioPessoaContext);
   const { gerarEscala, building, finish, setFinish } =
     useContext(EscalaContext);
 
@@ -54,7 +54,7 @@ export default function GeradorEscalas() {
   }, [dataSelecionada]);
 
   function getDatas() {
-    return horarios.map((horario) => {
+    return horarios?.map((horario) => {
       return { label: getFullDateBR(horario.data), value: horario.data };
     });
   }
@@ -130,7 +130,7 @@ export default function GeradorEscalas() {
       {
         text: 'Continuar',
         onPress: () => {
-          excluirHorariosUsuario(key);
+          excluirHorariosPessoa(key, data);
         }
       }
     ]);
@@ -217,7 +217,7 @@ export default function GeradorEscalas() {
           keyExtractor={(item) => item.key}
           data={dataSelecionada ? horariosCandidatosDia : []}
           renderItem={({ item }) => (
-            <ItemListaHorarioUsuario
+            <ItemListaHorarioPessoa
               fullFields
               data={item}
               deleteItem={handleDelete}

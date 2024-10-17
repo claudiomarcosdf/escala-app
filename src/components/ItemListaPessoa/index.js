@@ -5,12 +5,19 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback
 } from 'react-native';
-import Checkbox from 'expo-checkbox';
 
 import { FontAwesome6 } from '@expo/vector-icons';
-import { getLabelHorario } from '../../utils/helpers';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
+import { getStatus } from '../../utils/helpers';
 
-export default function ItemListaCoroinhaChecked({ data, setChecked }) {
+export default function ItemListaPessoa({ data, deleteItem, editItem }) {
+  function getTipoEStatus() {
+    const fullText = `${data?.tipo}  |  ${getStatus(data?.ativo)}`;
+    const statusOnly = getStatus(data?.ativo);
+    return data?.tipo ? fullText : statusOnly;
+  }
+
   return (
     <View style={styles.container}>
       <View style={styles.personBox}>
@@ -18,18 +25,17 @@ export default function ItemListaCoroinhaChecked({ data, setChecked }) {
           <FontAwesome6 name='person-praying' size={25} color='#2f3640' />
         </View>
         <View>
-          <TouchableWithoutFeedback>
+          <TouchableWithoutFeedback onPress={() => editItem(data)}>
             <Text numberOfLines={1} style={styles.textNome}>
               {data.nome}
             </Text>
           </TouchableWithoutFeedback>
+
           <View style={{ flexDirection: 'row' }}>
             <TouchableWithoutFeedback>
-              <Text style={styles.textCelular}>
-                {getLabelHorario(data?.horario)}
-              </Text>
+              <Text style={styles.textCelular}>{getTipoEStatus()}</Text>
             </TouchableWithoutFeedback>
-            <TouchableWithoutFeedback>
+            <TouchableWithoutFeedback onPress={() => editItem(data)}>
               <Text style={styles.textCelular}>
                 {data.celular && ` | ${data.celular}`}
               </Text>
@@ -37,12 +43,14 @@ export default function ItemListaCoroinhaChecked({ data, setChecked }) {
           </View>
         </View>
       </View>
-      <View style={styles.checkBox}>
-        <Checkbox
-          value={data.checked}
-          onValueChange={() => setChecked(data)}
-          color={data.checked ? '#0096c7' : undefined}
-        />
+      <View style={styles.deleteBox}>
+        <TouchableOpacity onPress={() => deleteItem(data.key, data.nome)}>
+          <MaterialCommunityIcons
+            name='trash-can-outline'
+            size={20}
+            color='#ee5253'
+          />
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -85,7 +93,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center'
   },
-  checkBox: {
+  deleteBox: {
     alignItems: 'center',
     justifyContent: 'center'
   }

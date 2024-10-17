@@ -20,13 +20,13 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import { getOnlyDateBr } from '../../utils/helpers';
 import { EscalaContext } from '../../contexts/escalaContext';
 
-export default function ModalEscala({ visible, setVisible, coroinha }) {
+export default function ModalEscala({ visible, setVisible, pessoa }) {
   let dataAtual = getOnlyDateBr();
   const [date, setDate] = useState(new Date(dataAtual));
   const [mode, setMode] = useState('date');
   const [show, setShow] = useState(false);
   const [nome, setNome] = useState('');
-  const { escalarCoroinha, building } = useContext(EscalaContext);
+  const { escalarPessoa, building } = useContext(EscalaContext);
 
   async function handleEscalar() {
     const dataSelecionada = format(date, 'dd/MM/yyy');
@@ -37,15 +37,15 @@ export default function ModalEscala({ visible, setVisible, coroinha }) {
     });
 
     const novaEscala = {
-      coroinha: coroinha.nome,
-      celular: coroinha.celular,
+      pessoa: pessoa.nome,
+      celular: pessoa.celular,
       data: dataSelecionada,
       hora: horaSelecionada,
       atraso: false,
       falta: false
     };
 
-    const gerouEscala = await escalarCoroinha(novaEscala);
+    const gerouEscala = await escalarPessoa(novaEscala);
     if (gerouEscala) setVisible(false);
   }
 
@@ -84,13 +84,13 @@ export default function ModalEscala({ visible, setVisible, coroinha }) {
       <Modal animationType='slide' visible={visible} transparent={true}>
         <View style={styles.container}>
           <View style={styles.modal}>
-            <Text style={styles.titleText}>Escalar Coroinha</Text>
+            <Text style={styles.titleText}>Escalar Pessoa</Text>
             <TextInput
               placeholder='Nome'
               style={styles.input}
               maxLength={47}
               numberOfLines={1}
-              value={nome || coroinha?.nome}
+              value={nome || pessoa?.nome}
               showSoftInputOnFocus={false}
               selectTextOnFocus={false}
               onChangeText={() => {}}

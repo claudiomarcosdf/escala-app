@@ -65,9 +65,9 @@ export default function Escalas() {
     exibirEscalas(date.dateString);
   }
 
-  function handleDelete(key, coroinha) {
+  function handleDelete(key, pessoa) {
     if (!key) return;
-    Alert.alert('Atenção', `Confirma exclusão do(a) ${coroinha} da escala?`, [
+    Alert.alert('Atenção', `Confirma exclusão de ${pessoa} da escala?`, [
       {
         text: 'Cancelar',
         style: 'cancel'
@@ -117,7 +117,7 @@ export default function Escalas() {
               style={styles.btnEscalar}
               onPress={() => navigation.navigate('EscalaIndividual')}
             >
-              <Text style={styles.textBtnEscalar}>Escalar coroinha</Text>
+              <Text style={styles.textBtnEscalar}>Escalar pessoa</Text>
             </TouchableOpacity>
             <PrintEscala data={escalas ? escalas : []} />
           </View>

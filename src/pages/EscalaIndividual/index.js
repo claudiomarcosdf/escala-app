@@ -10,33 +10,33 @@ import {
 } from 'react-native';
 import filter from 'lodash.filter';
 
-import { CoroinhaContext } from '../../contexts/coroinhaContext';
+import { PessoaContext } from '../../contexts/pessoaContext';
 import firebase from '../../firebaseConfig';
-import ItemListaCoroinhaEscala from '../../components/ItemListaCoroinhaEscala';
+import ItemListaPessoaEscala from '../../components/ItemListaPessoaEscala';
 import ModalEscala from '../../components/ModalEscala';
 
 export default function EscalaIndividual() {
-  const { coroinhas, setCoroinhas } = useContext(CoroinhaContext);
-  const [coroinhaSelecionado, setCoroinhaSelecionado] = useState(null);
+  const { pessoas, setPessoas } = useContext(PessoaContext);
+  const [pessoaSelecionado, setPessoaSelecionado] = useState(null);
   const [key, setKey] = useState(null);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
-  const [coroinhasFiltered, setCoroinhasFiltered] = useState([]);
+  const [pessoasFiltered, setPessoasFiltered] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
 
   function handleSearch(query) {
     setSearchQuery(query);
     const formattedQuery = query.toLowerCase();
-    const filteredData = filter(coroinhasFiltered, (coroinha) => {
-      if (coroinha.nome.toLowerCase().includes(formattedQuery)) return true;
+    const filteredData = filter(pessoasFiltered, (pessoa) => {
+      if (pessoa.nome.toLowerCase().includes(formattedQuery)) return true;
       return false;
     });
 
-    setCoroinhas(filteredData);
+    setPessoas(filteredData);
   }
 
-  function handleSelectCoroinha(data) {
-    setCoroinhaSelecionado(data);
+  function handleSelectPessoa(data) {
+    setPessoaSelecionado(data);
     setModalVisible(true);
   }
 
@@ -58,21 +58,21 @@ export default function EscalaIndividual() {
           />
         </View>
 
-        <View style={styles.boxTotalCoroinhas}>
-          <Text style={styles.textTotal}>Coroinhas cadastrados: </Text>
+        <View style={styles.boxTotalPessoas}>
+          <Text style={styles.textTotal}>Pessoas cadastradas: </Text>
           <Text style={[styles.textTotal, { fontWeight: '700' }]}>
-            {coroinhas.length != 0 ? coroinhas.length : 0}
+            {pessoas.length != 0 ? pessoas.length : 0}
           </Text>
         </View>
 
         <FlatList
           style={styles.list}
           keyExtractor={(item) => item.key}
-          data={coroinhas}
+          data={pessoas}
           renderItem={({ item }) => (
-            <ItemListaCoroinhaEscala
+            <ItemListaPessoaEscala
               data={item}
-              selectCoroinha={handleSelectCoroinha}
+              selectPessoa={handleSelectPessoa}
             />
           )}
           ListEmptyComponent={
@@ -83,7 +83,7 @@ export default function EscalaIndividual() {
             ) : (
               <View style={styles.textMessage}>
                 <Text style={{ fontSize: 14, color: '#ee5253' }}>
-                  Nenhum coroinha cadastrado!
+                  Nenhum pessoa cadastrado!
                 </Text>
               </View>
             )
@@ -93,7 +93,7 @@ export default function EscalaIndividual() {
         <ModalEscala
           visible={modalVisible}
           setVisible={setModalVisible}
-          coroinha={coroinhaSelecionado}
+          pessoa={pessoaSelecionado}
         />
       </View>
     </SafeAreaView>
@@ -118,7 +118,7 @@ const styles = StyleSheet.create({
     color: '#2f3640',
     marginBottom: 15
   },
-  boxTotalCoroinhas: {
+  boxTotalPessoas: {
     flexDirection: 'row',
     width: '100%',
     marginTop: 10,

@@ -69,14 +69,14 @@ export default function PrintEscala({ data }) {
               <span class="subtitle">${
                 paroquia ? paroquia.endereco : paroquiaDefault.endereco
               }</span>
-              <h3>Escala de coroinhas do dia ${data && data[0].data}</h3>
+              <h3>Escala de ajudantes do dia ${data && data[0].data}</h3>
               <br />
               <table style="margin: auto;" class="table">
                 <thead>
                   <tr>
                     <th>Horário</th>
-                    <th>Coroinha</th>
-                    <th>Celular</th>
+                    <th>Pessoa</th>
+                    <th>Função</th>
                     <th>Atraso</th>
                     <th>Falta</th>
                   </tr>
@@ -88,9 +88,9 @@ export default function PrintEscala({ data }) {
                         `<tr class="list" key=${escala.key}>
                   <td class="hora">${escala.hora}</td>
                   <td style="text-align: left;" class="name">${
-                    escala.coroinha
+                    escala.pessoa
                   }</td>
-                  <td style="text-align: left;">${escala.celular}</td>
+                  <td style="text-align: left;">${escala.tipopessoa}</td>
                   <td style="text-align: left;">${getDescricao(
                     escala.atraso
                   )}</td>

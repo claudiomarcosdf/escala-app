@@ -275,9 +275,9 @@ export default function CadastroHorarios() {
           >
             <Text
               style={{ fontWeight: '500' }}
-            >{`Horários do dia ${horarios.data}`}</Text>
+            >{`Horários do dia ${horarios?.data}`}</Text>
             <Text style={{ fontWeight: '700', marginBottom: 5 }}>
-              {horarios?.horarios.join(' - ')}
+              {horarios?.horarios?.join(' - ')}
             </Text>
             <TouchableOpacity onPress={() => handleDeleteHorario(horarios)}>
               <MaterialCommunityIcons

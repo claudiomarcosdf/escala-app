@@ -27,15 +27,15 @@ export default function ItemListaEscala({ data, deleteItem, selectEscala }) {
           <TouchableWithoutFeedback onPress={() => selectEscala(data)}>
             <View>
               <Text numberOfLines={1} style={styles.textNome}>
-                {data.coroinha}
+                {data.pessoa}
               </Text>
-              <Text style={styles.textCelular}>{data.celular}</Text>
+              <Text style={styles.textCelular}>{data.tipopessoa}</Text>
             </View>
           </TouchableWithoutFeedback>
         </View>
       </View>
       <View style={styles.deleteBox}>
-        <TouchableOpacity onPress={() => deleteItem(data.key, data.coroinha)}>
+        <TouchableOpacity onPress={() => deleteItem(data.key, data.pessoa)}>
           <MaterialCommunityIcons
             name='trash-can-outline'
             size={20}
