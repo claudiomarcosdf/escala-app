@@ -49,9 +49,9 @@ export default function ItemListaEscala({ data, deleteItem, selectEscala }) {
 
 function destak(data) {
   return data?.falta
-    ? { borderColor: '#ee5253' }
+    ? { borderColor: '#e74c3c' }
     : data?.atraso
-    ? { borderColor: '#f39c12' }
+    ? { borderColor: '#f1c40f' }
     : {};
 }
 

@@ -166,8 +166,7 @@ export default function Cadastro() {
             { label: 'Administrador', value: 'Administrador' },
             { label: 'Coroinha', value: 'Coroinha' },
             { label: 'Acólito', value: 'Acólito' },
-            { label: 'Cerimoniário', value: 'Cerimoniário' },
-            { label: 'Celebrante', value: 'Celebrante' }
+            { label: 'Cerimoniário', value: 'Cerimoniário' }
           ]}
           selectedValue={tipo}
           onValueChange={(value) => setTipo(value)}

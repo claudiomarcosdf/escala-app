@@ -15,7 +15,10 @@ export default function Configuracoes() {
   const [nomeParoquia, setNomeParoquia] = useState(null);
   const [enderecoParoquia, setEnderecoParoquia] = useState(null);
   const [qtdePessoasCandidatas, setQtdePessoasCandidatas] = useState(null);
-  const [qtdePessoasPorHorario, setQtdePessoasPorHorario] = useState(null);
+  const [qtdeCoroinhasPorHorario, setQtdeCoroinhasPorHorario] = useState(null);
+  const [qtdeAcolitosPorHorario, setQtdeAcolitosPorHorario] = useState(null);
+  const [qtdeCerimoniariosPorHorario, setQtdeCerimoniariosPorHorario] =
+    useState(null);
   const { paroquiaconfig, salvarParoquiaConfig } = useContext(AuthContext);
 
   useEffect(() => {
@@ -23,11 +26,15 @@ export default function Configuracoes() {
       setNomeParoquia(paroquiaconfig.nome);
       setEnderecoParoquia(paroquiaconfig.endereco);
       setQtdePessoasCandidatas(paroquiaconfig.qtdePessoasCandidatas);
-      setQtdePessoasPorHorario(paroquiaconfig.qtdePessoasPorHorario);
+      setQtdeCoroinhasPorHorario(paroquiaconfig.qtdeCoroinhasPorHorario);
+      setQtdeAcolitosPorHorario(paroquiaconfig.qtdeAcolitosPorHorario);
+      setQtdeCerimoniariosPorHorario(
+        paroquiaconfig.qtdeCerimoniariosPorHorario
+      );
     }
   }, []);
 
-  function handleSave() {
+  async function handleSave() {
     if (!nomeParoquia || !enderecoParoquia) {
       Alert.alert('Atenção', 'Favor informar nome e endereço da Paróquia!');
       return;
@@ -36,7 +43,9 @@ export default function Configuracoes() {
       nomeParoquia,
       enderecoParoquia,
       qtdePessoasCandidatas,
-      qtdePessoasPorHorario
+      qtdeCoroinhasPorHorario,
+      qtdeAcolitosPorHorario,
+      qtdeCerimoniariosPorHorario
     );
     Alert.alert('Sucesso', 'Informações salvas com sucesso!');
   }
@@ -54,22 +63,51 @@ export default function Configuracoes() {
         />
         <TextInput
           placeholder='Endereço'
-          style={styles.input}
+          style={[styles.input, { marginBottom: 30 }]}
           value={enderecoParoquia}
           onChangeText={(text) => setEnderecoParoquia(text)}
         />
+        <View style={styles.boxQtde}>
+          <Text>Qtde máxima de pessoas candidatas por horário</Text>
+        </View>
         <TextInput
-          placeholder='Qtde máx. candidatos por horário'
+          placeholder='Qtde pessoas por horário'
           style={styles.input}
           value={qtdePessoasCandidatas}
           onChangeText={(text) => setQtdePessoasCandidatas(text)}
           keyboardType='numeric'
         />
+
+        <View style={styles.boxQtde}>
+          <Text>Qtde máxima de Coroinhas por horário</Text>
+        </View>
         <TextInput
-          placeholder='Qtde máx. pessoas por horário'
+          placeholder='Qtde coroinhas por horário'
           style={styles.input}
-          value={qtdePessoasPorHorario}
-          onChangeText={(text) => setQtdePessoasPorHorario(text)}
+          value={qtdeCoroinhasPorHorario}
+          onChangeText={(text) => setQtdeCoroinhasPorHorario(text)}
+          keyboardType='numeric'
+        />
+
+        <View style={styles.boxQtde}>
+          <Text>Qtde máxima de Acólitos por horário</Text>
+        </View>
+        <TextInput
+          placeholder='Qtde acólitos por horário'
+          style={styles.input}
+          value={qtdeAcolitosPorHorario}
+          onChangeText={(text) => setQtdeAcolitosPorHorario(text)}
+          keyboardType='numeric'
+        />
+
+        <View style={styles.boxQtde}>
+          <Text>Qtde máxima de Cerimoniário por horário</Text>
+        </View>
+        <TextInput
+          placeholder='Qtde acólitos por horário'
+          style={[styles.input, { marginBottom: 30 }]}
+          value={qtdeCerimoniariosPorHorario}
+          onChangeText={(text) => setQtdeCerimoniariosPorHorario(text)}
           keyboardType='numeric'
         />
 
@@ -124,5 +162,10 @@ const styles = StyleSheet.create({
     backgroundColor: '#0984e3',
     backgroundColor: '#0096c7',
     width: '100%'
+  },
+  boxQtde: {
+    backgroundColor: 'yellow',
+    paddingHorizontal: 3,
+    marginBottom: 3
   }
 });

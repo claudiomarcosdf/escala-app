@@ -9,7 +9,7 @@ import {
 import { FontAwesome6 } from '@expo/vector-icons';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
-import { getStatus } from '../../utils/helpers';
+import { getStatus, getNomeSobrenome } from '../../utils/helpers';
 
 export default function ItemListaHorarioPessoa({
   data,
@@ -21,7 +21,7 @@ export default function ItemListaHorarioPessoa({
       <View>
         <TouchableWithoutFeedback>
           <Text numberOfLines={1} style={styles.textPessoa}>
-            {`${data?.nomepessoa} (${data?.tipopessoa})`}
+            {`${getNomeSobrenome(data?.nomepessoa)} (${data?.tipopessoa})`}
           </Text>
         </TouchableWithoutFeedback>
 

@@ -30,7 +30,8 @@ export default function EscolhaHorarios() {
     incluirHorariosPessoa,
     excluirHorariosPessoa,
     loading,
-    saving
+    saving,
+    horariosPreenchidos
   } = useContext(HorarioPessoaContext);
 
   useEffect(() => {
@@ -44,6 +45,7 @@ export default function EscolhaHorarios() {
   }, []);
 
   async function handleSave() {
+    //await horariosPreenchidos('20/10/2024', ['08:00', '20:00']);
     if (!data || !horariosSelecionado) {
       Alert.alert('Atenção', 'Favor informar o dia e os horários.');
       return;
@@ -77,7 +79,7 @@ export default function EscolhaHorarios() {
       {
         text: 'Continuar',
         onPress: () => {
-          excluirHorariosPessoa(key);
+          excluirHorariosPessoa(key, data);
         }
       }
     ]);
@@ -115,7 +117,8 @@ export default function EscolhaHorarios() {
           options={horarios ? getHorariosFiltrados() : null}
           listControls={{
             selectAllText: 'Marcar todos',
-            unselectAllText: 'Desmarcar todos'
+            unselectAllText: 'Desmarcar todos',
+            emptyListMessage: 'Selecione o Dia para obter os horários'
           }}
           selectedValue={horariosSelecionado}
           onValueChange={(value) => setHorariosSelecionados(value)}

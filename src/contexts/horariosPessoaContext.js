@@ -1,7 +1,8 @@
-import { createContext, useState } from 'react';
+import { createContext, useState, useContext } from 'react';
 import { format } from 'date-fns';
 import { Alert } from 'react-native';
 import firebase from '../firebaseConfig';
+import { AuthContext } from './authContext';
 
 export const HorarioPessoaContext = createContext({});
 
@@ -10,6 +11,29 @@ function HorarioPessoaProvider({ children }) {
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [horariosCandidatosDia, setHorariosCanditatosDia] = useState([]);
+
+  const { paroquiaconfig } = useContext(AuthContext);
+
+  async function getHorarios(dataBR) {
+    let retorno = [];
+    await firebase
+      .database()
+      .ref('horarios')
+      .orderByChild('data')
+      .equalTo(dataBR)
+      .once('value')
+      .then(function (snapshot) {
+        if (snapshot.val() != null) {
+          const objHorario = Object.keys(snapshot.val()).map((key) => ({
+            key: key,
+            ...snapshot.val()[key]
+          }));
+
+          objHorario[0].horarios.map((hora) => retorno.push(hora));
+        }
+      });
+    return retorno;
+  }
 
   //Caso a escala exista não deixa excluir horariopessoa
   async function escalaExiste(data) {
@@ -27,6 +51,7 @@ function HorarioPessoaProvider({ children }) {
     return retorno;
   }
 
+  //Verifica se a pessoa já salvou seus horários para a data informada
   async function horarioEscolhidoExiste(data, userkey) {
     let retorno = false;
     await firebase
@@ -53,16 +78,89 @@ function HorarioPessoaProvider({ children }) {
     return retorno;
   }
 
+  /**
+   * RETORNA VERDADEIRO SE A VAGA POR HORÁRIO JÁ FOI PREENCHIDA
+   * @param {*} data
+   * @param {*} horariosEscolhidos: ['09:00', '11:00']
+   * @returns
+   */
+  async function horariosPreenchidos(data, horariosEscolhidos) {
+    let retorno = { vagaPreenchida: false, horario: '' };
+
+    const horariosDoDia = await Promise.all([getHorarios(data)]);
+    let vagasPreenchidas = horariosDoDia[0].map((horario) => {
+      //[{ horario: '', totalPreenchidas: 0}]
+      return {
+        horario,
+        totalPreenchidas: 0
+      };
+    });
+
+    const qtdeVagasPorHorario = paroquiaconfig
+      ? paroquiaconfig?.qtdePessoasCandidatas
+      : 20; //obter das confgs do APP
+
+    await firebase
+      .database()
+      .ref('horariospessoa')
+      .orderByChild('data')
+      .equalTo(data)
+      .once('value')
+      .then(function (snapshot) {
+        if (snapshot.val() != null) {
+          const objHorarios = Object.keys(snapshot.val()).map((key) => ({
+            key: key,
+            ...snapshot.val()[key]
+          }));
+
+          objHorarios.forEach((horario) => {
+            horario.horarios.forEach((hora) => {
+              vagasPreenchidas[
+                vagasPreenchidas.findIndex((element) => element.horario == hora)
+              ].totalPreenchidas += 1;
+            });
+          });
+
+          //horariosEscolhidos pela pessoa
+          vagasPreenchidas.forEach((vagaPreenchida) => {
+            const horarioFinded = horariosEscolhidos.findIndex(
+              (horario) => horario == vagaPreenchida.horario
+            );
+            if (horarioFinded != -1) {
+              if (vagaPreenchida.totalPreenchidas == qtdeVagasPorHorario) {
+                retorno.vagaPreenchida = true;
+                retorno.horario = vagaPreenchida.horario;
+                return;
+              }
+            }
+          });
+        }
+      });
+    return retorno;
+  }
+
   async function incluirHorariosPessoa(user, data, horarios) {
     //salva horários escolhidos
     setSaving(true);
     let horariosPessoadb = firebase.database().ref('horariospessoa');
     let chave = horariosPessoadb.push().key; //build new key
 
-    let existe = await Promise.all([horarioEscolhidoExiste(data, user.key)]);
+    let [horarioExiste, vagaHorario] = await Promise.all([
+      horarioEscolhidoExiste(data, user.key),
+      horariosPreenchidos(data, horarios)
+    ]);
 
-    if (existe[0] == true) {
+    if (horarioExiste == true) {
       Alert.alert('Atenção', 'Você já candidatou para este dia.');
+      setSaving(false);
+      return;
+    }
+
+    if (vagaHorario.vagaPreenchida == true) {
+      Alert.alert(
+        'Atenção',
+        'O horário das ' + vagaHorario.horario + ' já foi preenchido.'
+      );
       setSaving(false);
       return;
     }
@@ -204,7 +302,8 @@ function HorarioPessoaProvider({ children }) {
         getHorariosPessoa,
         getHorariosCandidadosDoDia,
         setHorariosCanditatosDia,
-        horariosCandidatosDia
+        horariosCandidatosDia,
+        horariosPreenchidos
       }}
     >
       {children}

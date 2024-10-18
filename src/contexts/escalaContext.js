@@ -15,6 +15,23 @@ function EscalaProvider({ children }) {
 
   const { paroquiaconfig } = useContext(AuthContext);
 
+  function getQtdeVagasPorTipoPessoa(tipoPessoa) {
+    //obter das confgs do APP
+    switch (tipoPessoa) {
+      case 'Coroinha':
+        return paroquiaconfig ? paroquiaconfig?.qtdeCoroinhasPorHorario : 3;
+        break;
+      case 'Acólito':
+        return paroquiaconfig ? paroquiaconfig?.qtdeAcolitosPorHorario : 2;
+        break;
+      case 'Cerimoniário':
+        return paroquiaconfig ? paroquiaconfig?.qtdeCerimoniariosPorHorario : 2;
+        break;
+      default:
+        break;
+    }
+  }
+
   async function getEscalas(data) {
     setLoadingEscalas(true);
     setEscalas([]);
@@ -91,21 +108,17 @@ function EscalaProvider({ children }) {
       });
   }
 
-  function atualizaVagasPreenchidas(vagasPreenchidasTemp, horario) {
+  function atualizaVagasPreenchidas(tipopessoa, vagasPreenchidasTemp, horario) {
     const newArrayVagasPreenchidas = [...vagasPreenchidasTemp];
-    const arrayVagasPreenchidasUpdated = newArrayVagasPreenchidas.map(
-      (objVagaPreenchida) => {
-        if (objVagaPreenchida.horario == horario) {
-          return {
-            horario: objVagaPreenchida.horario,
-            totalPreenchidas: objVagaPreenchida.totalPreenchidas + 1
-          };
-        }
-        return { ...objVagaPreenchida };
-      }
+    const vagasPreenchidasIndex = newArrayVagasPreenchidas.findIndex(
+      (element) =>
+        element.horario == horario && element.tipopessoa == tipopessoa
     );
 
-    return arrayVagasPreenchidasUpdated;
+    newArrayVagasPreenchidas[vagasPreenchidasIndex].totalPreenchidas += 1;
+
+    console.log(newArrayVagasPreenchidas);
+    return newArrayVagasPreenchidas;
   }
 
   /**
@@ -134,28 +147,36 @@ function EscalaProvider({ children }) {
       : (horariosOrdenados = getOrderedHorario(horarios));
 
     const escalas = [];
-    const qtdeVagasPorHorario = paroquiaconfig
-      ? paroquiaconfig?.qtdePessoasPorHorario
-      : 10; //obter das confgs do APP
+    const tiposPessoa = ['Coroinha', 'Acólito', 'Cerimoniário'];
 
-    let vagasPreenchidas = horariosDoDia.map((horario) => {
-      //[{ horario: '', totalPreenchidas: 0}]
-      return {
-        horario,
-        totalPreenchidas: 0
-      };
+    let vagasPreenchidas = [];
+    tiposPessoa.forEach((tipopessoa) => {
+      horariosDoDia.map((horario) => {
+        //[{ tipopessoa: '', horario: '', totalPreenchidas: 0}]
+        vagasPreenchidas.push({
+          tipopessoa,
+          horario,
+          totalPreenchidas: 0
+        });
+      });
     });
 
     horariosOrdenados.forEach(
       ({ keypessoa, nomepessoa: candidato, tipopessoa, horarios }) => {
         horarios.forEach((horario) => {
           const vagaPreenchidaFinded = vagasPreenchidas.find(
-            (vagaHorario) => vagaHorario.horario == horario
+            (vagaHorario) =>
+              vagaHorario.horario == horario &&
+              vagaHorario.tipopessoa == tipopessoa
           );
+
           let totalVagasPreenchidasDoHorario =
             vagaPreenchidaFinded.totalPreenchidas;
 
-          if (totalVagasPreenchidasDoHorario <= qtdeVagasPorHorario) {
+          const qtdeVagasHorarioPorTipoPessoa =
+            getQtdeVagasPorTipoPessoa(tipopessoa);
+
+          if (totalVagasPreenchidasDoHorario < qtdeVagasHorarioPorTipoPessoa) {
             //incluir pessoa na escala no referido horário
             const newEscala = {
               keypessoa,
@@ -168,6 +189,7 @@ function EscalaProvider({ children }) {
             };
             escalas.push(newEscala);
             vagasPreenchidas = atualizaVagasPreenchidas(
+              tipopessoa,
               vagasPreenchidas,
               horario
             );

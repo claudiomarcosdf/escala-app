@@ -182,13 +182,17 @@ function AuthProvider({ children }) {
     nome,
     endereco,
     qtdePessoasCandidatas,
-    qtdePessoasPorHorario
+    qtdeCoroinhasPorHorario,
+    qtdeAcolitosPorHorario,
+    qtdeCerimoniariosPorHorario
   ) {
     const data = {
       nome,
       endereco,
       qtdePessoasCandidatas,
-      qtdePessoasPorHorario
+      qtdeCoroinhasPorHorario,
+      qtdeAcolitosPorHorario,
+      qtdeCerimoniariosPorHorario
     };
     await AsyncStorage.setItem('appsklconfig', JSON.stringify(data));
     setParoquiaConfig(data);
@@ -200,6 +204,10 @@ function AuthProvider({ children }) {
     if (!storageUser) setParoquiaConfig(null);
     else setParoquiaConfig(JSON.parse(storageUser));
   }
+
+  // async function erase() {
+  //   await AsyncStorage.removeItem('appsklconfig');
+  // }
 
   return (
     <AuthContext.Provider

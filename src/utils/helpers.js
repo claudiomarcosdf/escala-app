@@ -87,6 +87,26 @@ function getLabelHorario(value) {
   }
 }
 
+function capitalizeFullName(value) {
+  var splitStr = value.toLowerCase().split(' ');
+  for (var i = 0; i < splitStr.length; i++) {
+    splitStr[i] =
+      splitStr[i].charAt(0).toUpperCase() + splitStr[i].substring(1);
+  }
+  return splitStr.join(' ');
+}
+
+function getNomeSobrenome(value) {
+  const fullUsername = capitalizeFullName(value);
+
+  if (fullUsername.length <= 24) return fullUsername;
+
+  const userNameArray = fullUsername.split(' ');
+  const lastName =
+    userNameArray.length > 1 ? userNameArray[userNameArray.length - 1] : '';
+  return userNameArray[0] + ' ' + lastName;
+}
+
 export {
   getOnlyDateBr,
   getDataToFilterFirebase,
@@ -95,5 +115,6 @@ export {
   getOrderedHorario,
   getAmericanDate,
   getFullDateBR,
-  getStatus
+  getStatus,
+  getNomeSobrenome
 };
