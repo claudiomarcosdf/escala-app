@@ -10,6 +10,22 @@ function HorarioProvider({ children }) {
   const [loading, setLoading] = useState(false);
   const [finish, setFinish] = useState(false);
 
+  //Verifica se existe escala com para horários cadastrados
+  async function escalaExiste(data) {
+    let retorno = false;
+    await firebase
+      .database()
+      .ref('escalas')
+      .orderByChild('data')
+      .equalTo(data)
+      .once('value')
+      .then(function (snapshot) {
+        if (snapshot.val() != null) retorno = true;
+      });
+
+    return retorno;
+  }
+
   async function horarioExiste(data) {
     let retorno = false;
     await firebase
@@ -82,7 +98,14 @@ function HorarioProvider({ children }) {
       });
   }
 
-  async function excluirHorarios(key) {
+  async function excluirHorarios(key, data) {
+    let existe = await Promise.all([escalaExiste(data)]);
+
+    if (existe[0] == true) {
+      Alert.alert('Atenção', 'Exitem escalas geradas com estes horários!');
+      return;
+    }
+
     await firebase
       .database()
       .ref('horarios')

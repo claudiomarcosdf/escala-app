@@ -10,12 +10,12 @@ export const AuthContext = createContext({});
 function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [paroquia, setParoquia] = useState(null);
+  const [paroquiaconfig, setParoquiaConfig] = useState(null);
 
   useEffect(() => {
     async function loadStorage() {
       setLoading(true);
-      pegarParoquia();
+      pegarParoquiaConfig();
 
       const storageUser = await AsyncStorage.getItem('appskl');
 
@@ -178,25 +178,40 @@ function AuthProvider({ children }) {
 
   //---------- DADOS DA PARÓQUIA -------------------
 
-  async function salvarParoquia(nome, endereco) {
+  async function salvarParoquiaConfig(
+    nome,
+    endereco,
+    qtdePessoasCandidatas,
+    qtdePessoasPorHorario
+  ) {
     const data = {
       nome,
-      endereco
+      endereco,
+      qtdePessoasCandidatas,
+      qtdePessoasPorHorario
     };
     await AsyncStorage.setItem('appsklconfig', JSON.stringify(data));
-    setParoquia(data);
+    setParoquiaConfig(data);
   }
 
-  async function pegarParoquia() {
+  async function pegarParoquiaConfig() {
     const storageUser = await AsyncStorage.getItem('appsklconfig');
 
-    if (!storageUser) setParoquia(null);
-    else setParoquia(JSON.parse(storageUser));
+    if (!storageUser) setParoquiaConfig(null);
+    else setParoquiaConfig(JSON.parse(storageUser));
   }
 
   return (
     <AuthContext.Provider
-      value={{ user, login, singUp, logout, loading, paroquia, salvarParoquia }}
+      value={{
+        user,
+        login,
+        singUp,
+        logout,
+        loading,
+        paroquiaconfig,
+        salvarParoquiaConfig
+      }}
     >
       {children}
     </AuthContext.Provider>

@@ -11,11 +11,11 @@ import { AuthContext } from '../../contexts/authContext';
 export default function PrintEscala({ data }) {
   const [selectedPrinter, setSelectedPrinter] = useState();
   const [html, setHtml] = useState();
-  const [paroquiaDefault, setParoquiaDefault] = useState({
+  const [paroquiaconfigDefault, setParoquiaConfigDefault] = useState({
     nome: 'NOME DA PARÓQUIA',
     endereco: 'Endereço da Paróquia'
   });
-  const { paroquia } = useContext(AuthContext);
+  const { paroquiaconfig } = useContext(AuthContext);
 
   useEffect(() => {
     if (data.length != 0) {
@@ -64,10 +64,14 @@ export default function PrintEscala({ data }) {
           </head>
           <body style="text-align: center;">
               <span class="title">${
-                paroquia ? paroquia.nome : paroquiaDefault.nome
+                paroquiaconfig
+                  ? paroquiaconfig.nome
+                  : paroquiaconfigDefault.nome
               }</span><br />
               <span class="subtitle">${
-                paroquia ? paroquia.endereco : paroquiaDefault.endereco
+                paroquiaconfig
+                  ? paroquiaconfig.endereco
+                  : paroquiaconfigDefault.endereco
               }</span>
               <h3>Escala de ajudantes do dia ${data && data[0].data}</h3>
               <br />

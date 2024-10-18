@@ -156,7 +156,7 @@ export default function CadastroHorarios() {
       },
       {
         text: 'Excluir',
-        onPress: () => excluirHorarios(horarios.key)
+        onPress: () => excluirHorarios(horarios.key, horarios.data)
       }
     ]);
   }

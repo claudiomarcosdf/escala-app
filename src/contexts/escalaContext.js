@@ -2,6 +2,7 @@ import { createContext, useContext, useState } from 'react';
 import { Alert } from 'react-native';
 import firebase from '../firebaseConfig';
 import { shuffleArray, getOrderedHorario } from '../utils/helpers';
+import { AuthContext } from './authContext';
 
 export const EscalaContext = createContext({});
 
@@ -11,6 +12,8 @@ function EscalaProvider({ children }) {
   const [loadingEscalas, setLoadingEscalas] = useState(false);
   const [building, setBuilding] = useState(false);
   const [finish, setFinish] = useState(false);
+
+  const { paroquiaconfig } = useContext(AuthContext);
 
   async function getEscalas(data) {
     setLoadingEscalas(true);
@@ -131,7 +134,9 @@ function EscalaProvider({ children }) {
       : (horariosOrdenados = getOrderedHorario(horarios));
 
     const escalas = [];
-    const qtdeVagasPorHorario = 10; //obter das confgs do APP
+    const qtdeVagasPorHorario = paroquiaconfig
+      ? paroquiaconfig?.qtdePessoasPorHorario
+      : 10; //obter das confgs do APP
 
     let vagasPreenchidas = horariosDoDia.map((horario) => {
       //[{ horario: '', totalPreenchidas: 0}]

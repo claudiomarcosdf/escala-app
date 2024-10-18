@@ -14,12 +14,16 @@ import { AuthContext } from '../../contexts/authContext';
 export default function Configuracoes() {
   const [nomeParoquia, setNomeParoquia] = useState(null);
   const [enderecoParoquia, setEnderecoParoquia] = useState(null);
-  const { paroquia, salvarParoquia } = useContext(AuthContext);
+  const [qtdePessoasCandidatas, setQtdePessoasCandidatas] = useState(null);
+  const [qtdePessoasPorHorario, setQtdePessoasPorHorario] = useState(null);
+  const { paroquiaconfig, salvarParoquiaConfig } = useContext(AuthContext);
 
   useEffect(() => {
-    if (paroquia) {
-      setNomeParoquia(paroquia.nome);
-      setEnderecoParoquia(paroquia.endereco);
+    if (paroquiaconfig) {
+      setNomeParoquia(paroquiaconfig.nome);
+      setEnderecoParoquia(paroquiaconfig.endereco);
+      setQtdePessoasCandidatas(paroquiaconfig.qtdePessoasCandidatas);
+      setQtdePessoasPorHorario(paroquiaconfig.qtdePessoasPorHorario);
     }
   }, []);
 
@@ -28,7 +32,12 @@ export default function Configuracoes() {
       Alert.alert('Atenção', 'Favor informar nome e endereço da Paróquia!');
       return;
     }
-    salvarParoquia(nomeParoquia, enderecoParoquia);
+    salvarParoquiaConfig(
+      nomeParoquia,
+      enderecoParoquia,
+      qtdePessoasCandidatas,
+      qtdePessoasPorHorario
+    );
     Alert.alert('Sucesso', 'Informações salvas com sucesso!');
   }
 
@@ -48,6 +57,20 @@ export default function Configuracoes() {
           style={styles.input}
           value={enderecoParoquia}
           onChangeText={(text) => setEnderecoParoquia(text)}
+        />
+        <TextInput
+          placeholder='Qtde máx. candidatos por horário'
+          style={styles.input}
+          value={qtdePessoasCandidatas}
+          onChangeText={(text) => setQtdePessoasCandidatas(text)}
+          keyboardType='numeric'
+        />
+        <TextInput
+          placeholder='Qtde máx. pessoas por horário'
+          style={styles.input}
+          value={qtdePessoasPorHorario}
+          onChangeText={(text) => setQtdePessoasPorHorario(text)}
+          keyboardType='numeric'
         />
 
         <TouchableOpacity style={styles.btnSalvar} onPress={handleSave}>
