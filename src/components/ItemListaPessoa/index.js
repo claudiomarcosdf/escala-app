@@ -12,10 +12,23 @@ import { Ionicons } from '@expo/vector-icons';
 import { getStatus } from '../../utils/helpers';
 
 export default function ItemListaPessoa({ data, deleteItem, editItem }) {
+  function destak(data) {
+    return data?.tipo == 'Administrador'
+      ? { color: '#ee5253' }
+      : { color: '#2f3640' };
+  }
+
   function getTipoEStatus() {
-    const fullText = `${data?.tipo}  |  ${getStatus(data?.ativo)}`;
+    const statusStyled = `  |  ${getStatus(data?.ativo)}`;
     const statusOnly = getStatus(data?.ativo);
-    return data?.tipo ? fullText : statusOnly;
+    return data?.tipo ? (
+      <Text style={[styles.textTipoStatus, destak(data)]}>
+        {data?.tipo}
+        <Text style={styles.textTipoStatus}>{statusStyled}</Text>
+      </Text>
+    ) : (
+      <Text style={styles.textTipoStatus}>{statusOnly}</Text>
+    );
   }
 
   return (
@@ -33,10 +46,10 @@ export default function ItemListaPessoa({ data, deleteItem, editItem }) {
 
           <View style={{ flexDirection: 'row' }}>
             <TouchableWithoutFeedback>
-              <Text style={styles.textCelular}>{getTipoEStatus()}</Text>
+              {getTipoEStatus()}
             </TouchableWithoutFeedback>
             <TouchableWithoutFeedback onPress={() => editItem(data)}>
-              <Text style={styles.textCelular}>
+              <Text style={styles.textTipoStatus}>
                 {data.celular && ` | ${data.celular}`}
               </Text>
             </TouchableWithoutFeedback>
@@ -76,7 +89,7 @@ const styles = StyleSheet.create({
     textOverflow: 'ellipsis',
     whiteSpace: 'nowrap'
   },
-  textCelular: {
+  textTipoStatus: {
     color: '#2f3640',
     fontSize: 12
   },

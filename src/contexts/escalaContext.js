@@ -19,13 +19,19 @@ function EscalaProvider({ children }) {
     //obter das confgs do APP
     switch (tipoPessoa) {
       case 'Coroinha':
-        return paroquiaconfig ? paroquiaconfig?.qtdeCoroinhasPorHorario : 3;
+        return paroquiaconfig
+          ? parseInt(paroquiaconfig?.qtdeCoroinhasPorHorario)
+          : 3;
         break;
       case 'Acólito':
-        return paroquiaconfig ? paroquiaconfig?.qtdeAcolitosPorHorario : 2;
+        return paroquiaconfig
+          ? parseInt(paroquiaconfig?.qtdeAcolitosPorHorario)
+          : 2;
         break;
       case 'Cerimoniário':
-        return paroquiaconfig ? paroquiaconfig?.qtdeCerimoniariosPorHorario : 2;
+        return paroquiaconfig
+          ? parseInt(paroquiaconfig?.qtdeCerimoniariosPorHorario)
+          : 2;
         break;
       default:
         break;

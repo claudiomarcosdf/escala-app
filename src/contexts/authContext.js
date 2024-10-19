@@ -63,7 +63,7 @@ function AuthProvider({ children }) {
     let pessoa = firebase.database().ref('pessoas');
     let chave = uid;
 
-    pessoa
+    await pessoa
       .child(chave)
       .set({
         email,
@@ -186,7 +186,7 @@ function AuthProvider({ children }) {
     qtdeAcolitosPorHorario,
     qtdeCerimoniariosPorHorario
   ) {
-    const data = {
+    const dados = {
       nome,
       endereco,
       qtdePessoasCandidatas,
@@ -194,15 +194,46 @@ function AuthProvider({ children }) {
       qtdeAcolitosPorHorario,
       qtdeCerimoniariosPorHorario
     };
-    await AsyncStorage.setItem('appsklconfig', JSON.stringify(data));
-    setParoquiaConfig(data);
+
+    let paroquiaConfig = firebase.database().ref('configuracoes');
+    let chave = paroquiaConfig.push().key;
+
+    await paroquiaConfig
+      .child(chave)
+      .set(dados)
+      .then(() => {
+        const data = {
+          key: chave,
+          ...dados
+        };
+        AsyncStorage.setItem('appsklconfig', JSON.stringify(data));
+        setParoquiaConfig(data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }
 
   async function pegarParoquiaConfig() {
     const storageUser = await AsyncStorage.getItem('appsklconfig');
 
-    if (!storageUser) setParoquiaConfig(null);
-    else setParoquiaConfig(JSON.parse(storageUser));
+    if (!storageUser) {
+      await firebase
+        .database()
+        .ref('configuracoes')
+        .once('value')
+        .then(function (snapshot) {
+          if (snapshot.val() != null) {
+            const objHorario = Object.keys(snapshot.val()).map((key) => ({
+              key: key,
+              ...snapshot.val()[key]
+            }));
+
+            AsyncStorage.setItem('appsklconfig', JSON.stringify(objHorario[0]));
+            setParoquiaConfig(objHorario[0]);
+          } else setParoquiaConfig(null);
+        });
+    } else setParoquiaConfig(JSON.parse(storageUser));
   }
 
   // async function erase() {

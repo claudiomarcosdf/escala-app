@@ -1,4 +1,4 @@
-import { useState, useContext } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import {
   View,
   Text,
@@ -16,13 +16,19 @@ import ItemListaPessoaEscala from '../../components/ItemListaPessoaEscala';
 import ModalEscala from '../../components/ModalEscala';
 
 export default function EscalaIndividual() {
-  const { pessoas, setPessoas } = useContext(PessoaContext);
+  const { pessoas: todasPessoas, loading } = useContext(PessoaContext);
+  const [pessoas, setPessoas] = useState([]);
   const [pessoaSelecionado, setPessoaSelecionado] = useState(null);
   const [key, setKey] = useState(null);
-  const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [pessoasFiltered, setPessoasFiltered] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
+
+  useEffect(() => {
+    const pessoasAtivas = todasPessoas.filter((pessoa) => pessoa.ativo == true);
+    setPessoas(pessoasAtivas);
+    setPessoasFiltered(pessoasAtivas);
+  }, [todasPessoas]);
 
   function handleSearch(query) {
     setSearchQuery(query);
@@ -31,7 +37,6 @@ export default function EscalaIndividual() {
       if (pessoa.nome.toLowerCase().includes(formattedQuery)) return true;
       return false;
     });
-
     setPessoas(filteredData);
   }
 
@@ -83,7 +88,7 @@ export default function EscalaIndividual() {
             ) : (
               <View style={styles.textMessage}>
                 <Text style={{ fontSize: 14, color: '#ee5253' }}>
-                  Nenhum pessoa cadastrado!
+                  Nenhuma pessoa cadastrada!
                 </Text>
               </View>
             )
