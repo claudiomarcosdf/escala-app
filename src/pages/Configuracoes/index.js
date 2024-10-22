@@ -14,9 +14,9 @@ import { AuthContext } from '../../contexts/authContext';
 export default function Configuracoes() {
   const [nomeParoquia, setNomeParoquia] = useState(null);
   const [enderecoParoquia, setEnderecoParoquia] = useState(null);
-  const [qtdePessoasCandidatas, setQtdePessoasCandidatas] = useState(null);
+  const [qtdePessoasVoluntarias, setQtdePessoasCandidatas] = useState(null);
   const [qtdeCoroinhasPorHorario, setQtdeCoroinhasPorHorario] = useState(null);
-  const [qtdeAcolitosPorHorario, setQtdeAcolitosPorHorario] = useState(null);
+  const [qtdeMescesPorHorario, setQtdeMescesPorHorario] = useState(null);
   const [qtdeCerimoniariosPorHorario, setQtdeCerimoniariosPorHorario] =
     useState(null);
   const { paroquiaconfig, salvarParoquiaConfig } = useContext(AuthContext);
@@ -25,9 +25,9 @@ export default function Configuracoes() {
     if (paroquiaconfig) {
       setNomeParoquia(paroquiaconfig.nome);
       setEnderecoParoquia(paroquiaconfig.endereco);
-      setQtdePessoasCandidatas(paroquiaconfig.qtdePessoasCandidatas);
+      setQtdePessoasCandidatas(paroquiaconfig.qtdePessoasVoluntarias);
       setQtdeCoroinhasPorHorario(paroquiaconfig.qtdeCoroinhasPorHorario);
-      setQtdeAcolitosPorHorario(paroquiaconfig.qtdeAcolitosPorHorario);
+      setQtdeMescesPorHorario(paroquiaconfig.qtdeMescesPorHorario);
       setQtdeCerimoniariosPorHorario(
         paroquiaconfig.qtdeCerimoniariosPorHorario
       );
@@ -42,10 +42,10 @@ export default function Configuracoes() {
     salvarParoquiaConfig(
       nomeParoquia,
       enderecoParoquia,
-      qtdePessoasCandidatas,
+      qtdePessoasVoluntarias,
+      qtdeCerimoniariosPorHorario,
       qtdeCoroinhasPorHorario,
-      qtdeAcolitosPorHorario,
-      qtdeCerimoniariosPorHorario
+      qtdeMescesPorHorario
     );
     Alert.alert('Sucesso', 'Informações salvas com sucesso!');
   }
@@ -68,13 +68,24 @@ export default function Configuracoes() {
           onChangeText={(text) => setEnderecoParoquia(text)}
         />
         <View style={styles.boxQtde}>
-          <Text>Qtde máxima de pessoas candidatas por horário</Text>
+          <Text>Qtde máxima de pessoas voluntárias por horário</Text>
         </View>
         <TextInput
           placeholder='Qtde pessoas por horário'
           style={styles.input}
-          value={qtdePessoasCandidatas}
+          value={qtdePessoasVoluntarias}
           onChangeText={(text) => setQtdePessoasCandidatas(text)}
+          keyboardType='numeric'
+        />
+
+        <View style={styles.boxQtde}>
+          <Text>Qtde máxima de Cerimoniário por horário</Text>
+        </View>
+        <TextInput
+          placeholder='Qtde mesces por horário'
+          style={[styles.input, { marginBottom: 30 }]}
+          value={qtdeCerimoniariosPorHorario}
+          onChangeText={(text) => setQtdeCerimoniariosPorHorario(text)}
           keyboardType='numeric'
         />
 
@@ -90,24 +101,13 @@ export default function Configuracoes() {
         />
 
         <View style={styles.boxQtde}>
-          <Text>Qtde máxima de Acólitos por horário</Text>
+          <Text>Qtde máxima de Mesces por horário</Text>
         </View>
         <TextInput
-          placeholder='Qtde acólitos por horário'
+          placeholder='Qtde mesces por horário'
           style={styles.input}
-          value={qtdeAcolitosPorHorario}
-          onChangeText={(text) => setQtdeAcolitosPorHorario(text)}
-          keyboardType='numeric'
-        />
-
-        <View style={styles.boxQtde}>
-          <Text>Qtde máxima de Cerimoniário por horário</Text>
-        </View>
-        <TextInput
-          placeholder='Qtde acólitos por horário'
-          style={[styles.input, { marginBottom: 30 }]}
-          value={qtdeCerimoniariosPorHorario}
-          onChangeText={(text) => setQtdeCerimoniariosPorHorario(text)}
+          value={qtdeMescesPorHorario}
+          onChangeText={(text) => setQtdeMescesPorHorario(text)}
           keyboardType='numeric'
         />
 

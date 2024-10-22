@@ -62,8 +62,14 @@ export default function EscolhaHorarios() {
   function getHorariosFiltrados() {
     if (!horarios || !data) return;
 
-    let dataSelecionada = horarios.filter((horario) => horario.data == data);
-    return dataSelecionada[0].horarios.map((hora) => {
+    let dataSelecionadaList = horarios.filter(
+      (horario) => horario.data == data
+    );
+    let horariosList = dataSelecionadaList[0].horarios.sort((a, b) =>
+      a > b ? 1 : b > a ? -1 : 0
+    );
+
+    return horariosList.map((hora) => {
       return { label: hora, value: hora };
     });
   }
@@ -88,7 +94,7 @@ export default function EscolhaHorarios() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.boxAreaElements}>
-        <Text style={styles.titleText}>Candidate-se às Missas</Text>
+        <Text style={styles.titleText}>Voluntarie-se às Missas</Text>
         <Text style={styles.titlePessoa}>{user?.nome}</Text>
 
         <Dropdown
@@ -137,7 +143,7 @@ export default function EscolhaHorarios() {
         )}
 
         <View style={styles.boxTotalHorarios}>
-          <Text style={styles.textTotal}>Horários escolhidos: </Text>
+          <Text style={styles.textTotal}>Dias e Horários a concorrer: </Text>
           <Text style={[styles.textTotal, { fontWeight: '700' }]}>
             {horariosPessoa.length != 0 ? horariosPessoa.length : 0}
           </Text>

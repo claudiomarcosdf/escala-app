@@ -1,7 +1,7 @@
 import { createContext, useContext, useState } from 'react';
 import { Alert } from 'react-native';
 import firebase from '../firebaseConfig';
-import { shuffleArray, getOrderedHorario } from '../utils/helpers';
+import { shuffleArray } from '../utils/helpers';
 import { AuthContext } from './authContext';
 
 export const EscalaContext = createContext({});
@@ -23,9 +23,9 @@ function EscalaProvider({ children }) {
           ? parseInt(paroquiaconfig?.qtdeCoroinhasPorHorario)
           : 3;
         break;
-      case 'Acólito':
+      case 'Mesce':
         return paroquiaconfig
-          ? parseInt(paroquiaconfig?.qtdeAcolitosPorHorario)
+          ? parseInt(paroquiaconfig?.qtdeMescesPorHorario)
           : 2;
         break;
       case 'Cerimoniário':
@@ -123,7 +123,7 @@ function EscalaProvider({ children }) {
 
     newArrayVagasPreenchidas[vagasPreenchidasIndex].totalPreenchidas += 1;
 
-    console.log(newArrayVagasPreenchidas);
+    console.log('Atualização de vagas', newArrayVagasPreenchidas);
     return newArrayVagasPreenchidas;
   }
 
@@ -147,13 +147,13 @@ function EscalaProvider({ children }) {
       return;
     }
 
-    let horariosOrdenados = [];
+    let horariosPessoaOrdenados = [];
     embaralhar
-      ? (horariosOrdenados = shuffleArray(horarios))
-      : (horariosOrdenados = getOrderedHorario(horarios));
+      ? (horariosPessoaOrdenados = shuffleArray(horarios)) //embaralhado
+      : (horariosPessoaOrdenados = horarios); //ordem do lançamento
 
     const escalas = [];
-    const tiposPessoa = ['Coroinha', 'Acólito', 'Cerimoniário'];
+    const tiposPessoa = ['Cerimoniário', 'Coroinha', 'Mesce'];
 
     let vagasPreenchidas = [];
     tiposPessoa.forEach((tipopessoa) => {
@@ -167,42 +167,51 @@ function EscalaProvider({ children }) {
       });
     });
 
-    horariosOrdenados.forEach(
-      ({ keypessoa, nomepessoa: candidato, tipopessoa, horarios }) => {
-        horarios.forEach((horario) => {
-          const vagaPreenchidaFinded = vagasPreenchidas.find(
-            (vagaHorario) =>
-              vagaHorario.horario == horario &&
-              vagaHorario.tipopessoa == tipopessoa
-          );
+    horariosDoDia.forEach((hora) => {
+      console.log('hora', hora);
+      horariosPessoaOrdenados.forEach(
+        ({ keypessoa, nomepessoa: candidato, tipopessoa, horarios }) => {
+          console.log('tipopessoa', tipopessoa);
+          horarios.forEach((horario) => {
+            console.log('horario', horario);
+            if (horario == hora) {
+              const vagaPreenchidaFinded = vagasPreenchidas.find(
+                (vagaHorario) =>
+                  vagaHorario.horario == horario &&
+                  vagaHorario.tipopessoa == tipopessoa
+              );
 
-          let totalVagasPreenchidasDoHorario =
-            vagaPreenchidaFinded.totalPreenchidas;
+              let totalVagasPreenchidasDoHorario =
+                vagaPreenchidaFinded.totalPreenchidas;
 
-          const qtdeVagasHorarioPorTipoPessoa =
-            getQtdeVagasPorTipoPessoa(tipopessoa);
+              const qtdeVagasHorarioPorTipoPessoa =
+                getQtdeVagasPorTipoPessoa(tipopessoa);
 
-          if (totalVagasPreenchidasDoHorario < qtdeVagasHorarioPorTipoPessoa) {
-            //incluir pessoa na escala no referido horário
-            const newEscala = {
-              keypessoa,
-              pessoa: candidato,
-              tipopessoa,
-              data,
-              hora: horario,
-              atraso: false,
-              falta: false
-            };
-            escalas.push(newEscala);
-            vagasPreenchidas = atualizaVagasPreenchidas(
-              tipopessoa,
-              vagasPreenchidas,
-              horario
-            );
-          }
-        });
-      }
-    ); //end forEach
+              if (
+                totalVagasPreenchidasDoHorario < qtdeVagasHorarioPorTipoPessoa
+              ) {
+                //incluir pessoa na escala no referido horário
+                const newEscala = {
+                  keypessoa,
+                  pessoa: candidato,
+                  tipopessoa,
+                  data,
+                  hora: horario,
+                  atraso: false,
+                  falta: false
+                };
+                escalas.push(newEscala);
+                vagasPreenchidas = atualizaVagasPreenchidas(
+                  tipopessoa,
+                  vagasPreenchidas,
+                  horario
+                );
+              }
+            }
+          }); //for horarios
+        }
+      ); //for horariospessoa
+    }); //end forEach
 
     for (var i = 0; i < escalas.length; i++) {
       await Promise.all([salvarEscala(escalas[i])]);

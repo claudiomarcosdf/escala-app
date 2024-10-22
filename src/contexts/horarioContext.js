@@ -6,6 +6,7 @@ import firebase from '../firebaseConfig';
 export const HorarioContext = createContext({});
 
 function HorarioProvider({ children }) {
+  const [horario, setHorario] = useState(null);
   const [horarios, setHorarios] = useState(null);
   const [loading, setLoading] = useState(false);
   const [finish, setFinish] = useState(false);
@@ -41,7 +42,7 @@ function HorarioProvider({ children }) {
     return retorno;
   }
 
-  async function incluirHorarios(data, horarios) {
+  async function incluirHorario(data, horarios) {
     setLoading(true);
     setFinish(false);
     let horariosdb = firebase.database().ref('horarios');
@@ -50,16 +51,18 @@ function HorarioProvider({ children }) {
     let existe = await Promise.all([horarioExiste(data)]);
 
     if (existe[0] == true) {
-      Alert.alert('Atenção', 'Horários já cadrastados para essa data!');
+      Alert.alert('Atenção', 'Horários já cadastrados para essa data!');
       setLoading(false);
       return;
     }
+
+    const horariosOrder = horarios.sort((a, b) => (a > b ? 1 : b > a ? -1 : 0));
 
     horariosdb
       .child(chave)
       .set({
         data,
-        horarios
+        horarios: horariosOrder
       })
       .then(() => {
         const data = {
@@ -78,7 +81,7 @@ function HorarioProvider({ children }) {
       });
   }
 
-  async function alterarHorarios(key, data, horarios) {
+  async function alterarHorario(key, data, horarios) {
     firebase
       .database()
       .ref('horarios')
@@ -98,7 +101,7 @@ function HorarioProvider({ children }) {
       });
   }
 
-  async function excluirHorarios(key, data) {
+  async function excluirHorario(key, data) {
     let existe = await Promise.all([escalaExiste(data)]);
 
     if (existe[0] == true) {
@@ -118,7 +121,7 @@ function HorarioProvider({ children }) {
       });
   }
 
-  async function getHorarios(data) {
+  async function getHorario(data) {
     const dataBR = format(data, 'dd/MM/yyy');
     await firebase
       .database()
@@ -133,8 +136,8 @@ function HorarioProvider({ children }) {
             ...snapshot.val()[key]
           }));
 
-          setHorarios(objHorario[0]);
-        } else setHorarios(null);
+          setHorario(objHorario[0]); //object
+        } else setHorario(null);
       });
   }
 
@@ -153,8 +156,12 @@ function HorarioProvider({ children }) {
             ...snapshot.val()[key]
           }));
 
-          //console.log(objHorarios);
-          setHorarios(objHorarios);
+          //list
+          setHorarios(
+            objHorarios.sort((a, b) =>
+              a.data > b.data ? 1 : b.data > a.data ? -1 : 0
+            )
+          );
         } else setHorarios(null);
       });
   }
@@ -164,14 +171,15 @@ function HorarioProvider({ children }) {
       value={{
         loading,
         setLoading,
+        horario,
         horarios,
         setHorarios,
-        incluirHorarios,
+        incluirHorario,
         finish,
         setFinish,
-        alterarHorarios,
-        excluirHorarios,
-        getHorarios,
+        alterarHorario,
+        excluirHorario,
+        getHorario,
         getHorariosAtivos
       }}
     >

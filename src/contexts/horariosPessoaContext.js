@@ -10,7 +10,7 @@ function HorarioPessoaProvider({ children }) {
   const [horariosPessoa, setHorariosPessoa] = useState([]);
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [horariosCandidatosDia, setHorariosCanditatosDia] = useState([]);
+  const [horariosVoluntariosDia, setHorariosVoluntariosDia] = useState([]);
 
   const { paroquiaconfig } = useContext(AuthContext);
 
@@ -97,8 +97,8 @@ function HorarioPessoaProvider({ children }) {
     });
 
     const qtdeVagasPorHorario = paroquiaconfig
-      ? paroquiaconfig?.qtdePessoasCandidatas
-      : 20; //obter das confgs do APP
+      ? paroquiaconfig?.qtdePessoasVoluntarias
+      : 20; //Máx de pessoas que podem se voluntariar por horário
 
     await firebase
       .database()
@@ -145,9 +145,11 @@ function HorarioPessoaProvider({ children }) {
     let horariosPessoadb = firebase.database().ref('horariospessoa');
     let chave = horariosPessoadb.push().key; //build new key
 
+    const horariosOrder = horarios.sort((a, b) => (a > b ? 1 : b > a ? -1 : 0));
+
     let [horarioExiste, vagaHorario] = await Promise.all([
       horarioEscolhidoExiste(data, user.key),
-      horariosPreenchidos(data, horarios)
+      horariosPreenchidos(data, horariosOrder)
     ]);
 
     if (horarioExiste == true) {
@@ -172,7 +174,7 @@ function HorarioPessoaProvider({ children }) {
         nomepessoa: user.nome,
         tipopessoa: user.tipo,
         data,
-        horarios
+        horarios: horariosOrder
       })
       .then(() => {
         const dados = {
@@ -181,7 +183,7 @@ function HorarioPessoaProvider({ children }) {
           nomepessoa: user.nome,
           tipopessoa: user.tipo,
           data,
-          horarios
+          horarios: horariosOrder
         };
 
         Alert.alert('Sucesso', 'Horários salvos com sucesso!');
@@ -255,10 +257,10 @@ function HorarioPessoaProvider({ children }) {
       });
   }
 
-  async function getHorariosCandidadosDoDia(dataBR) {
+  async function getHorariosVoluntariosDoDia(dataBR) {
     //Retorna os horários de TODOS as pessoas candidatas do dia
     setLoading(true);
-    setHorariosCanditatosDia([]);
+    setHorariosVoluntariosDia([]);
     await firebase
       .database()
       .ref('horariospessoa')
@@ -266,16 +268,16 @@ function HorarioPessoaProvider({ children }) {
       .equalTo(dataBR)
       .once('value', (snapshot) => {
         if (snapshot.val() != null) {
-          const objHorariosCandidatos = Object.keys(snapshot.val()).map(
+          const objHorariosVoluntarios = Object.keys(snapshot.val()).map(
             (key) => ({
               key: key,
               ...snapshot.val()[key]
             })
           );
 
-          if (objHorariosCandidatos.length != 0)
-            setHorariosCanditatosDia(
-              [...objHorariosCandidatos].sort(({ data: a }, { data: b }) =>
+          if (objHorariosVoluntarios.length != 0)
+            setHorariosVoluntariosDia(
+              [...objHorariosVoluntarios].sort(({ data: a }, { data: b }) =>
                 a > b ? -1 : a < b ? 1 : 0
               )
             );
@@ -300,9 +302,9 @@ function HorarioPessoaProvider({ children }) {
         saving,
         setSaving,
         getHorariosPessoa,
-        getHorariosCandidadosDoDia,
-        setHorariosCanditatosDia,
-        horariosCandidatosDia,
+        getHorariosVoluntariosDoDia,
+        setHorariosVoluntariosDia,
+        horariosVoluntariosDia,
         horariosPreenchidos
       }}
     >

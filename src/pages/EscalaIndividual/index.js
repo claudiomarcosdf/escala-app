@@ -25,7 +25,9 @@ export default function EscalaIndividual() {
   const [modalVisible, setModalVisible] = useState(false);
 
   useEffect(() => {
-    const pessoasAtivas = todasPessoas.filter((pessoa) => pessoa.ativo == true);
+    const pessoasAtivas = todasPessoas.filter(
+      (pessoa) => pessoa.ativo == true && pessoa.tipo != 'Administrador'
+    );
     setPessoas(pessoasAtivas);
     setPessoasFiltered(pessoasAtivas);
   }, [todasPessoas]);
@@ -64,7 +66,7 @@ export default function EscalaIndividual() {
         </View>
 
         <View style={styles.boxTotalPessoas}>
-          <Text style={styles.textTotal}>Pessoas cadastradas: </Text>
+          <Text style={styles.textTotal}>Pessoas aptas: </Text>
           <Text style={[styles.textTotal, { fontWeight: '700' }]}>
             {pessoas.length != 0 ? pessoas.length : 0}
           </Text>

@@ -181,24 +181,29 @@ function AuthProvider({ children }) {
   async function salvarParoquiaConfig(
     nome,
     endereco,
-    qtdePessoasCandidatas,
+    qtdePessoasVoluntarias,
+    qtdeCerimoniariosPorHorario,
     qtdeCoroinhasPorHorario,
-    qtdeAcolitosPorHorario,
-    qtdeCerimoniariosPorHorario
+    qtdeMescesPorHorario
   ) {
     const dados = {
       nome,
       endereco,
-      qtdePessoasCandidatas,
+      qtdePessoasVoluntarias,
+      qtdeCerimoniariosPorHorario,
       qtdeCoroinhasPorHorario,
-      qtdeAcolitosPorHorario,
-      qtdeCerimoniariosPorHorario
+      qtdeMescesPorHorario
     };
 
-    let paroquiaConfig = firebase.database().ref('configuracoes');
-    let chave = paroquiaConfig.push().key;
+    let keyParoquia = null;
+    if (paroquiaconfig) {
+      keyParoquia = paroquiaconfig.key;
+    }
 
-    await paroquiaConfig
+    let paroquiaConfigDb = firebase.database().ref('configuracoes');
+    let chave = keyParoquia ? keyParoquia : paroquiaConfigDb.push().key;
+
+    await paroquiaConfigDb
       .child(chave)
       .set(dados)
       .then(() => {

@@ -159,14 +159,14 @@ export default function Cadastro() {
           onChangeText={(text) => setCelular(text)}
         />
         <Dropdown
-          placeholder='Selecione o tipo...'
+          placeholder='Selecione a função...'
           placeholderStyle={{ opacity: 0.5 }}
           dropdownStyle={styles.dropdown}
           options={[
             { label: 'Administrador', value: 'Administrador' },
+            { label: 'Cerimoniário', value: 'Cerimoniário' },
             { label: 'Coroinha', value: 'Coroinha' },
-            { label: 'Acólito', value: 'Acólito' },
-            { label: 'Cerimoniário', value: 'Cerimoniário' }
+            { label: 'Mesce', value: 'Mesce' }
           ]}
           selectedValue={tipo}
           onValueChange={(value) => setTipo(value)}

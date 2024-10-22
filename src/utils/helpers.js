@@ -48,7 +48,7 @@ function shuffleArray(arr) {
   return arr;
 }
 
-//Função para ordenar o array pessoas pelo horário
+//Função não utilizada
 function getOrderedHorario(array) {
   return array.sort((a, b) =>
     a.horario > b.horario ? 1 : b.horario > a.horario ? -1 : 0

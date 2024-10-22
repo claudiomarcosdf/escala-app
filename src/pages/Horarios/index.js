@@ -39,12 +39,12 @@ export default function CadastroHorarios() {
 
   const {
     loading,
-    incluirHorarios,
-    excluirHorarios,
+    incluirHorario,
+    excluirHorario,
     finish,
     setFinish,
-    getHorarios,
-    horarios
+    getHorario,
+    horario
   } = useContext(HorarioContext);
 
   async function handleDayPress(date) {
@@ -59,7 +59,7 @@ export default function CadastroHorarios() {
     };
 
     setMarkedDates(markedDay);
-    await getHorarios(selectedDate);
+    await getHorario(selectedDate);
   }
 
   function handleAdicionarHorario() {
@@ -124,7 +124,7 @@ export default function CadastroHorarios() {
     const onlyDate = date.valueOf() + date.getTimezoneOffset() * 60 * 1000;
     const dataFormatada = format(onlyDate, 'dd/MM/yyy');
 
-    await incluirHorarios(dataFormatada, horariosDisponiveis);
+    await incluirHorario(dataFormatada, horariosDisponiveis);
     setDateTimePicker(new Date(dataAtual));
     setHorariosDisponiveis([]);
   }
@@ -148,15 +148,15 @@ export default function CadastroHorarios() {
     ]);
   }
 
-  function handleDeleteHorario(horarios) {
-    Alert.alert('Atenção', `Excluir horários do dia ${horarios.data}?`, [
+  function handleDeleteHorario(horario) {
+    Alert.alert('Atenção', `Excluir horários do dia ${horario.data}?`, [
       {
         text: 'Cancelar',
         style: 'cancel'
       },
       {
         text: 'Excluir',
-        onPress: () => excluirHorarios(horarios.key, horarios.data)
+        onPress: () => excluirHorario(horario.key, horario.data)
       }
     ]);
   }
@@ -260,7 +260,7 @@ export default function CadastroHorarios() {
           </View>
         )}
 
-        {horarios && (
+        {horario && (
           <View
             style={{
               display: 'flex',
@@ -275,11 +275,11 @@ export default function CadastroHorarios() {
           >
             <Text
               style={{ fontWeight: '500' }}
-            >{`Horários do dia ${horarios?.data}`}</Text>
+            >{`Horários do dia ${horario?.data}`}</Text>
             <Text style={{ fontWeight: '700', marginBottom: 5 }}>
-              {horarios?.horarios?.join(' - ')}
+              {horario?.horarios?.join(' - ')}
             </Text>
-            <TouchableOpacity onPress={() => handleDeleteHorario(horarios)}>
+            <TouchableOpacity onPress={() => handleDeleteHorario(horario)}>
               <MaterialCommunityIcons
                 name='trash-can-outline'
                 size={25}

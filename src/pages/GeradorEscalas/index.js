@@ -32,10 +32,10 @@ export default function GeradorEscalas() {
 
   const { getHorariosAtivos, horarios } = useContext(HorarioContext);
   const {
-    loading: loadingCandidatos,
-    setHorariosCanditatosDia,
-    getHorariosCandidadosDoDia,
-    horariosCandidatosDia,
+    loading: loadingVoluntarios,
+    setHorariosVoluntariosDia,
+    getHorariosVoluntariosDoDia,
+    horariosVoluntariosDia,
     excluirHorariosPessoa
   } = useContext(HorarioPessoaContext);
   const { gerarEscala, building, finish, setFinish } =
@@ -72,20 +72,20 @@ export default function GeradorEscalas() {
     setHorariosDoDia(objDataSelecionada[0].horarios);
   }
 
-  function getTotalCandidatos() {
+  function getTotalVoluntarios() {
     return dataSelecionada
-      ? horariosCandidatosDia.length != 0
-        ? horariosCandidatosDia.length
+      ? horariosVoluntariosDia.length != 0
+        ? horariosVoluntariosDia.length
         : 0
       : 0;
   }
 
   async function gerarEscalasFinalizar(embaralhar) {
-    //console.log(horariosCandidatosDia);
+    //console.log(horariosVoluntariosDia);
     await gerarEscala(
       dataSelecionada,
       horariosDoDia,
-      horariosCandidatosDia,
+      horariosVoluntariosDia,
       embaralhar
     );
     setDataSelecionada(null);
@@ -93,12 +93,12 @@ export default function GeradorEscalas() {
 
   async function handleGerar() {
     Keyboard.dismiss();
-    if (!dataSelecionada || horariosCandidatosDia.length == 0) {
-      Alert.alert('Atenção', 'Não há candidatos para esta data!');
+    if (!dataSelecionada || horariosVoluntariosDia.length == 0) {
+      Alert.alert('Atenção', 'Não há voluntários para esta data!');
       return;
     }
 
-    Alert.alert('Embaralhar', `Deseja ordenar aleatoriamente os candidatos?`, [
+    Alert.alert('Embaralhar', `Deseja embaralhar os voluntários às vagas?`, [
       {
         text: 'Cancelar',
         style: 'cancel'
@@ -116,7 +116,7 @@ export default function GeradorEscalas() {
 
   async function handleChangeData(value) {
     setDataSelecionada(value);
-    await getHorariosCandidadosDoDia(value);
+    await getHorariosVoluntariosDoDia(value);
   }
 
   async function handleDelete(key, data) {
@@ -205,17 +205,19 @@ export default function GeradorEscalas() {
           </View>
         )}
 
-        <View style={styles.boxTotalCandidatos}>
-          <Text style={styles.textTotalCandidados}>Total de candidados: </Text>
-          <Text style={[styles.textTotalCandidados, { fontWeight: '700' }]}>
-            {getTotalCandidatos()}
+        <View style={styles.boxTotalVoluntarios}>
+          <Text style={styles.textTotalVoluntarios}>
+            Total de voluntários às vagas:{' '}
+          </Text>
+          <Text style={[styles.textTotalVoluntarios, { fontWeight: '700' }]}>
+            {getTotalVoluntarios()}
           </Text>
         </View>
 
         <FlatList
           style={styles.list}
           keyExtractor={(item) => item.key}
-          data={dataSelecionada ? horariosCandidatosDia : []}
+          data={dataSelecionada ? horariosVoluntariosDia : []}
           renderItem={({ item }) => (
             <ItemListaHorarioPessoa
               fullFields
@@ -224,14 +226,14 @@ export default function GeradorEscalas() {
             />
           )}
           ListEmptyComponent={
-            loadingCandidatos ? (
+            loadingVoluntarios ? (
               <View style={styles.textMessageList}>
                 <Text style={styles.textMessageList}>Carregando...</Text>
               </View>
             ) : (
               <View style={styles.textMessageList}>
                 <Text style={{ fontSize: 14, color: '#ee5253' }}>
-                  Nenhum candidato para este dia!
+                  Nenhum voluntário para este dia!
                 </Text>
               </View>
             )
@@ -317,13 +319,13 @@ const styles = StyleSheet.create({
   boxMessage: { marginTop: 20, alignItems: 'center' },
   iconAndtext: { flexDirection: 'row', alignItems: 'center' },
   textMessage: { color: '#2ecc71', fontWeight: '700', marginLeft: 5 },
-  boxTotalCandidatos: {
+  boxTotalVoluntarios: {
     flexDirection: 'row',
     width: '100%',
     marginTop: 18,
     paddingHorizontal: 5
   },
-  textTotalCandidados: { fontSize: 12, color: '#0096c7' },
+  textTotalVoluntarios: { fontSize: 12, color: '#0096c7' },
   list: {
     width: '100%',
     marginTop: 4,
