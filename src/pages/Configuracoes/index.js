@@ -124,7 +124,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: 35,
     paddingHorizontal: 2,
-    backgroundColor: '#F2f6fc'
+    backgroundColor: '#1d2638'
   },
   boxAreaElements: {
     flex: 1,
@@ -134,10 +134,11 @@ const styles = StyleSheet.create({
   titleText: {
     fontSize: 18,
     fontWeight: '700',
-    color: '#2f3640',
-    marginBottom: 15
+    color: '#fff',
+    marginBottom: 25
   },
   input: {
+    color: '#001e39',
     marginBottom: 10,
     backgroundColor: '#FFF',
     borderRadius: 4,
@@ -156,16 +157,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     height: 45,
+    backgroundColor: '#001e39',
+    borderWidth: 1.4,
+    borderColor: '#01446c',
     marginBotton: 10,
-    marginTop: 5,
+    marginTop: 30,
     borderRadius: 8,
-    backgroundColor: '#0984e3',
-    backgroundColor: '#0096c7',
     width: '100%'
   },
   boxQtde: {
-    backgroundColor: 'yellow',
+    backgroundColor: '#74b9ff',
     paddingHorizontal: 3,
-    marginBottom: 3
+    marginBottom: 3,
+    borderRadius: 3
   }
 });

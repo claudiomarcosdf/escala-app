@@ -148,7 +148,7 @@ export default function GeradorEscalas() {
             placeholder='Selecione o dia...'
             placeholderStyle={{ opacity: 0.5 }}
             selectedItemStyle={{
-              color: '#0096c7',
+              color: '#001e39',
               fontSize: 16,
               fontWeight: '900'
             }}
@@ -158,7 +158,7 @@ export default function GeradorEscalas() {
             onValueChange={(value) => {
               handleChangeData(value);
             }}
-            primaryColor={'#0096c7'}
+            primaryColor={'#001e39'}
           />
         </View>
 
@@ -249,7 +249,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: 35,
     paddingHorizontal: 5,
-    backgroundColor: '#F2f6fc'
+    backgroundColor: '#1d2638'
   },
   boxArea: {
     flex: 1,
@@ -259,8 +259,8 @@ const styles = StyleSheet.create({
   titleText: {
     fontSize: 18,
     fontWeight: '700',
-    color: '#2f3640',
-    marginBottom: 8
+    color: '#fff',
+    marginBottom: 10
   },
   boxDropdown: {
     width: '100%',
@@ -277,9 +277,10 @@ const styles = StyleSheet.create({
     height: 45,
     marginBotton: 10,
     marginTop: 3,
-    borderRadius: 8,
-    backgroundColor: '#0984e3',
-    backgroundColor: '#0096c7',
+    backgroundColor: '#001e39',
+    borderWidth: 1.4,
+    borderColor: '#01446c',
+    borderRadius: 5,
     width: '100%'
   },
   btnText: {
@@ -328,10 +329,10 @@ const styles = StyleSheet.create({
   textTotalVoluntarios: { fontSize: 12, color: '#0096c7' },
   list: {
     width: '100%',
-    marginTop: 4,
+    marginTop: 3,
     padding: 5,
     borderRadius: 8,
-    backgroundColor: '#dfe4ea'
+    backgroundColor: '#01446c'
   },
   textMessageList: {
     alignItems: 'center',

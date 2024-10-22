@@ -61,15 +61,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     padding: 8,
-    marginTop: 0,
-    marginBottom: 3,
+    marginHorizontal: 3,
+    marginTop: 4,
     borderRadius: 5,
     backgroundColor: '#fff'
   },
   boxDataHora: {
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: 30
+    marginRight: 20
   },
   textData: {
     color: '#2f3640',

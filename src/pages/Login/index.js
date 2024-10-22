@@ -56,6 +56,23 @@ export default function Login({ loginType = 'login' }) {
     }
   }
 
+  function getStyleBottom() {
+    const btnAcessar = {
+      backgroundColor: '#001e39',
+      borderWidth: 1.4,
+      borderColor: '#01446c',
+      borderRadius: 5
+    };
+    const btnCadastrar = {
+      backgroundColor: '#001e39',
+      borderColor: '#01446c',
+      borderWidth: 1.4,
+      borderRadius: 5
+    };
+    return type === 'login' ? btnAcessar : btnCadastrar;
+    //{ backgroundColor: type === 'login' ? '#192a56' : '#141414' }
+  }
+
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <SafeAreaView style={styles.container}>
@@ -111,10 +128,7 @@ export default function Login({ loginType = 'login' }) {
         )}
 
         <TouchableOpacity
-          style={[
-            styles.btnLogin,
-            { backgroundColor: type === 'login' ? '#0096c7' : '#141414' }
-          ]}
+          style={[styles.btnLogin, getStyleBottom()]}
           onPress={handleLogin}
         >
           <Text style={styles.loginText}>
@@ -131,7 +145,7 @@ export default function Login({ loginType = 'login' }) {
           {loading ? (
             <ActivityIndicator size={20} color='#0096c7' />
           ) : (
-            <Text style={{ textAlign: 'center' }}>
+            <Text style={{ textAlign: 'center', color: 'white' }}>
               {type === 'login' ? 'Criar uma conta' : 'Já possuo uma conta'}
             </Text>
           )}
@@ -146,7 +160,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: 100,
     paddingHorizontal: 10,
-    backgroundColor: '#F2f6fc'
+    backgroundColor: '#1d2638'
   },
   input: {
     marginBottom: 10,
@@ -159,7 +173,8 @@ const styles = StyleSheet.create({
   },
   loginText: {
     color: '#FFF',
-    fontSize: 17
+    fontSize: 17,
+    fontWeight: '600'
   },
   btnLogin: {
     alignItems: 'center',
@@ -174,7 +189,7 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
     borderRadius: 50,
-    borderColor: '#74b9ff',
-    borderWidth: 0.5
+    borderColor: '#5b7192',
+    borderWidth: 2
   }
 });

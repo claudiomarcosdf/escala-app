@@ -58,8 +58,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     padding: 10,
-    marginTop: 0,
-    marginBottom: 3,
+    marginTop: 4,
+    marginHorizontal: 3,
     borderRadius: 5,
     backgroundColor: '#fff'
   },

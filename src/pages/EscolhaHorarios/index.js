@@ -101,7 +101,7 @@ export default function EscolhaHorarios() {
           placeholder='Selecione o dia...'
           placeholderStyle={{ opacity: 0.5 }}
           selectedItemStyle={{
-            color: '#0096c7',
+            color: '#001e39',
             fontSize: 16,
             fontWeight: '900'
           }}
@@ -112,7 +112,7 @@ export default function EscolhaHorarios() {
             setHorariosSelecionados([]);
             setData(value);
           }}
-          primaryColor={'#0096c7'}
+          primaryColor={'#001e39'}
         />
 
         <Dropdown
@@ -128,7 +128,7 @@ export default function EscolhaHorarios() {
           }}
           selectedValue={horariosSelecionado}
           onValueChange={(value) => setHorariosSelecionados(value)}
-          primaryColor={'#0096c7'}
+          primaryColor={'#001e39'}
         />
 
         <TouchableOpacity style={styles.btnSalvar} onPress={handleSave}>
@@ -180,7 +180,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: 35,
     paddingHorizontal: 2,
-    backgroundColor: '#F2f6fc'
+    backgroundColor: '#1d2638'
   },
   boxAreaElements: {
     flex: 1,
@@ -190,12 +190,12 @@ const styles = StyleSheet.create({
   titleText: {
     fontSize: 18,
     fontWeight: '700',
-    color: '#2f3640',
+    color: '#fff',
     marginBottom: 15
   },
   titlePessoa: {
     fontWeight: '500',
-    color: '#0984e3',
+    color: '#0096c7',
     marginBottom: 10
   },
   dropdown: {
@@ -222,25 +222,27 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     height: 45,
-    marginBotton: 10,
+    marginBotton: 15,
     marginTop: 5,
     borderRadius: 8,
-    backgroundColor: '#0984e3',
-    backgroundColor: '#0096c7',
+    backgroundColor: '#001e39',
+    borderWidth: 1.4,
+    borderColor: '#01446c',
     width: '100%'
   },
   boxTotalHorarios: {
     flexDirection: 'row',
     width: '100%',
-    marginTop: 10,
+    marginTop: 15,
+    marginBottom: 2,
     paddingHorizontal: 5
   },
   list: {
     width: '100%',
-    marginTop: 2,
+    marginTop: 3,
     padding: 5,
     borderRadius: 8,
-    backgroundColor: '#dfe4ea'
+    backgroundColor: '#01446c'
   },
   textTotal: { fontSize: 12, color: '#0096c7' },
   textMessage: {

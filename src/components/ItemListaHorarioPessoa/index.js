@@ -83,8 +83,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     padding: 10,
-    marginTop: 0,
-    marginBottom: 3,
+    marginHorizontal: 3,
+    marginTop: 4,
     borderRadius: 5,
     backgroundColor: '#fff'
   },

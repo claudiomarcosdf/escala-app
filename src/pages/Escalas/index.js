@@ -29,7 +29,7 @@ export default function Escalas() {
   let dataAtual = getOnlyDateBr();
   const [dateNow, setDateNow] = useState(new Date(dataAtual));
   const [markedDates, setMarkedDates] = useState({
-    [dataAtual]: { selected: true, marked: true }
+    [dataAtual]: { selected: true, marked: true, selectedColor: '#0096c7' }
   });
   const [horaMarcada, setHoraMarcada] = useState({ horas: '', minutos: '' });
   const [modalVisible, setModalVisible] = useState(false);
@@ -57,7 +57,7 @@ export default function Escalas() {
     let markedDay = {};
     markedDay[date.dateString] = {
       selected: true,
-      selectedColor: '#3b3dbf',
+      selectedColor: '#01446c',
       textColor: '#fff'
     };
 
@@ -101,17 +101,21 @@ export default function Escalas() {
             onDayPress={handleDayPress}
             markedDates={markedDates}
             enableSwipeMonths={true}
-            style={{ borderRadius: 5 }}
+            style={{ borderRadius: 5, backgroundColor: '#001e39' }}
             theme={{
               todayTextColor: '#000',
-              selectedDayBackgroundColor: '#00adf5',
+              selectedDayBackgroundColor: '#01446c',
               selectedDayTextColor: '#fff'
             }}
           />
         </View>
 
         <View style={styles.boxComands}>
-          <Text style={{ fontSize: 13, fontWeight: '600' }}>Escala do dia</Text>
+          <Text
+            style={{ fontSize: 13, fontColor: '#001e39', fontWeight: '600' }}
+          >
+            Escala do dia
+          </Text>
           <View style={{ flexDirection: 'row' }}>
             <TouchableOpacity
               style={styles.btnEscalar}
@@ -163,7 +167,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: 35,
     paddingHorizontal: 2,
-    backgroundColor: '#F2f6fc'
+    backgroundColor: '#1d2638'
   },
   boxArea: {
     flex: 1,
@@ -173,7 +177,7 @@ const styles = StyleSheet.create({
   titleText: {
     fontSize: 18,
     fontWeight: '700',
-    color: '#2f3640',
+    color: '#fff',
     marginBottom: 8
   },
   boxCalendar: {
@@ -185,10 +189,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 5,
     borderRadius: 5,
     padding: 3,
-    backgroundColor: '#fff'
+    paddingHorizontal: 5,
+    backgroundColor: '#fff',
+    marginBottom: 3
   },
   textBtnEscalar: { color: '#fff', fontSize: 12, fontWeight: '700' },
   btnEscalar: {
@@ -198,7 +203,7 @@ const styles = StyleSheet.create({
     height: 24,
     paddingHorizontal: 12,
     borderRadius: 5,
-    backgroundColor: '#0096c7'
+    backgroundColor: '#001e39'
   },
   // btnCompartilhar: {
   //   marginLeft: 0,
@@ -212,12 +217,13 @@ const styles = StyleSheet.create({
   // },
   list: {
     width: '100%',
-    marginTop: 10,
+    marginTop: 3,
     padding: 5,
     borderRadius: 8,
-    backgroundColor: '#dfe4ea'
+    backgroundColor: '#01446c'
   },
   textMessage: {
+    color: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: 20

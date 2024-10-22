@@ -159,7 +159,12 @@ export default function ModalEscala({ visible, setVisible, pessoa }) {
               style={styles.btnCancelar}
               onPress={handleCancelar}
             >
-              <Text style={[styles.btnText, { color: '#0096c7' }]}>
+              <Text
+                style={[
+                  styles.btnText,
+                  { color: '#001e39', fontWeight: '600' }
+                ]}
+              >
                 Cancelar
               </Text>
             </TouchableOpacity>
@@ -198,9 +203,9 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   titleText: {
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: '700',
-    color: '#2f3640',
+    color: '#1d2638',
     marginBottom: 15
   },
   input: {
@@ -210,6 +215,7 @@ const styles = StyleSheet.create({
     height: 45,
     padding: 10,
     borderWidth: 1,
+    color: '#1d2638',
     borderColor: '#747d8c',
     width: '100%',
     fontSize: 15,
@@ -223,8 +229,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     height: 45,
     marginTop: 20,
-    borderRadius: 8,
-    backgroundColor: '#0096c7',
+    backgroundColor: '#001e39',
+    borderWidth: 1.4,
+    borderColor: '#01446c',
+    borderRadius: 5,
     width: '100%'
   },
   btnCancelar: {
@@ -234,7 +242,7 @@ const styles = StyleSheet.create({
     marginTop: 15,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: '#0096c7',
+    borderColor: '#001e39',
     backgroundColor: '#ffffff',
     width: '100%'
   },
@@ -248,10 +256,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     width: 100,
     height: 45,
+    borderWidth: 1.4,
+    borderColor: '#01446c',
     borderRadius: 50,
     borderTopRightRadius: 0,
     borderBottomRightRadius: 0,
-    backgroundColor: '#0096c7'
+    backgroundColor: '#001e39'
   },
   textBtnDataHora: {
     color: '#FFF',
@@ -259,6 +269,7 @@ const styles = StyleSheet.create({
     fontWeight: '600'
   },
   textInputDataHora: {
+    color: '#001e39',
     marginBottom: 10,
     backgroundColor: '#F2f6fc',
     borderRadius: 50,
@@ -268,11 +279,12 @@ const styles = StyleSheet.create({
     padding: 10,
     paddingLeft: 20,
     borderWidth: 1,
-    borderColor: '#0096c7',
+    borderColor: '#001e39',
     fontWeight: '700',
     width: 120
   },
   textShowDataHora: {
+    color: '#0096c7',
     fontSize: 15,
     fontWeight: '700',
     marginBottom: 25

@@ -133,13 +133,13 @@ export default function Cadastro() {
         )}
 
         <View style={styles.boxStatus}>
-          <Text style={{ fontSize: 13, marginLeft: 5 }}>
+          <Text style={{ fontSize: 13, marginLeft: 5, color: '#fff' }}>
             {ativo ? 'Ativo' : 'Inativo'}
           </Text>
           <Switch
             style={styles.customSwitch}
             trackColor={{ false: '#767577', true: '#81b0ff' }}
-            thumbColor={ativo ? '#f5dd4b' : '#f4f3f4'}
+            thumbColor={ativo ? '#0096c7' : '#f4f3f4'}
             ios_backgroundColor='#3e3e3e'
             onValueChange={toggleSwitch}
             value={ativo}
@@ -170,7 +170,7 @@ export default function Cadastro() {
           ]}
           selectedValue={tipo}
           onValueChange={(value) => setTipo(value)}
-          primaryColor={'#0096c7'}
+          primaryColor={'#001e39'}
         />
 
         <TouchableOpacity style={styles.btnCadastrar} onPress={handleSave}>
@@ -179,7 +179,8 @@ export default function Cadastro() {
 
         <View style={{ width: '100%', marginTop: 15 }}>
           <TextInput
-            placeholder='Pesquisar'
+            placeholder='Pesquisar...'
+            placeholderTextColor='#ccc'
             clearButtonMode='always'
             style={styles.textPesquisar}
             autoCapitalize='none'
@@ -232,7 +233,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: 35,
     paddingHorizontal: 2,
-    backgroundColor: '#F2f6fc'
+    backgroundColor: '#1d2638'
   },
   boxAreaCadastro: {
     flex: 1,
@@ -242,7 +243,7 @@ const styles = StyleSheet.create({
   titleText: {
     fontSize: 18,
     fontWeight: '700',
-    color: '#2f3640',
+    color: '#fff',
     marginBottom: 15
   },
   input: {
@@ -271,8 +272,10 @@ const styles = StyleSheet.create({
     height: 45,
     marginBotton: 10,
     marginTop: 5,
-    borderRadius: 8,
-    backgroundColor: '#0096c7',
+    borderWidth: 1.4,
+    borderColor: '#01446c',
+    borderRadius: 5,
+    backgroundColor: '#001e39',
     width: '100%'
   },
   boxStatus: {
@@ -295,6 +298,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 5
   },
   textPesquisar: {
+    color: '#fff',
     paddingHorizontal: 10,
     paddingVertical: 1,
     borderColor: '#ccc',
@@ -304,10 +308,11 @@ const styles = StyleSheet.create({
   textTotal: { fontSize: 12, color: '#0096c7' },
   list: {
     width: '100%',
-    marginTop: 2,
+    marginTop: 3,
     padding: 5,
     borderRadius: 8,
-    backgroundColor: '#dfe4ea'
+    backgroundColor: '#dfe4ea',
+    backgroundColor: '#01446c'
   },
   textMessage: {
     alignItems: 'center',

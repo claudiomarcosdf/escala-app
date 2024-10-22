@@ -139,10 +139,10 @@ export default function PrintEscala({ data }) {
   return (
     <>
       <TouchableOpacity style={styles.btnCompartilhar} onPress={print}>
-        <Feather name='printer' size={15} color='#2f3640' />
+        <Feather name='printer' size={15} color='#001e39' />
       </TouchableOpacity>
       <TouchableOpacity style={styles.btnCompartilhar} onPress={printToFile}>
-        <AntDesign name='sharealt' size={15} color='#2f3640' />
+        <AntDesign name='sharealt' size={15} color='#001e39' />
       </TouchableOpacity>
     </>
   );

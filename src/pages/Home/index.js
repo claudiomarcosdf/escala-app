@@ -19,10 +19,15 @@ export default function Home() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.areaButtons}>
+        <View style={styles.title}>
+          <MaterialCommunityIcons
+            name='view-dashboard-outline'
+            size={24}
+            color='#fff'
+          />
+          <Text style={styles.textTitle}>MENU</Text>
+        </View>
         <View style={styles.boxButtons}>
-          <View style={styles.title}>
-            <Text style={{ fontWeight: '600' }}>MENU</Text>
-          </View>
           <TouchableOpacity
             style={styles.button}
             onPress={() => navigation.navigate('Cadastro')}
@@ -31,7 +36,7 @@ export default function Home() {
               name='person-praying'
               size={30}
               color='#fff'
-              style={{ marginRight: 25 }}
+              style={styles.iconsStyle}
             />
             <Text style={styles.textButtom}>Cadastro de Pessoa</Text>
           </TouchableOpacity>
@@ -43,7 +48,7 @@ export default function Home() {
               name='calendar-clock'
               size={30}
               color='#fff'
-              style={{ marginRight: 25 }}
+              style={styles.iconsStyle}
             />
             <Text style={styles.textButtom}>Horários das Missas</Text>
           </TouchableOpacity>
@@ -55,7 +60,7 @@ export default function Home() {
               name='timer-cog-outline'
               size={30}
               color='#fff'
-              style={{ marginRight: 25 }}
+              style={styles.iconsStyle}
             />
             <Text style={styles.textButtom}>Gerador de Escalas</Text>
           </TouchableOpacity>
@@ -67,7 +72,7 @@ export default function Home() {
               name='calendar-account'
               size={30}
               color='#fff'
-              style={{ marginRight: 25 }}
+              style={styles.iconsStyle}
             />
             <Text style={styles.textButtom}>Escala Individual</Text>
           </TouchableOpacity>
@@ -79,7 +84,7 @@ export default function Home() {
               name='calendar-month'
               size={30}
               color='#fff'
-              style={{ marginRight: 25 }}
+              style={styles.iconsStyle}
             />
             <Text style={styles.textButtom}>Escalas</Text>
           </TouchableOpacity>
@@ -103,52 +108,68 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: 35,
     paddingHorizontal: 10,
-    backgroundColor: '#F2f6fc',
+    backgroundColor: '#1d2638',
     alignItems: 'center',
     justifyContent: 'center'
   },
   title: {
+    flexDirection: 'row',
+    color: '#fff',
     alignItems: 'center',
-    marginBottom: 20
+    marginBottom: 25
+  },
+  textTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#fff',
+    marginLeft: 10
   },
   areaButtons: {
     flex: 1,
-    width: '90%',
+    width: '95%',
     alignItems: 'center',
     justifyContent: 'center'
+  },
+  iconsStyle: {
+    opacity: 0.8,
+    marginBottom: 5
   },
   boxButtons: {
-    flex: 1,
-    width: '100%',
-    justifyContent: 'center'
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    width: '100%'
   },
   button: {
-    flexDirection: 'row',
+    justifyContent: 'center',
     alignItems: 'center',
-    width: '100%',
-    borderRadius: 2,
-    backgroundColor: '#0096c7',
-    padding: 25,
-    marginBottom: 4
+    width: '48%',
+    height: 130,
+    borderRadius: 5,
+    backgroundColor: '#001e39',
+    borderWidth: 1.4,
+    borderColor: '#01446c',
+    padding: 20,
+    marginBottom: 15
   },
   textButtom: {
+    textAlign: 'center',
     color: '#fff',
     fontSize: 16,
-    fontWeight: '500'
+    fontWeight: '400'
   },
   buttonOut: {
     width: '100%',
     alignItems: 'center',
     borderWidth: 1.5,
-    borderColor: '#ced6e0',
+    borderColor: '#001e39',
     backgroundColor: '#fff',
-    borderRadius: 2,
+    borderRadius: 5,
     padding: 10,
     marginTop: 20
   },
   textButtomOut: {
-    color: '#2f3640',
-    color: '#0096c7',
+    color: '#001e39',
     fontWeight: '600'
   },
   developer: { fontSize: 9, fontStyle: 'italic', color: '#2d3436' }

@@ -42,7 +42,7 @@ export default function Routes() {
           component={EscolhaHorarios}
           options={{
             headerShown: false,
-            tabBarLabel: 'Candidate-se',
+            tabBarLabel: 'Voluntarie-se',
             tabBarIcon: ({ color, size }) => {
               return (
                 <MaterialCommunityIcons

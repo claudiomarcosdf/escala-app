@@ -30,7 +30,7 @@ export default function CadastroHorarios() {
 
   const [dateNow, setDateNow] = useState(new Date(dataAtual));
   const [markedDates, setMarkedDates] = useState({
-    [dataAtual]: { selected: true, marked: true }
+    [dataAtual]: { selected: true, marked: true, selectedColor: '#0096c7' }
     // ['2024-10-14']: { disabled: true, disableTouchEvent: true }
   });
   const [dateTimePicker, setDateTimePicker] = useState(new Date(dataAtual)); //para hora apenas
@@ -54,7 +54,7 @@ export default function CadastroHorarios() {
     let markedDay = {};
     markedDay[date.dateString] = {
       selected: true,
-      selectedColor: '#3b3dbf',
+      selectedColor: '#01446c',
       textColor: '#fff'
     };
 
@@ -174,11 +174,13 @@ export default function CadastroHorarios() {
             onDayPress={handleDayPress}
             markedDates={markedDates}
             enableSwipeMonths={true}
-            style={{ borderRadius: 5 }}
+            style={{
+              borderRadius: 5,
+              backgroundColor: '#001e39'
+            }}
             theme={{
-              //todayTextColor: '#ff0000',
               todayTextColor: '#000',
-              selectedDayBackgroundColor: '#00adf5',
+              selectedDayBackgroundColor: '#01446c',
               selectedDayTextColor: '#fff'
             }}
           />
@@ -215,7 +217,9 @@ export default function CadastroHorarios() {
           Horários das missas selecionados
         </Text>
         {horariosDisponiveis.length === 0 && (
-          <Text style={{ fontSize: 12 }}>Nenhum selecionado</Text>
+          <Text style={{ fontSize: 12, color: '#fff' }}>
+            Nenhum selecionado
+          </Text>
         )}
         <View style={{ flexDirection: 'row', marginBottom: 25 }}>
           {horariosDisponiveis.map((horario) => (
@@ -266,17 +270,17 @@ export default function CadastroHorarios() {
               display: 'flex',
               justifyContent: 'center',
               alignItems: 'center',
-              padding: 8,
+              padding: 10,
               marginTop: 30,
-              borderWidth: 1,
-              borderColor: '#2ecc71',
+              borderWidth: 2,
+              borderColor: '#0096c7',
               borderRadius: 5
             }}
           >
             <Text
-              style={{ fontWeight: '500' }}
+              style={{ fontWeight: '500', color: '#fff' }}
             >{`Horários do dia ${horario?.data}`}</Text>
-            <Text style={{ fontWeight: '700', marginBottom: 5 }}>
+            <Text style={{ fontWeight: '700', marginBottom: 5, color: '#fff' }}>
               {horario?.horarios?.join(' - ')}
             </Text>
             <TouchableOpacity onPress={() => handleDeleteHorario(horario)}>
@@ -309,7 +313,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: 35,
     paddingHorizontal: 5,
-    backgroundColor: '#F2f6fc'
+    backgroundColor: '#1d2638'
   },
   boxArea: {
     flex: 1,
@@ -319,7 +323,7 @@ const styles = StyleSheet.create({
   titleText: {
     fontSize: 18,
     fontWeight: '700',
-    color: '#2f3640',
+    color: '#fff',
     marginBottom: 8
   },
   boxCalendar: {
@@ -331,9 +335,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     height: 40,
     marginBotton: 10,
-    borderRadius: 8,
-    backgroundColor: '#0984e3',
-    backgroundColor: '#0096c7',
+    backgroundColor: '#001e39',
+    borderWidth: 1.4,
+    borderColor: '#01446c',
+    borderRadius: 5,
     width: '100%'
   },
   btnText: {
@@ -355,17 +360,19 @@ const styles = StyleSheet.create({
     padding: 4,
     borderWidth: 1,
     borderColor: '#02c39a',
-    backgroundColor: '#02c39a'
+    backgroundColor: '#2ecc71'
   },
   btnHora: {
     alignItems: 'center',
     justifyContent: 'center',
     width: 140,
     height: 40,
+    borderWidth: 1.4,
+    borderColor: '#01446c',
     borderRadius: 50,
     borderTopRightRadius: 0,
     borderBottomRightRadius: 0,
-    backgroundColor: '#0096c7'
+    backgroundColor: '#001e39'
   },
   textBtnHora: {
     color: '#FFF',
@@ -381,7 +388,7 @@ const styles = StyleSheet.create({
     padding: 10,
     paddingLeft: 20,
     borderWidth: 1,
-    borderColor: '#0096c7',
+    borderColor: '#01446c',
     fontWeight: '700',
     width: 120
   },

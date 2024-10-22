@@ -123,7 +123,7 @@ function EscalaProvider({ children }) {
 
     newArrayVagasPreenchidas[vagasPreenchidasIndex].totalPreenchidas += 1;
 
-    console.log('Atualização de vagas', newArrayVagasPreenchidas);
+    //console.log('Atualização de vagas', newArrayVagasPreenchidas);
     return newArrayVagasPreenchidas;
   }
 
@@ -168,12 +168,9 @@ function EscalaProvider({ children }) {
     });
 
     horariosDoDia.forEach((hora) => {
-      console.log('hora', hora);
       horariosPessoaOrdenados.forEach(
         ({ keypessoa, nomepessoa: candidato, tipopessoa, horarios }) => {
-          console.log('tipopessoa', tipopessoa);
           horarios.forEach((horario) => {
-            console.log('horario', horario);
             if (horario == hora) {
               const vagaPreenchidaFinded = vagasPreenchidas.find(
                 (vagaHorario) =>

@@ -99,7 +99,7 @@ export default function ModalFaltaAtraso({ visible, setVisible, escala }) {
               style={styles.btnCancelar}
               onPress={handleConfirmar}
             >
-              <Text style={[styles.btnText, { color: '#0096c7' }]}>
+              <Text style={[styles.btnText, { color: '#001e39' }]}>
                 Confirmar
               </Text>
             </TouchableOpacity>
@@ -130,7 +130,7 @@ const styles = StyleSheet.create({
   titleText: {
     fontSize: 14,
     fontWeight: '700',
-    color: '#2f3640',
+    color: '#001e39',
     marginBottom: 45
   },
   btnCancelar: {
@@ -140,7 +140,7 @@ const styles = StyleSheet.create({
     marginTop: 15,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: '#0096c7',
+    borderColor: '#001e39',
     backgroundColor: '#ffffff',
     width: '100%'
   },
@@ -158,6 +158,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff'
   },
   textLabel: {
+    color: '#001e39',
     width: 50,
     paddingLeft: 5,
     fontWeight: '600'
