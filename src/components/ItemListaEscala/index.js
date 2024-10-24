@@ -7,6 +7,7 @@ import {
 } from 'react-native';
 
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import AppStyles from '../../appStyles';
 
 export default function ItemListaEscala({ data, deleteItem, selectEscala }) {
   return (
@@ -39,7 +40,7 @@ export default function ItemListaEscala({ data, deleteItem, selectEscala }) {
           <MaterialCommunityIcons
             name='trash-can-outline'
             size={20}
-            color='#ee5253'
+            color={AppStyles.color.danger}
           />
         </TouchableOpacity>
       </View>

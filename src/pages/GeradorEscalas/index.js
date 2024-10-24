@@ -18,6 +18,7 @@ import { AntDesign } from '@expo/vector-icons';
 import { format } from 'date-fns';
 import { ptBR } from '../../localeCalendar';
 
+import AppStyles from '../../appStyles';
 import { HorarioContext } from '../../contexts/horarioContext';
 import { EscalaContext } from '../../contexts/escalaContext';
 import { HorarioPessoaContext } from '../../contexts/horariosPessoaContext';
@@ -148,7 +149,7 @@ export default function GeradorEscalas() {
             placeholder='Selecione o dia...'
             placeholderStyle={{ opacity: 0.5 }}
             selectedItemStyle={{
-              color: '#001e39',
+              color: AppStyles.color.primary,
               fontSize: 16,
               fontWeight: '900'
             }}
@@ -158,7 +159,7 @@ export default function GeradorEscalas() {
             onValueChange={(value) => {
               handleChangeData(value);
             }}
-            primaryColor={'#001e39'}
+            primaryColor={AppStyles.color.primary}
           />
         </View>
 
@@ -166,7 +167,9 @@ export default function GeradorEscalas() {
           Horários das missas do dia
         </Text>
         {horariosDoDia.length === 0 && (
-          <Text style={{ fontSize: 12 }}>Nenhuma data selecionada</Text>
+          <Text style={{ fontSize: 12, color: '#fff' }}>
+            Nenhuma data selecionada
+          </Text>
         )}
         <View style={{ flexDirection: 'row', marginBottom: 20 }}>
           {horariosDoDia.map((horario) => (
@@ -187,13 +190,17 @@ export default function GeradorEscalas() {
         </TouchableOpacity>
         {building && (
           <View style={{ marginTop: 20 }}>
-            <ActivityIndicator size={20} color='#0984e3' />
+            <ActivityIndicator size={20} color={AppStyles.color.loading} />
           </View>
         )}
         {finish && (
           <View style={styles.boxMessage}>
             <View style={styles.iconAndtext}>
-              <AntDesign name='checkcircle' size={16} color='#2ecc71' />
+              <AntDesign
+                name='checkcircle'
+                size={16}
+                color={AppStyles.color.success}
+              />
               <Text style={styles.textMessage}>Escala gerada com sucesso!</Text>
             </View>
             <TouchableOpacity
@@ -232,7 +239,7 @@ export default function GeradorEscalas() {
               </View>
             ) : (
               <View style={styles.textMessageList}>
-                <Text style={{ fontSize: 14, color: '#ee5253' }}>
+                <Text style={{ fontSize: 14, color: AppStyles.color.danger }}>
                   Nenhum voluntário para este dia!
                 </Text>
               </View>
@@ -249,7 +256,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: 35,
     paddingHorizontal: 5,
-    backgroundColor: '#1d2638'
+    backgroundColor: AppStyles.color.background
   },
   boxArea: {
     flex: 1,
@@ -277,9 +284,9 @@ const styles = StyleSheet.create({
     height: 45,
     marginBotton: 10,
     marginTop: 3,
-    backgroundColor: '#001e39',
+    backgroundColor: AppStyles.color.primary,
     borderWidth: 1.4,
-    borderColor: '#01446c',
+    borderColor: AppStyles.color.secondary,
     borderRadius: 5,
     width: '100%'
   },
@@ -291,7 +298,7 @@ const styles = StyleSheet.create({
   textHorariosSelecionados: {
     marginBottom: 5,
     fontSize: 16,
-    color: '#0096c7',
+    color: AppStyles.color.blueLightColor,
     fontWeight: '700'
   },
   boxHorarioDisponivel: {
@@ -308,7 +315,7 @@ const styles = StyleSheet.create({
     paddingBottom: 2,
     borderRadius: 5,
     marginTop: 4,
-    backgroundColor: '#2ecc71',
+    backgroundColor: AppStyles.color.success,
     alignItems: 'center',
     justifyContent: 'center'
   },
@@ -319,20 +326,24 @@ const styles = StyleSheet.create({
   },
   boxMessage: { marginTop: 20, alignItems: 'center' },
   iconAndtext: { flexDirection: 'row', alignItems: 'center' },
-  textMessage: { color: '#2ecc71', fontWeight: '700', marginLeft: 5 },
+  textMessage: {
+    color: AppStyles.color.success,
+    fontWeight: '700',
+    marginLeft: 5
+  },
   boxTotalVoluntarios: {
     flexDirection: 'row',
     width: '100%',
     marginTop: 18,
     paddingHorizontal: 5
   },
-  textTotalVoluntarios: { fontSize: 12, color: '#0096c7' },
+  textTotalVoluntarios: { fontSize: 12, color: AppStyles.color.blueLightColor },
   list: {
     width: '100%',
     marginTop: 3,
     padding: 5,
     borderRadius: 8,
-    backgroundColor: '#01446c'
+    backgroundColor: AppStyles.color.secondary
   },
   textMessageList: {
     alignItems: 'center',

@@ -5,16 +5,17 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback
 } from 'react-native';
-
 import { FontAwesome6 } from '@expo/vector-icons';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
+
+import AppStyles from '../../appStyles';
 import { getStatus } from '../../utils/helpers';
 
 export default function ItemListaPessoa({ data, deleteItem, editItem }) {
   function destak(data) {
     return data?.tipo == 'Administrador'
-      ? { color: '#ee5253' }
+      ? { color: AppStyles.color.danger }
       : { color: '#2f3640' };
   }
 
@@ -61,7 +62,7 @@ export default function ItemListaPessoa({ data, deleteItem, editItem }) {
           <MaterialCommunityIcons
             name='trash-can-outline'
             size={20}
-            color='#ee5253'
+            color={AppStyles.color.danger}
           />
         </TouchableOpacity>
       </View>

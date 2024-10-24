@@ -12,8 +12,9 @@ import {
   ActivityIndicator,
   Keyboard
 } from 'react-native';
-
 import firebase from '../../firebaseConfig';
+
+import AppStyles from '../../appStyles';
 import { AuthContext } from '../../contexts/authContext';
 
 export default function Login({ loginType = 'login' }) {
@@ -58,14 +59,14 @@ export default function Login({ loginType = 'login' }) {
 
   function getStyleBottom() {
     const btnAcessar = {
-      backgroundColor: '#001e39',
+      backgroundColor: AppStyles.color.primary,
       borderWidth: 1.4,
-      borderColor: '#01446c',
+      borderColor: AppStyles.color.secondary,
       borderRadius: 5
     };
     const btnCadastrar = {
-      backgroundColor: '#001e39',
-      borderColor: '#01446c',
+      backgroundColor: AppStyles.color.primary,
+      borderColor: AppStyles.color.secondary,
       borderWidth: 1.4,
       borderRadius: 5
     };
@@ -143,7 +144,10 @@ export default function Login({ loginType = 'login' }) {
           }
         >
           {loading ? (
-            <ActivityIndicator size={20} color='#0096c7' />
+            <ActivityIndicator
+              size={20}
+              color={AppStyles.color.blueLightColor}
+            />
           ) : (
             <Text style={{ textAlign: 'center', color: 'white' }}>
               {type === 'login' ? 'Criar uma conta' : 'Já possuo uma conta'}
@@ -160,7 +164,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: 100,
     paddingHorizontal: 10,
-    backgroundColor: '#1d2638'
+    backgroundColor: AppStyles.color.background
   },
   input: {
     marginBottom: 10,

@@ -10,6 +10,7 @@ import { useNavigation } from '@react-navigation/native';
 import { FontAwesome6 } from '@expo/vector-icons';
 import { MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
 
+import AppStyles from '../../appStyles';
 import { AuthContext } from '../../contexts/authContext';
 
 export default function Home() {
@@ -108,7 +109,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: 35,
     paddingHorizontal: 10,
-    backgroundColor: '#1d2638',
+    backgroundColor: AppStyles.color.background,
     alignItems: 'center',
     justifyContent: 'center'
   },
@@ -146,9 +147,9 @@ const styles = StyleSheet.create({
     width: '48%',
     height: 130,
     borderRadius: 5,
-    backgroundColor: '#001e39',
+    backgroundColor: AppStyles.color.primary,
     borderWidth: 1.4,
-    borderColor: '#01446c',
+    borderColor: AppStyles.color.secondary,
     padding: 20,
     marginBottom: 15
   },
@@ -162,14 +163,14 @@ const styles = StyleSheet.create({
     width: '100%',
     alignItems: 'center',
     borderWidth: 1.5,
-    borderColor: '#001e39',
+    borderColor: AppStyles.color.primary,
     backgroundColor: '#fff',
     borderRadius: 5,
     padding: 10,
     marginTop: 20
   },
   textButtomOut: {
-    color: '#001e39',
+    color: AppStyles.color.primary,
     fontWeight: '600'
   },
   developer: { fontSize: 9, fontStyle: 'italic', color: '#2d3436' }

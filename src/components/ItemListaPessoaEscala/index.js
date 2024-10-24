@@ -5,16 +5,17 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback
 } from 'react-native';
-
 import { FontAwesome6 } from '@expo/vector-icons';
 import { AntDesign } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
+
+import AppStyles from '../../appStyles';
 import { getLabelHorario } from '../../utils/helpers';
 
 export default function ItemListaPessoaEscala({ data, selectPessoa }) {
   function destak(data) {
     return data?.tipo == 'Administrador'
-      ? { color: '#ee5253' }
+      ? { color: AppStyles.color.danger }
       : { color: '#2f3640' };
   }
   return (

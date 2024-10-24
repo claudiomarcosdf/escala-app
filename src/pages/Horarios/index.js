@@ -19,6 +19,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import { ptBR } from '../../localeCalendar';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
+import AppStyles from '../../appStyles';
 LocaleConfig.locales['pt-br'] = ptBR;
 LocaleConfig.defaultLocale = 'pt-br';
 
@@ -30,7 +31,11 @@ export default function CadastroHorarios() {
 
   const [dateNow, setDateNow] = useState(new Date(dataAtual));
   const [markedDates, setMarkedDates] = useState({
-    [dataAtual]: { selected: true, marked: true, selectedColor: '#0096c7' }
+    [dataAtual]: {
+      selected: true,
+      marked: true,
+      selectedColor: AppStyles.color.blueLightColor
+    }
     // ['2024-10-14']: { disabled: true, disableTouchEvent: true }
   });
   const [dateTimePicker, setDateTimePicker] = useState(new Date(dataAtual)); //para hora apenas
@@ -54,7 +59,7 @@ export default function CadastroHorarios() {
     let markedDay = {};
     markedDay[date.dateString] = {
       selected: true,
-      selectedColor: '#01446c',
+      selectedColor: AppStyles.color.secondary,
       textColor: '#fff'
     };
 
@@ -176,11 +181,11 @@ export default function CadastroHorarios() {
             enableSwipeMonths={true}
             style={{
               borderRadius: 5,
-              backgroundColor: '#001e39'
+              backgroundColor: AppStyles.color.primary
             }}
             theme={{
               todayTextColor: '#000',
-              selectedDayBackgroundColor: '#01446c',
+              selectedDayBackgroundColor: AppStyles.color.secondary,
               selectedDayTextColor: '#fff'
             }}
           />
@@ -244,13 +249,17 @@ export default function CadastroHorarios() {
         </TouchableOpacity>
         {loading && (
           <View style={{ marginTop: 20 }}>
-            <ActivityIndicator size={20} color='#0984e3' />
+            <ActivityIndicator size={20} color={AppStyles.color.loading} />
           </View>
         )}
         {finish && (
           <View style={styles.boxMessage}>
             <View style={styles.iconAndtext}>
-              <AntDesign name='checkcircle' size={16} color='#2ecc71' />
+              <AntDesign
+                name='checkcircle'
+                size={16}
+                color={AppStyles.color.success}
+              />
               <Text style={styles.textMessage}>
                 Horários cadastrados com sucesso!
               </Text>
@@ -273,7 +282,7 @@ export default function CadastroHorarios() {
               padding: 10,
               marginTop: 30,
               borderWidth: 2,
-              borderColor: '#0096c7',
+              borderColor: AppStyles.color.blueLightColor,
               borderRadius: 5
             }}
           >
@@ -287,7 +296,7 @@ export default function CadastroHorarios() {
               <MaterialCommunityIcons
                 name='trash-can-outline'
                 size={25}
-                color='#ee5253'
+                color={AppStyles.color.danger}
               />
             </TouchableOpacity>
           </View>
@@ -313,7 +322,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: 35,
     paddingHorizontal: 5,
-    backgroundColor: '#1d2638'
+    backgroundColor: AppStyles.color.background
   },
   boxArea: {
     flex: 1,
@@ -335,9 +344,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     height: 40,
     marginBotton: 10,
-    backgroundColor: '#001e39',
+    backgroundColor: AppStyles.color.primary,
     borderWidth: 1.4,
-    borderColor: '#01446c',
+    borderColor: AppStyles.color.secondary,
     borderRadius: 5,
     width: '100%'
   },
@@ -360,7 +369,7 @@ const styles = StyleSheet.create({
     padding: 4,
     borderWidth: 1,
     borderColor: '#02c39a',
-    backgroundColor: '#2ecc71'
+    backgroundColor: AppStyles.color.success
   },
   btnHora: {
     alignItems: 'center',
@@ -368,11 +377,11 @@ const styles = StyleSheet.create({
     width: 140,
     height: 40,
     borderWidth: 1.4,
-    borderColor: '#01446c',
+    borderColor: AppStyles.color.secondary,
     borderRadius: 50,
     borderTopRightRadius: 0,
     borderBottomRightRadius: 0,
-    backgroundColor: '#001e39'
+    backgroundColor: AppStyles.color.primary
   },
   textBtnHora: {
     color: '#FFF',
@@ -388,14 +397,14 @@ const styles = StyleSheet.create({
     padding: 10,
     paddingLeft: 20,
     borderWidth: 1,
-    borderColor: '#01446c',
+    borderColor: AppStyles.color.secondary,
     fontWeight: '700',
     width: 120
   },
   textHorariosSelecionados: {
     marginBottom: 5,
     fontSize: 14,
-    color: '#0096c7',
+    color: AppStyles.color.blueLightColor,
     fontWeight: '700'
   },
   boxHorarioDisponivel: {
@@ -414,7 +423,7 @@ const styles = StyleSheet.create({
     paddingBottom: 2,
     borderRadius: 5,
     marginTop: 4,
-    backgroundColor: '#2ecc71',
+    backgroundColor: AppStyles.color.success,
     alignItems: 'center',
     justifyContent: 'center'
   },
@@ -425,5 +434,9 @@ const styles = StyleSheet.create({
   },
   boxMessage: { marginTop: 20, alignItems: 'center' },
   iconAndtext: { flexDirection: 'row', alignItems: 'center' },
-  textMessage: { color: '#2ecc71', fontWeight: '700', marginLeft: 5 }
+  textMessage: {
+    color: AppStyles.color.success,
+    fontWeight: '700',
+    marginLeft: 5
+  }
 });

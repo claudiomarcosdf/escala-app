@@ -10,6 +10,8 @@ import {
   ActivityIndicator
 } from 'react-native';
 import Dropdown from 'react-native-input-select';
+
+import AppStyles from '../../appStyles';
 import { AuthContext } from '../../contexts/authContext';
 import { HorarioContext } from '../../contexts/horarioContext';
 import { PessoaContext } from '../../contexts/pessoaContext';
@@ -101,7 +103,7 @@ export default function EscolhaHorarios() {
           placeholder='Selecione o dia...'
           placeholderStyle={{ opacity: 0.5 }}
           selectedItemStyle={{
-            color: '#001e39',
+            color: AppStyles.color.primary,
             fontSize: 16,
             fontWeight: '900'
           }}
@@ -112,7 +114,7 @@ export default function EscolhaHorarios() {
             setHorariosSelecionados([]);
             setData(value);
           }}
-          primaryColor={'#001e39'}
+          primaryColor={AppStyles.color.primary}
         />
 
         <Dropdown
@@ -128,7 +130,7 @@ export default function EscolhaHorarios() {
           }}
           selectedValue={horariosSelecionado}
           onValueChange={(value) => setHorariosSelecionados(value)}
-          primaryColor={'#001e39'}
+          primaryColor={AppStyles.color.primary}
         />
 
         <TouchableOpacity style={styles.btnSalvar} onPress={handleSave}>
@@ -138,7 +140,7 @@ export default function EscolhaHorarios() {
         </TouchableOpacity>
         {saving && (
           <View style={{ marginTop: 20 }}>
-            <ActivityIndicator size={20} color='#0984e3' />
+            <ActivityIndicator size={20} color={AppStyles.color.loading} />
           </View>
         )}
 
@@ -163,7 +165,7 @@ export default function EscolhaHorarios() {
               </View>
             ) : (
               <View style={styles.textMessage}>
-                <Text style={{ fontSize: 14, color: '#ee5253' }}>
+                <Text style={{ fontSize: 14, color: AppStyles.color.danger }}>
                   Nenhum horário escolhido!
                 </Text>
               </View>
@@ -180,7 +182,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: 35,
     paddingHorizontal: 2,
-    backgroundColor: '#1d2638'
+    backgroundColor: AppStyles.color.background
   },
   boxAreaElements: {
     flex: 1,
@@ -195,7 +197,7 @@ const styles = StyleSheet.create({
   },
   titlePessoa: {
     fontWeight: '500',
-    color: '#0096c7',
+    color: AppStyles.color.blueLightColor,
     marginBottom: 10
   },
   dropdown: {
@@ -225,9 +227,9 @@ const styles = StyleSheet.create({
     marginBotton: 15,
     marginTop: 5,
     borderRadius: 8,
-    backgroundColor: '#001e39',
+    backgroundColor: AppStyles.color.primary,
     borderWidth: 1.4,
-    borderColor: '#01446c',
+    borderColor: AppStyles.color.secondary,
     width: '100%'
   },
   boxTotalHorarios: {
@@ -242,9 +244,9 @@ const styles = StyleSheet.create({
     marginTop: 3,
     padding: 5,
     borderRadius: 8,
-    backgroundColor: '#01446c'
+    backgroundColor: AppStyles.color.secondary
   },
-  textTotal: { fontSize: 12, color: '#0096c7' },
+  textTotal: { fontSize: 12, color: AppStyles.color.blueLightColor },
   textMessage: {
     alignItems: 'center',
     justifyContent: 'center',

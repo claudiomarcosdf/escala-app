@@ -9,9 +9,10 @@ import {
   FlatList
 } from 'react-native';
 import filter from 'lodash.filter';
-
-import { PessoaContext } from '../../contexts/pessoaContext';
 import firebase from '../../firebaseConfig';
+
+import AppStyles from '../../appStyles';
+import { PessoaContext } from '../../contexts/pessoaContext';
 import ItemListaPessoaEscala from '../../components/ItemListaPessoaEscala';
 import ModalEscala from '../../components/ModalEscala';
 
@@ -90,7 +91,7 @@ export default function EscalaIndividual() {
               </View>
             ) : (
               <View style={styles.textMessage}>
-                <Text style={{ fontSize: 14, color: '#ee5253' }}>
+                <Text style={{ fontSize: 14, color: AppStyles.color.danger }}>
                   Nenhuma pessoa cadastrada!
                 </Text>
               </View>
@@ -113,7 +114,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: 35,
     paddingHorizontal: 2,
-    backgroundColor: '#1d2638'
+    backgroundColor: AppStyles.color.background
   },
   boxAreaCadastro: {
     flex: 1,
@@ -140,13 +141,13 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 10
   },
-  textTotal: { fontSize: 12, color: '#0096c7' },
+  textTotal: { fontSize: 12, color: AppStyles.color.blueLightColor },
   list: {
     width: '100%',
     marginTop: 3,
     padding: 5,
     borderRadius: 8,
-    backgroundColor: '#01446c'
+    backgroundColor: AppStyles.color.secondary
   },
   textMessage: {
     alignItems: 'center',

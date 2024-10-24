@@ -5,10 +5,11 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback
 } from 'react-native';
-
 import { FontAwesome6 } from '@expo/vector-icons';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
+
+import AppStyles from '../../appStyles';
 import { getStatus, getNomeSobrenome } from '../../utils/helpers';
 
 export default function ItemListaHorarioPessoa({
@@ -69,7 +70,7 @@ export default function ItemListaHorarioPessoa({
           <MaterialCommunityIcons
             name='trash-can-outline'
             size={20}
-            color='#ee5253'
+            color={AppStyles.color.danger}
           />
         </TouchableOpacity>
       </View>

@@ -2,10 +2,10 @@ import { useEffect, useState, useContext } from 'react';
 import { View, StyleSheet, TouchableOpacity, Platform } from 'react-native';
 import * as Print from 'expo-print';
 import { shareAsync } from 'expo-sharing';
-
 import { Feather } from '@expo/vector-icons';
 import { AntDesign } from '@expo/vector-icons';
 
+import AppStyles from '../../appStyles';
 import { AuthContext } from '../../contexts/authContext';
 
 export default function PrintEscala({ data }) {
@@ -139,10 +139,10 @@ export default function PrintEscala({ data }) {
   return (
     <>
       <TouchableOpacity style={styles.btnCompartilhar} onPress={print}>
-        <Feather name='printer' size={15} color='#001e39' />
+        <Feather name='printer' size={15} color={AppStyles.color.primary} />
       </TouchableOpacity>
       <TouchableOpacity style={styles.btnCompartilhar} onPress={printToFile}>
-        <AntDesign name='sharealt' size={15} color='#001e39' />
+        <AntDesign name='sharealt' size={15} color={AppStyles.color.primary} />
       </TouchableOpacity>
     </>
   );

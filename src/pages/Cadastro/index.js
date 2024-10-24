@@ -15,6 +15,7 @@ import Dropdown from 'react-native-input-select';
 import { Feather } from '@expo/vector-icons';
 import filter from 'lodash.filter';
 
+import AppStyles from '../../appStyles';
 import firebase from '../../firebaseConfig';
 import ItemListaPessoa from '../../components/ItemListaPessoa';
 import { PessoaContext } from '../../contexts/pessoaContext';
@@ -139,7 +140,7 @@ export default function Cadastro() {
           <Switch
             style={styles.customSwitch}
             trackColor={{ false: '#767577', true: '#81b0ff' }}
-            thumbColor={ativo ? '#0096c7' : '#f4f3f4'}
+            thumbColor={ativo ? AppStyles.color.blueLightColor : '#f4f3f4'}
             ios_backgroundColor='#3e3e3e'
             onValueChange={toggleSwitch}
             value={ativo}
@@ -170,7 +171,7 @@ export default function Cadastro() {
           ]}
           selectedValue={tipo}
           onValueChange={(value) => setTipo(value)}
-          primaryColor={'#001e39'}
+          primaryColor={AppStyles.color.primary}
         />
 
         <TouchableOpacity style={styles.btnCadastrar} onPress={handleSave}>
@@ -216,7 +217,7 @@ export default function Cadastro() {
               </View>
             ) : (
               <View style={styles.textMessage}>
-                <Text style={{ fontSize: 14, color: '#ee5253' }}>
+                <Text style={{ fontSize: 14, color: AppStyles.color.danger }}>
                   Nenhuma pessoa cadastrada!
                 </Text>
               </View>
@@ -233,7 +234,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: 35,
     paddingHorizontal: 2,
-    backgroundColor: '#1d2638'
+    backgroundColor: AppStyles.color.background
   },
   boxAreaCadastro: {
     flex: 1,
@@ -273,9 +274,9 @@ const styles = StyleSheet.create({
     marginBotton: 10,
     marginTop: 5,
     borderWidth: 1.4,
-    borderColor: '#01446c',
+    borderColor: AppStyles.color.secondary,
     borderRadius: 5,
-    backgroundColor: '#001e39',
+    backgroundColor: AppStyles.color.primary,
     width: '100%'
   },
   boxStatus: {
@@ -305,14 +306,13 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 10
   },
-  textTotal: { fontSize: 12, color: '#0096c7' },
+  textTotal: { fontSize: 12, color: AppStyles.color.blueLightColor },
   list: {
     width: '100%',
     marginTop: 3,
     padding: 5,
     borderRadius: 8,
-    backgroundColor: '#dfe4ea',
-    backgroundColor: '#01446c'
+    backgroundColor: AppStyles.color.secondary
   },
   textMessage: {
     alignItems: 'center',

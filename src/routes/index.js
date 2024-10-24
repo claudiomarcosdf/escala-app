@@ -5,6 +5,7 @@ import Feather from '@expo/vector-icons/Feather';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { AntDesign } from '@expo/vector-icons';
 
+import AppStyles from '../appStyles';
 import { AuthContext } from '../contexts/authContext';
 import Login from '../pages/Login';
 import Escalas from '../pages/Escalas';
@@ -12,6 +13,7 @@ import StackRoutes from '../routes/stackRoutes';
 import GeradorEscalas from '../pages/GeradorEscalas';
 import Configuracoes from '../pages/Configuracoes';
 import EscolhaHorarios from '../pages/EscolhaHorarios';
+import MinhasEscalas from '../pages/MinhasEscalas';
 
 const Tab = createBottomTabNavigator();
 
@@ -31,7 +33,7 @@ export default function Routes() {
       <Tab.Navigator
         screenOptions={{
           tabBarHideOnKeyboard: true,
-          tabBarActiveTintColor: '#0096c7',
+          tabBarActiveTintColor: AppStyles.color.blueLightColor,
           tabBarStyle: {
             borderTopWidth: 0
           }
@@ -55,13 +57,30 @@ export default function Routes() {
           }}
         />
         <Tab.Screen
+          name='MinhasEscalas'
+          component={MinhasEscalas}
+          options={{
+            headerShown: false,
+            tabBarLabel: 'Minhas Escalas',
+            tabBarIcon: ({ color, size }) => {
+              return (
+                <MaterialCommunityIcons
+                  name='table-clock'
+                  size={size}
+                  color={color}
+                />
+              );
+            }
+          }}
+        />
+        <Tab.Screen
           name='Logout'
           component={LogoutComponent}
           options={{
             headerShown: false,
             tabBarLabel: 'Sair',
-            tabBarButton: () => (
-              <TouchableOpacity onPress={() => logout()}>
+            tabBarButton: (props) => (
+              <TouchableOpacity {...props} onPress={() => logout()}>
                 <View style={styles.BtnLogout}>
                   <Feather name='log-out' size={24} color='#e55039' />
                   <Text style={styles.TextLogout}>Sair</Text>
@@ -78,7 +97,7 @@ export default function Routes() {
     <Tab.Navigator
       screenOptions={{
         tabBarHideOnKeyboard: true,
-        tabBarActiveTintColor: '#0096c7',
+        tabBarActiveTintColor: AppStyles.color.blueLightColor,
         tabBarStyle: {
           borderTopWidth: 0
         }

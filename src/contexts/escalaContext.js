@@ -1,7 +1,7 @@
 import { createContext, useContext, useState } from 'react';
 import { Alert } from 'react-native';
 import firebase from '../firebaseConfig';
-import { shuffleArray } from '../utils/helpers';
+import { shuffleArray, transformToDate } from '../utils/helpers';
 import { AuthContext } from './authContext';
 
 export const EscalaContext = createContext({});
@@ -12,6 +12,8 @@ function EscalaProvider({ children }) {
   const [loadingEscalas, setLoadingEscalas] = useState(false);
   const [building, setBuilding] = useState(false);
   const [finish, setFinish] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [escalasPessoa, setEscalasPessoa] = useState([]);
 
   const { paroquiaconfig } = useContext(AuthContext);
 
@@ -283,6 +285,42 @@ function EscalaProvider({ children }) {
       });
   }
 
+  async function getEscalasPessoa(userkey, dataInicioBR) {
+    //--> Retorna os horários da pessoa de 1 ano atrás até a data atual
+    setLoading(true);
+    setEscalasPessoa([]);
+    await firebase
+      .database()
+      .ref('escalas')
+      .orderByChild('keypessoa')
+      .equalTo(userkey)
+      .once('value', (snapshot) => {
+        if (snapshot.val() != null) {
+          const escalasPessoa = Object.keys(snapshot.val()).map((key) => ({
+            key: key,
+            ...snapshot.val()[key]
+          }));
+
+          const escalasPessoaFilter = escalasPessoa.filter(
+            (objHorario) =>
+              transformToDate(objHorario.data) >= transformToDate(dataInicioBR)
+          );
+
+          if (escalasPessoaFilter.length != 0) {
+            const orderedEscalas = [...escalasPessoaFilter].sort(
+              ({ data: a }, { data: b }) => (a > b ? -1 : a < b ? 1 : 0)
+            );
+            setEscalasPessoa(orderedEscalas);
+          }
+        }
+        setLoading(false);
+      })
+      .catch((err) => {
+        setLoading(false);
+        console.log(err);
+      });
+  }
+
   return (
     <EscalaContext.Provider
       value={{
@@ -296,7 +334,11 @@ function EscalaProvider({ children }) {
         loadingEscalas,
         excluirEscala,
         escalarPessoa,
-        lancarFaltaAtraso
+        lancarFaltaAtraso,
+        loading,
+        getEscalasPessoa,
+        escalasPessoa,
+        setEscalasPessoa
       }}
     >
       {children}

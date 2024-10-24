@@ -9,6 +9,7 @@ import {
   TouchableOpacity
 } from 'react-native';
 
+import AppStyles from '../../appStyles';
 import { AuthContext } from '../../contexts/authContext';
 
 export default function Configuracoes() {
@@ -124,7 +125,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: 35,
     paddingHorizontal: 2,
-    backgroundColor: '#1d2638'
+    backgroundColor: AppStyles.color.background
   },
   boxAreaElements: {
     flex: 1,
@@ -138,7 +139,7 @@ const styles = StyleSheet.create({
     marginBottom: 25
   },
   input: {
-    color: '#001e39',
+    color: AppStyles.color.primary,
     marginBottom: 10,
     backgroundColor: '#FFF',
     borderRadius: 4,
@@ -157,9 +158,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     height: 45,
-    backgroundColor: '#001e39',
+    backgroundColor: AppStyles.color.primary,
     borderWidth: 1.4,
-    borderColor: '#01446c',
+    borderColor: AppStyles.color.secondary,
     marginBotton: 10,
     marginTop: 30,
     borderRadius: 8,

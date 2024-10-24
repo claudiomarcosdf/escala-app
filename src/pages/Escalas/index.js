@@ -15,6 +15,7 @@ import { AntDesign } from '@expo/vector-icons';
 import { Calendar, LocaleConfig } from 'react-native-calendars';
 import { ptBR } from '../../localeCalendar';
 
+import AppStyles from '../../appStyles';
 import ItemListaEscala from '../../components/ItemListaEscala';
 import PrintEscala from '../../components/PrintEscala';
 import { EscalaContext } from '../../contexts/escalaContext';
@@ -29,7 +30,11 @@ export default function Escalas() {
   let dataAtual = getOnlyDateBr();
   const [dateNow, setDateNow] = useState(new Date(dataAtual));
   const [markedDates, setMarkedDates] = useState({
-    [dataAtual]: { selected: true, marked: true, selectedColor: '#0096c7' }
+    [dataAtual]: {
+      selected: true,
+      marked: true,
+      selectedColor: AppStyles.color.blueLightColor
+    }
   });
   const [horaMarcada, setHoraMarcada] = useState({ horas: '', minutos: '' });
   const [modalVisible, setModalVisible] = useState(false);
@@ -57,7 +62,7 @@ export default function Escalas() {
     let markedDay = {};
     markedDay[date.dateString] = {
       selected: true,
-      selectedColor: '#01446c',
+      selectedColor: AppStyles.color.secondary,
       textColor: '#fff'
     };
 
@@ -82,7 +87,10 @@ export default function Escalas() {
   function handleFaltasAtrasos(data) {
     const dataEscala = new Date(getAmericanDate(data.data));
     const dataHoje = new Date(dataAtual);
-    if (dataEscala < new Date(dataAtual)) return;
+    if (dataEscala < new Date(dataAtual)) {
+      Alert.alert('Atenção', 'Não é mais possível lançar faltas ou atrasos.');
+      return;
+    }
 
     setEscalaSelecionada(data);
     setModalVisible(true);
@@ -101,10 +109,13 @@ export default function Escalas() {
             onDayPress={handleDayPress}
             markedDates={markedDates}
             enableSwipeMonths={true}
-            style={{ borderRadius: 5, backgroundColor: '#001e39' }}
+            style={{
+              borderRadius: 5,
+              backgroundColor: AppStyles.color.primary
+            }}
             theme={{
               todayTextColor: '#000',
-              selectedDayBackgroundColor: '#01446c',
+              selectedDayBackgroundColor: AppStyles.color.secondary,
               selectedDayTextColor: '#fff'
             }}
           />
@@ -112,7 +123,11 @@ export default function Escalas() {
 
         <View style={styles.boxComands}>
           <Text
-            style={{ fontSize: 13, fontColor: '#001e39', fontWeight: '600' }}
+            style={{
+              fontSize: 13,
+              fontColor: AppStyles.color.primary,
+              fontWeight: '600'
+            }}
           >
             Escala do dia
           </Text>
@@ -145,7 +160,7 @@ export default function Escalas() {
               </View>
             ) : (
               <View style={styles.textMessage}>
-                <Text style={{ fontSize: 14, color: '#ee5253' }}>
+                <Text style={{ fontSize: 14, color: AppStyles.color.danger }}>
                   Nenhuma escala para o dia selecionado!
                 </Text>
               </View>
@@ -167,7 +182,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: 35,
     paddingHorizontal: 2,
-    backgroundColor: '#1d2638'
+    backgroundColor: AppStyles.color.background
   },
   boxArea: {
     flex: 1,
@@ -203,7 +218,7 @@ const styles = StyleSheet.create({
     height: 24,
     paddingHorizontal: 12,
     borderRadius: 5,
-    backgroundColor: '#001e39'
+    backgroundColor: AppStyles.color.primary
   },
   // btnCompartilhar: {
   //   marginLeft: 0,
@@ -213,14 +228,14 @@ const styles = StyleSheet.create({
   //   width: 25,
   //   paddingHorizontal: 0,
   //   borderRadius: 50
-  //    backgroundColor: '#0984e3'
+  //    backgroundColor: AppStyles.color.loading
   // },
   list: {
     width: '100%',
     marginTop: 3,
     padding: 5,
     borderRadius: 8,
-    backgroundColor: '#01446c'
+    backgroundColor: AppStyles.color.secondary
   },
   textMessage: {
     color: '#fff',

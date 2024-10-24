@@ -107,6 +107,12 @@ function getNomeSobrenome(value) {
   return userNameArray[0] + ' ' + lastName;
 }
 
+function transformToDate(dateBR) {
+  const americanDateString = getAmericanDate(dateBR);
+
+  return new Date(americanDateString);
+}
+
 export {
   getOnlyDateBr,
   getDataToFilterFirebase,
@@ -116,5 +122,6 @@ export {
   getAmericanDate,
   getFullDateBR,
   getStatus,
-  getNomeSobrenome
+  getNomeSobrenome,
+  transformToDate
 };

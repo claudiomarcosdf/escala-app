@@ -14,6 +14,7 @@ import {
   Switch
 } from 'react-native';
 
+import AppStyles from '../../appStyles';
 import { EscalaContext } from '../../contexts/escalaContext';
 
 export default function ModalFaltaAtraso({ visible, setVisible, escala }) {
@@ -76,7 +77,7 @@ export default function ModalFaltaAtraso({ visible, setVisible, escala }) {
               <Text style={styles.textLabel}>Falta</Text>
               <Switch
                 trackColor={{ false: '#767577', true: '#fab1a0' }}
-                thumbColor={isFalta ? '#ee5253' : '#f4f3f4'}
+                thumbColor={isFalta ? AppStyles.color.danger : '#f4f3f4'}
                 ios_backgroundColor='#3e3e3e'
                 onValueChange={toggleFalta}
                 value={isFalta}
@@ -87,7 +88,7 @@ export default function ModalFaltaAtraso({ visible, setVisible, escala }) {
               <Text style={styles.textLabel}>Atraso</Text>
               <Switch
                 trackColor={{ false: '#767577', true: '#fab1a0' }}
-                thumbColor={isAtraso ? '#ee5253' : '#f4f3f4'}
+                thumbColor={isAtraso ? AppStyles.color.danger : '#f4f3f4'}
                 ios_backgroundColor='#3e3e3e'
                 onValueChange={toggleAtraso}
                 value={isAtraso}
@@ -99,7 +100,9 @@ export default function ModalFaltaAtraso({ visible, setVisible, escala }) {
               style={styles.btnCancelar}
               onPress={handleConfirmar}
             >
-              <Text style={[styles.btnText, { color: '#001e39' }]}>
+              <Text
+                style={[styles.btnText, { color: AppStyles.color.primary }]}
+              >
                 Confirmar
               </Text>
             </TouchableOpacity>
@@ -130,7 +133,7 @@ const styles = StyleSheet.create({
   titleText: {
     fontSize: 14,
     fontWeight: '700',
-    color: '#001e39',
+    color: AppStyles.color.primary,
     marginBottom: 45
   },
   btnCancelar: {
@@ -139,8 +142,8 @@ const styles = StyleSheet.create({
     height: 45,
     marginTop: 15,
     borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#001e39',
+    borderWidth: 1.4,
+    borderColor: AppStyles.color.primary,
     backgroundColor: '#ffffff',
     width: '100%'
   },
@@ -158,7 +161,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff'
   },
   textLabel: {
-    color: '#001e39',
+    color: AppStyles.color.primary,
     width: 50,
     paddingLeft: 5,
     fontWeight: '600'

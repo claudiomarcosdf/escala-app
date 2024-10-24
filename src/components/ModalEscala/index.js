@@ -17,6 +17,7 @@ import { format } from 'date-fns';
 import ptBrToDataPicker from 'date-fns/locale/pt-BR';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
+import AppStyles from '../../appStyles';
 import { getOnlyDateBr } from '../../utils/helpers';
 import { EscalaContext } from '../../contexts/escalaContext';
 
@@ -150,7 +151,9 @@ export default function ModalEscala({ visible, setVisible, pessoa }) {
               })}
             </Text>
 
-            {building && <ActivityIndicator size={20} color='#0984e3' />}
+            {building && (
+              <ActivityIndicator size={20} color={AppStyles.color.loading} />
+            )}
 
             <TouchableOpacity style={styles.btnEscalar} onPress={handleEscalar}>
               <Text style={styles.btnText}>Escalar</Text>
@@ -162,7 +165,7 @@ export default function ModalEscala({ visible, setVisible, pessoa }) {
               <Text
                 style={[
                   styles.btnText,
-                  { color: '#001e39', fontWeight: '600' }
+                  { color: AppStyles.color.primary, fontWeight: '600' }
                 ]}
               >
                 Cancelar
@@ -205,7 +208,7 @@ const styles = StyleSheet.create({
   titleText: {
     fontSize: 16,
     fontWeight: '700',
-    color: '#1d2638',
+    color: AppStyles.color.background,
     marginBottom: 15
   },
   input: {
@@ -215,7 +218,7 @@ const styles = StyleSheet.create({
     height: 45,
     padding: 10,
     borderWidth: 1,
-    color: '#1d2638',
+    color: AppStyles.color.background,
     borderColor: '#747d8c',
     width: '100%',
     fontSize: 15,
@@ -229,9 +232,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     height: 45,
     marginTop: 20,
-    backgroundColor: '#001e39',
+    backgroundColor: AppStyles.color.primary,
     borderWidth: 1.4,
-    borderColor: '#01446c',
+    borderColor: AppStyles.color.secondary,
     borderRadius: 5,
     width: '100%'
   },
@@ -241,13 +244,13 @@ const styles = StyleSheet.create({
     height: 45,
     marginTop: 15,
     borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#001e39',
+    borderWidth: 1.4,
+    borderColor: AppStyles.color.primary,
     backgroundColor: '#ffffff',
     width: '100%'
   },
   btnText: {
-    color: '#FFF',
+    color: '#ffffff',
     fontSize: 14,
     fontWeight: '600'
   },
@@ -257,11 +260,11 @@ const styles = StyleSheet.create({
     width: 100,
     height: 45,
     borderWidth: 1.4,
-    borderColor: '#01446c',
+    borderColor: AppStyles.color.secondary,
     borderRadius: 50,
     borderTopRightRadius: 0,
     borderBottomRightRadius: 0,
-    backgroundColor: '#001e39'
+    backgroundColor: AppStyles.color.primary
   },
   textBtnDataHora: {
     color: '#FFF',
@@ -269,7 +272,7 @@ const styles = StyleSheet.create({
     fontWeight: '600'
   },
   textInputDataHora: {
-    color: '#001e39',
+    color: AppStyles.color.primary,
     marginBottom: 10,
     backgroundColor: '#F2f6fc',
     borderRadius: 50,
@@ -279,12 +282,12 @@ const styles = StyleSheet.create({
     padding: 10,
     paddingLeft: 20,
     borderWidth: 1,
-    borderColor: '#001e39',
+    borderColor: AppStyles.color.primary,
     fontWeight: '700',
     width: 120
   },
   textShowDataHora: {
-    color: '#0096c7',
+    color: AppStyles.color.blueLightColor,
     fontSize: 15,
     fontWeight: '700',
     marginBottom: 25
