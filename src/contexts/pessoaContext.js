@@ -9,36 +9,36 @@ function PessoaProvider({ children }) {
   const [loading, setLoading] = useState(false);
   const [horariosPessoa, setHorariosPessoa] = useState(false);
 
+  async function getPessoas() {
+    setPessoas([]);
+
+    await firebase
+      .database()
+      .ref('pessoas') //'pessoas/1'
+      .once('value', (snapshot) => {
+        snapshot?.forEach((childItem) => {
+          let data = {
+            key: childItem.key,
+            email: childItem.val().email,
+            nome: childItem.val().nome,
+            celular: childItem.val().celular,
+            tipo: childItem.val().tipo,
+            ativo: childItem.val().ativo
+          };
+
+          setPessoas((oldPessoas) => [...oldPessoas, data].reverse());
+          setLoading(false);
+        });
+      })
+      .catch((err) => {
+        setLoading(false);
+        console.log(err);
+      });
+  }
+
   useEffect(() => {
     setLoading(true);
-    async function getDados() {
-      setPessoas([]);
-
-      await firebase
-        .database()
-        .ref('pessoas') //'pessoas/1'
-        .once('value', (snapshot) => {
-          snapshot?.forEach((childItem) => {
-            let data = {
-              key: childItem.key,
-              email: childItem.val().email,
-              nome: childItem.val().nome,
-              celular: childItem.val().celular,
-              tipo: childItem.val().tipo,
-              ativo: childItem.val().ativo
-            };
-
-            setPessoas((oldPessoas) => [...oldPessoas, data].reverse());
-            setLoading(false);
-          });
-        })
-        .catch((err) => {
-          setLoading(false);
-          console.log(err);
-        });
-    }
-
-    getDados();
+    getPessoas();
   }, []);
 
   async function incluirPessoa(uid, nome, celular, tipo = '', ativo = false) {
@@ -117,6 +117,7 @@ function PessoaProvider({ children }) {
       value={{
         loading,
         pessoas,
+        getPessoas,
         setPessoas,
         incluirPessoa,
         alterarPessoa,

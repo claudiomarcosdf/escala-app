@@ -5,6 +5,7 @@ import Cadastro from '../pages/Cadastro';
 import CadastroHorarios from '../pages/Horarios';
 import EscalaIndividual from '../pages/EscalaIndividual';
 import EscolhaHorarios from '../pages/EscolhaHorarios';
+import Relatorios from '../pages/Relatorios';
 
 const Stack = createNativeStackNavigator();
 
@@ -35,6 +36,13 @@ export default function StackRoutes() {
       <Stack.Screen
         name='EscalaIndividual'
         component={EscalaIndividual}
+        options={{
+          headerShown: false
+        }}
+      />
+      <Stack.Screen
+        name='Relatorios'
+        component={Relatorios}
         options={{
           headerShown: false
         }}

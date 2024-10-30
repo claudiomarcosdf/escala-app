@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { FontAwesome6 } from '@expo/vector-icons';
+import Feather from '@expo/vector-icons/Feather';
 import { MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
 
 import AppStyles from '../../appStyles';
@@ -88,6 +89,18 @@ export default function Home() {
               style={styles.iconsStyle}
             />
             <Text style={styles.textButtom}>Escalas</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => navigation.navigate('Relatorios')}
+          >
+            <Feather
+              name='file-text'
+              size={30}
+              color='#fff'
+              style={styles.iconsStyle}
+            />
+            <Text style={styles.textButtom}>Relatórios</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.buttonOut} onPress={() => logout()}>

@@ -81,9 +81,14 @@ function AuthProvider({ children }) {
           tipo,
           ativo
         };
+
+        Alert.alert(
+          'Sucesso',
+          'Conta criada. Aguarde o administrador ativá-la.'
+        );
       })
       .catch((err) => {
-        console.log(err);
+        Alert.alert('Atenção', 'Erro ao cadastrar pessoa. ' + err);
       });
   }
 
@@ -94,6 +99,7 @@ function AuthProvider({ children }) {
       .ref(idPessoa)
       .on('value', (snapshot) => {
         const data = snapshot.val();
+        setLoading(false);
 
         if (data != null) {
           if (data.ativo) {
@@ -103,8 +109,8 @@ function AuthProvider({ children }) {
             Alert.alert('Acesso negado', 'Usuário inativo.');
             setUser(null);
           }
-        }
-        setLoading(false);
+        } else
+          Alert.alert('Acesso negado', 'Dados cadastrais não encontrados.');
       });
   }
 
@@ -157,7 +163,7 @@ function AuthProvider({ children }) {
       })
       .catch((err) => {
         setLoading(false);
-        Alert.alert('Atenção', 'Erro ao cadastrar usuário.');
+        Alert.alert('Atenção', 'Erro ao cadastrar usuário. ' + err);
         //alert('Erro ao cadastrar usuário. \n' + err);
         return;
       });

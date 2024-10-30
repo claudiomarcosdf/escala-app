@@ -362,11 +362,14 @@ const styles = StyleSheet.create({
   },
   plusButton: {
     alignItems: 'center',
-    marginLeft: 10,
-    borderRadius: 50,
+    justifyContent: 'center',
+    marginLeft: 0,
+    paddingRight: 5,
+    // borderRadius: 50,
+    borderBottomRightRadius: 50,
+    borderTopRightRadius: 50,
     width: 55,
-    height: 35,
-    padding: 4,
+    height: 40,
     borderWidth: 1,
     borderColor: '#02c39a',
     backgroundColor: AppStyles.color.success
@@ -390,7 +393,7 @@ const styles = StyleSheet.create({
   },
   textInputHora: {
     backgroundColor: '#F2f6fc',
-    borderRadius: 50,
+    // borderRadius: 50,
     borderTopLeftRadius: 0,
     borderBottomLeftRadius: 0,
     height: 40,

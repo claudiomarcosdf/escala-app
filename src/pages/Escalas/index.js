@@ -138,7 +138,12 @@ export default function Escalas() {
             >
               <Text style={styles.textBtnEscalar}>Escalar pessoa</Text>
             </TouchableOpacity>
-            <PrintEscala data={escalas ? escalas : []} />
+            <PrintEscala
+              data={escalas ? escalas : []}
+              heightBottom={25}
+              widthBottom={25}
+              iconSize={15}
+            />
           </View>
         </View>
 

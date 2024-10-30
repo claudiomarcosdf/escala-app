@@ -1,4 +1,4 @@
-import { useEffect, useState, useContext, useRef } from 'react';
+import { useEffect, useState, useMemo, useContext, useRef } from 'react';
 import {
   View,
   Text,
@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 import Dropdown from 'react-native-input-select';
 import { Feather } from '@expo/vector-icons';
+import SimpleLineIcons from '@expo/vector-icons/SimpleLineIcons';
 import filter from 'lodash.filter';
 
 import AppStyles from '../../appStyles';
@@ -24,7 +25,7 @@ export default function Cadastro() {
   const inputRef = useRef(null);
   const [nome, setNome] = useState(null);
   const [celular, setCelular] = useState(null);
-  const [tipo, setTipo] = useState(null);
+  const [tipoPessoa, setTipoPessoa] = useState(null);
   const [key, setKey] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [pessoasFiltered, setPessoasFiltered] = useState([]);
@@ -32,23 +33,33 @@ export default function Cadastro() {
   const [ativo, setAtivo] = useState(false);
   const toggleSwitch = () => setAtivo((previousState) => !previousState);
 
-  const { loading, pessoas, setPessoas, alterarPessoa, excluirPessoa } =
-    useContext(PessoaContext);
+  const {
+    loading,
+    getPessoas,
+    pessoas,
+    setPessoas,
+    alterarPessoa,
+    excluirPessoa
+  } = useContext(PessoaContext);
+
+  useMemo(() => {
+    setPessoasFiltered(pessoas);
+  }, [pessoas]);
 
   useEffect(() => {
-    setPessoasFiltered(pessoas);
+    getPessoas();
   }, []);
 
   async function handleSave() {
-    if (!nome || !tipo) return;
+    if (!nome || !tipoPessoa) return;
 
     if (key) {
-      await alterarPessoa(key, nome, celular, tipo, ativo);
+      await alterarPessoa(key, nome, celular, tipoPessoa, ativo);
       setPessoasFiltered(pessoas);
       Keyboard.dismiss();
       setNome('');
       setCelular('');
-      setTipo(null);
+      setTipoPessoa(null);
       setAtivo(false);
       setKey(null);
       return;
@@ -61,7 +72,7 @@ export default function Cadastro() {
     Alert.alert('Atenção', 'O cadastro é realizado pela própria pessoa.');
     setNome(null);
     setCelular(null);
-    setTipo(null);
+    setTipoPessoa(null);
     setAtivo(false);
     Keyboard.dismiss();
   }
@@ -88,7 +99,7 @@ export default function Cadastro() {
     setKey(data.key);
     setNome(data.nome);
     setCelular(data.celular);
-    setTipo(data?.tipo || null);
+    setTipoPessoa(data?.tipo || null);
     setAtivo(data?.ativo);
     inputRef.current.focus();
   }
@@ -97,7 +108,7 @@ export default function Cadastro() {
     setKey(null);
     setNome(null);
     setCelular(null);
-    setTipo(null);
+    setTipoPessoa(null);
     setAtivo(false);
     Keyboard.dismiss();
   }
@@ -169,8 +180,8 @@ export default function Cadastro() {
             { label: 'Coroinha', value: 'Coroinha' },
             { label: 'Mesce', value: 'Mesce' }
           ]}
-          selectedValue={tipo}
-          onValueChange={(value) => setTipo(value)}
+          selectedValue={tipoPessoa}
+          onValueChange={(value) => setTipoPessoa(value)}
           primaryColor={AppStyles.color.primary}
         />
 
@@ -193,10 +204,18 @@ export default function Cadastro() {
         </View>
 
         <View style={styles.boxTotalCoroinhas}>
-          <Text style={styles.textTotal}>Pessoas cadastradas: </Text>
-          <Text style={[styles.textTotal, { fontWeight: '700' }]}>
-            {pessoas.length != 0 ? pessoas.length : 0}
-          </Text>
+          <View style={{ flexDirection: 'row' }}>
+            <Text style={styles.textTotal}>Pessoas cadastradas: </Text>
+            <Text style={[styles.textTotal, { fontWeight: '700' }]}>
+              {pessoas.length != 0 ? pessoas.length : 0}
+            </Text>
+          </View>
+          <TouchableOpacity
+            style={styles.btnRefresh}
+            onPress={() => getPessoas()}
+          >
+            <SimpleLineIcons name='refresh' size={15} color='#fff' />
+          </TouchableOpacity>
         </View>
 
         <FlatList
@@ -294,9 +313,14 @@ const styles = StyleSheet.create({
   },
   boxTotalCoroinhas: {
     flexDirection: 'row',
+    justifyContent: 'space-between',
     width: '100%',
     marginTop: 10,
     paddingHorizontal: 5
+  },
+  btnRefresh: {
+    marginBottom: 2,
+    paddingHorizontal: 2
   },
   textPesquisar: {
     color: '#fff',

@@ -27,6 +27,7 @@ export default function ModalEscala({ visible, setVisible, pessoa }) {
   const [mode, setMode] = useState('date');
   const [show, setShow] = useState(false);
   const [nome, setNome] = useState('');
+
   const { escalarPessoa, building } = useContext(EscalaContext);
 
   async function handleEscalar() {
@@ -38,8 +39,9 @@ export default function ModalEscala({ visible, setVisible, pessoa }) {
     });
 
     const novaEscala = {
+      keypessoa: pessoa.key,
       pessoa: pessoa.nome,
-      celular: pessoa.celular,
+      tipopessoa: pessoa.tipo,
       data: dataSelecionada,
       hora: horaSelecionada,
       atraso: false,

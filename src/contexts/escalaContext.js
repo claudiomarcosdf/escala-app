@@ -14,6 +14,7 @@ function EscalaProvider({ children }) {
   const [finish, setFinish] = useState(false);
   const [loading, setLoading] = useState(false);
   const [escalasPessoa, setEscalasPessoa] = useState([]);
+  const [escalasRelatorio, setEscalasRelatorio] = useState([]);
 
   const { paroquiaconfig } = useContext(AuthContext);
 
@@ -222,6 +223,8 @@ function EscalaProvider({ children }) {
 
   async function escalarPessoa(novaEscala) {
     //Pode escalar no mesmo dia, EXCETO no mesmo horário
+
+    console.log(novaEscala);
     setBuilding(true);
     let retorno = [];
     await firebase
@@ -286,7 +289,7 @@ function EscalaProvider({ children }) {
   }
 
   async function getEscalasPessoa(userkey, dataInicioBR) {
-    //--> Retorna os horários da pessoa de 1 ano atrás até a data atual
+    //--> Retorna as escalas da pessoa desde a data de início informada
     setLoading(true);
     setEscalasPessoa([]);
     await firebase
@@ -321,6 +324,47 @@ function EscalaProvider({ children }) {
       });
   }
 
+  async function getEscalasRelatorio(dataInicioBR, dataFinalBR, tipoPessoa) {
+    //--> Retorna as escalas no intervalo de dastas informadas
+    setLoading(true);
+    setEscalasRelatorio([]);
+    await firebase
+      .database()
+      .ref('escalas')
+      .orderByChild('data')
+      .startAt(dataInicioBR)
+      .endAt(dataFinalBR)
+      .once('value', (snapshot) => {
+        if (snapshot.val() != null) {
+          const escalas = Object.keys(snapshot.val()).map((key) => ({
+            key: key,
+            ...snapshot.val()[key]
+          }));
+
+          let escalasFilter = escalas;
+
+          if (tipoPessoa) {
+            escalasFilter = escalas.filter(
+              (escala) => escala.tipopessoa == tipoPessoa
+            );
+          }
+
+          if (escalasFilter.length != 0) {
+            const orderedEscalas = [...escalasFilter].sort(
+              ({ data: a }, { data: b }) => (a > b ? -1 : a < b ? 1 : 0)
+            );
+            //console.log(orderedEscalas);
+            setEscalasRelatorio(orderedEscalas);
+          }
+        }
+        setLoading(false);
+      })
+      .catch((err) => {
+        setLoading(false);
+        console.log(err);
+      });
+  }
+
   return (
     <EscalaContext.Provider
       value={{
@@ -338,7 +382,10 @@ function EscalaProvider({ children }) {
         loading,
         getEscalasPessoa,
         escalasPessoa,
-        setEscalasPessoa
+        setEscalasPessoa,
+        getEscalasRelatorio,
+        escalasRelatorio,
+        setEscalasRelatorio
       }}
     >
       {children}

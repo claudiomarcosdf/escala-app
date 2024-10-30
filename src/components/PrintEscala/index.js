@@ -8,7 +8,14 @@ import { AntDesign } from '@expo/vector-icons';
 import AppStyles from '../../appStyles';
 import { AuthContext } from '../../contexts/authContext';
 
-export default function PrintEscala({ data }) {
+export default function PrintEscala({
+  data,
+  intervalDates,
+  heightBottom,
+  widthBottom,
+  iconSize,
+  iconColor
+}) {
   const [selectedPrinter, setSelectedPrinter] = useState();
   const [html, setHtml] = useState();
   const [paroquiaconfigDefault, setParoquiaConfigDefault] = useState({
@@ -17,8 +24,21 @@ export default function PrintEscala({ data }) {
   });
   const { paroquiaconfig } = useContext(AuthContext);
 
+  function getTdData(data) {
+    return intervalDates ? `<td class="hora">${data}</td>` : '';
+  }
+
   useEffect(() => {
     if (data.length != 0) {
+      let subtitulo = `Escala de ajudantes do dia ${data && data[0].data}`;
+      let thData = '';
+
+      //significa que é requisição do relatório
+      if (intervalDates) {
+        subtitulo = `Escala de ajudantes do dia ${intervalDates}`;
+        thData = '<th>Data</th>';
+      }
+
       const html = `
         <!DOCTYPE html>
         <html lang="pt-br">
@@ -73,11 +93,12 @@ export default function PrintEscala({ data }) {
                   ? paroquiaconfig.endereco
                   : paroquiaconfigDefault.endereco
               }</span>
-              <h3>Escala de ajudantes do dia ${data && data[0].data}</h3>
+              <h3>${subtitulo}</h3>
               <br />
               <table style="margin: auto;" class="table">
                 <thead>
                   <tr>
+                    ${thData}
                     <th>Horário</th>
                     <th>Pessoa</th>
                     <th>Função</th>
@@ -90,7 +111,8 @@ export default function PrintEscala({ data }) {
                     .map(
                       (escala) =>
                         `<tr class="list" key=${escala.key}>
-                  <td class="hora">${escala.hora}</td>
+                      ${getTdData(escala.data)}
+                      <td class="hora">${escala.hora}</td>
                   <td style="text-align: left;" class="name">${
                     escala.pessoa
                   }</td>
@@ -138,11 +160,31 @@ export default function PrintEscala({ data }) {
 
   return (
     <>
-      <TouchableOpacity style={styles.btnCompartilhar} onPress={print}>
-        <Feather name='printer' size={15} color={AppStyles.color.primary} />
+      <TouchableOpacity
+        style={[
+          styles.btnCompartilhar,
+          { height: heightBottom, width: widthBottom }
+        ]}
+        onPress={print}
+      >
+        <Feather
+          name='printer'
+          size={iconSize}
+          color={iconColor ? iconColor : AppStyles.color.primary}
+        />
       </TouchableOpacity>
-      <TouchableOpacity style={styles.btnCompartilhar} onPress={printToFile}>
-        <AntDesign name='sharealt' size={15} color={AppStyles.color.primary} />
+      <TouchableOpacity
+        style={[
+          styles.btnCompartilhar,
+          { height: heightBottom, width: widthBottom }
+        ]}
+        onPress={printToFile}
+      >
+        <AntDesign
+          name='sharealt'
+          size={iconSize}
+          color={iconColor ? iconColor : AppStyles.color.primary}
+        />
       </TouchableOpacity>
     </>
   );

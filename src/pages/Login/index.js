@@ -52,7 +52,6 @@ export default function Login({ loginType = 'login' }) {
       }
 
       await singUp(email, nome, celular, password);
-      Alert.alert('Sucesso', 'Conta criada. Aguarde o administrador ativá-la.');
       setLogin();
     }
   }
@@ -72,6 +71,14 @@ export default function Login({ loginType = 'login' }) {
     };
     return type === 'login' ? btnAcessar : btnCadastrar;
     //{ backgroundColor: type === 'login' ? '#192a56' : '#141414' }
+  }
+
+  function getTextAcesso() {
+    return loading ? 'Acessando...' : 'Acessar';
+  }
+
+  function getTextCadastro() {
+    return loading ? 'Cadastrando...' : 'Cadastrar';
   }
 
   return (
@@ -133,7 +140,7 @@ export default function Login({ loginType = 'login' }) {
           onPress={handleLogin}
         >
           <Text style={styles.loginText}>
-            {type === 'login' ? 'Acessar' : 'Cadastrar'}
+            {type === 'login' ? getTextAcesso() : getTextCadastro()}
           </Text>
         </TouchableOpacity>
 
